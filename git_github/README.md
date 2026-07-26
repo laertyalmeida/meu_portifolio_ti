@@ -1,7 +1,5 @@
 # Git e GitHub — Guia de Estudos
 
-> **"Conhecimento só tem valor quando é compartilhado."**
-
 ## Sobre o projeto
 
 Este repositório reúne minha documentação de estudos sobre **Git** e **GitHub**.
