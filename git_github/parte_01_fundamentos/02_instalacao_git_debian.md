@@ -42,8 +42,9 @@ Recomenda-se ter concluído o capítulo anterior, no qual foram apresentados os 
 
 Instalar um programa é o processo de copiar seus arquivos para o sistema operacional e realizar as configurações necessárias para que ele possa ser executado corretamente.
 
-No Debian, esse processo normalmente é realizado utilizando o **APT)**, uma ferramenta do própro Debian para gerenciar pacotes (programas) da distribuição.
-**apt - Advanced Package Tool** → *Ferramenta avançada de pacotes*
+No Debian, esse processo normalmente é realizado utilizando o **APT)**, uma ferramenta do Debian para gerenciar pacotes (programas) da própria distribuição.
+
+**apt** → *Advanced Package Tool* → *Ferramenta avançada de pacotes*
 
 O APT localiza os pacotes nos repositórios oficiais, realiza o download dos arquivos necessários e executa a instalação automaticamente.
 
