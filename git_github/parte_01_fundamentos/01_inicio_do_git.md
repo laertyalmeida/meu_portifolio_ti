@@ -1,147 +1,112 @@
-# 01 - Início dos estudos Git
+# Tempo estimado de leitura
 
-## Objetivo
+**5 minutos**
 
-Iniciar os estudos sobre Git, compreendendo o conceito de controle de versão e realizando a criação do primeiro repositório Git local.
+**Nível:** Iniciante
 
----
+## Neste capítulo você aprenderá
 
-## Ambiente utilizado
-
-**Sistema operacional:**
-
-Debian Linux
-
-**Terminal utilizado:**
-
-Bash
+* O que é Git.
+* O que é controle de versão.
+* Onde o Git é utilizado.
+* Por que aprender Git.
 
 ---
 
-# Conceito aprendido
+# Git e GitHub — Guia de Estudos
+
+---
+
+# Informações do capítulo
+
+| Campo                   | Informação             |
+| ----------------------- | ---------------------- |
+| **Capítulo**            | 01                     |
+| **Título**              | Início dos Estudos Git |
+| **Autor**               | Laerte Costa           |
+| **Sistema Operacional** | Debian GNU/Linux       |
+| **Terminal**            | Bash                   |
+| **Última atualização**  | Julho de 2026          |
+
+---
+
+# Pré-requisitos
+
+Nenhum.
+
+Este é o primeiro capítulo da coleção e foi desenvolvido para quem está iniciando seus estudos com Git.
+
+---
+
+# Conceito teórico
 
 ## O que é Git?
 
-O Git é um sistema de controle de versão distribuído utilizado para acompanhar alterações realizadas em arquivos e projetos.
+O **Git** é um sistema de **controle de versão** distribuído.
 
-Ele permite registrar o histórico das modificações, possibilitando:
+Seu objetivo é registrar todas as alterações realizadas em um projeto, criando um histórico organizado que permite acompanhar sua evolução ao longo do tempo.
 
-- acompanhar alterações realizadas;
-- recuperar versões anteriores de arquivos;
-- criar diferentes linhas de desenvolvimento através de branches;
-- organizar projetos;
-- facilitar o trabalho colaborativo.
+Com o Git é possível:
 
-O Git é uma ferramenta muito utilizada no desenvolvimento de software, administração de sistemas e organização de documentação técnica.
+* registrar alterações em arquivos;
+* recuperar versões anteriores;
+* trabalhar em equipe com segurança;
+* desenvolver novas funcionalidades sem comprometer a versão principal do projeto.
 
----
-
-# Primeiro comando aprendido
-
-## git init
-
-Comando utilizado:
-
-```bash
-git init
-```
-
-## Função do comando
-
-O comando `git init` é utilizado para transformar um diretório comum em um repositório Git local.
-
-Antes da execução do comando, o diretório funciona apenas como uma pasta comum do sistema.
-
-Após executar:
-
-```bash
-git init
-```
-
-o Git cria uma estrutura interna responsável pelo gerenciamento do repositório.
+Hoje o Git é uma das ferramentas mais utilizadas por desenvolvedores, administradores de sistemas, profissionais de DevOps e diversas outras áreas da tecnologia, e mais, com o git você pode compartilhar conhecimento e incluir seu desenvolvimento na sua grade curricular.
 
 ---
 
-# Estrutura criada pelo Git
+## O que é Controle de Versão?
 
-Após inicializar um repositório, é criada uma pasta oculta chamada:
+Controle de versão é o processo de registrar as alterações realizadas em um projeto.
 
-```bash
-.git
-```
+Em vez de criar vários arquivos com nomes diferentes para cada modificação, o Git mantém um histórico de todas as versões.
 
-Exemplo:
-
-```
-meu_projeto/
-├── arquivos_do_projeto
-└── .git/
-```
-
-A pasta `.git` contém todas as informações internas necessárias para o funcionamento do Git, como:
-
-- histórico de alterações;
-- informações dos commits;
-- configurações do repositório;
-- referências de branches;
-- banco de objetos do Git.
-
-A pasta `.git` não deve ser modificada manualmente, pois qualquer alteração incorreta pode comprometer o funcionamento do repositório.
+Assim, sempre que necessário, é possível consultar ou restaurar uma versão anterior.
 
 ---
 
-# Primeiro teste realizado
+## Por que aprender Git?
 
-Foi criado um diretório para estudos e executado o comando:
+Mesmo trabalhando sozinho, o Git ajuda a organizar projetos, acompanhar sua evolução e recuperar alterações quando necessário.
 
-```bash
-git init
-```
-
-Após a execução, foi observado que o diretório passou a ser reconhecido pelo Git como um repositório local.
+Além disso, é uma habilidade muito valorizada no mercado de tecnologia e amplamente utilizada em empresas de todos os portes.
 
 ---
 
-# Conceito importante aprendido
+## Onde o Git é utilizado?
 
-Um diretório comum e um repositório Git possuem diferenças:
+O Git pode ser utilizado em praticamente qualquer projeto, como:
 
-## Diretório comum
+* desenvolvimento de software;
+* scripts e automações;
+* documentação técnica;
+* infraestrutura como código;
+* estudos pessoais;
+* projetos colaborativos.
 
-É apenas uma pasta contendo arquivos.
-
-Exemplo:
-
-```
-projeto/
-├── arquivo1.txt
-└── arquivo2.txt
-```
-
-## Repositório Git
-
-É uma pasta que possui a estrutura adicional criada pelo Git:
-
-```
-projeto/
-├── arquivo1.txt
-├── arquivo2.txt
-└── .git/
-```
-
-A presença da pasta `.git` indica que aquele diretório está sendo gerenciado pelo Git.
+Sempre que um arquivo sofrer alterações ao longo do tempo, ele poderá ser versionado utilizando Git.
 
 ---
-# Obs:
 
-Veremos na prática no registro 04.
+# Resumo
 
-# Observações do aprendizado
+Neste primeiro capítulo foram apresentados os conceitos fundamentais do Git e do controle de versão.
 
-Este foi o primeiro registro dos estudos sobre Git.
+Nos próximos capítulos você aprenderá a instalar o Git, configurar o ambiente e começar a utilizá-lo na prática.
 
-Neste momento foi compreendido que o Git não é apenas uma ferramenta para armazenar arquivos, mas um sistema capaz de registrar toda a evolução de um projeto.
+---
 
-Este documento faz parte da construção do portfólio técnico de estudos envolvendo Linux, Git, redes e desenvolvimento.
+# Próximo capítulo
 
-A documentação será utilizada como histórico de aprendizado e também como material de consulta futura.
+## Capítulo 02 — Instalação do Git no Debian
+
+No próximo capítulo você aprenderá como instalar o Git no Debian e verificar se a instalação foi realizada corretamente.
+
+---
+
+> **"Conhecimento só tem valor quando é compartilhado."**
+>
+> **— Laerte Costa**
+
