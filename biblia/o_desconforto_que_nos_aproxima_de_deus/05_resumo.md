@@ -33,4 +33,4 @@ Deus transforma nossa dor em propósito quando a colocamos em Suas mãos.
 
 *4 E, por fim, vê Deus transformar sua história em um legado.*
 
-**"Ana não venceu porque não sofreu. Ela venceu porque decidiu levar seu sofrimento ao lugar certo: aos pés do Senhor. O desconforto que poderia afastá-la de Deus tornou-se o instrumento que a aproximou dEle e a fez participar de um propósito que alcançou gerações."**
+**Ana não venceu porque não sofreu. Ela venceu porque decidiu levar seu sofrimento ao lugar certo: aos pés do Senhor. O desconforto que poderia afastá-la de Deus tornou-se o instrumento que a aproximou dEle e a fez participar de um propósito que alcançou gerações.**
