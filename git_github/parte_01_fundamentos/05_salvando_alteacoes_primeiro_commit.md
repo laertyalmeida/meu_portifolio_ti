@@ -63,7 +63,7 @@ Dentro do diretório do projeto, crie um arquivo chamado `README.md`.
 touch README.md
 ```
 
-**touch** → *touch* → *usado para criar arquivo* → *touch = tocar* → *apenar tocar o arquivo sem modificar seu conteúdo, apenas para alterar data/hora do arquivo* → *se não houver arquivo com o nome informado é criado um novo*
+**touch** → *touch* → *usado para criar arquivo* → *touch = tocar* → *apenas tocar o arquivo sem modificar seu conteúdo, apenas para alterar data/hora do arquivo* → *se não houver arquivo com o nome informado é criado um novo*
 
 O arquivo README.md, normalmente é utilizado para apresentar informações sobre o projeto, como um índice.
 
@@ -136,7 +136,7 @@ Changes to be committed:
   new file: README.md
 ```
 
-**new file** → *new* → *novo* → *novo arquivo*
+**new file** → *new* → *novo* → *file* → *arquivo* → *novo arquivo*
 
 Isso significa que o arquivo foi adicionado à área de **preparação** e está pronto para ser registrado.
 
