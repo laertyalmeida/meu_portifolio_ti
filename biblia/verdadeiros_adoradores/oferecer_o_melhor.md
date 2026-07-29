@@ -46,3 +46,17 @@ Assim evitamos criar o hábito de adiar nossa entrega até que o tempo, a rotina
 A verdadeira adoração sempre envolve entrega.
 Deus não nos pede perfeição nem comparação; Ele pede o nosso coração.
 Que possamos seguir o exemplo de Davi, oferecendo ao Senhor uma adoração que tenha valor para nós, porque nasce de um coração que ama, honra e coloca Deus em primeiro lugar.
+
+# Resumos whatsapp
+
+**O VERDADEIRO ADORADOR SEMPRE OFERECE O MELHOR PARA DEUS**
+
+**2 Samuel 24:24
+
+Davi declarou: *"Não oferecerei ao Senhor holocaustos que não me custem nada."*
+
+A verdadeira adoração sempre envolve entrega. Deus não espera que ofereçamos o melhor que existe, mas o melhor que temos.
+O nosso melhor é visto nas nossas prioridades: no tempo que dedicamos, na nossa disposição, na nossa obediência e no amor com que servimos ao Senhor.
+Essa reflexão não é para gerar acusação, pois a acusação não vem de Deus. É um convite para examinarmos o nosso coração e colocarmos novamente o Senhor no centro da nossa vida.
+Assim como Davi, sejamos participativos na nossa adoração. Não deixemos para depois aquilo que podemos entregar hoje, para que a rotina e as circunstâncias não esfriem a nossa paixão pela presença de Deus.
+Quem ama a Deus não oferece o que sobra; oferece o seu melhor.
