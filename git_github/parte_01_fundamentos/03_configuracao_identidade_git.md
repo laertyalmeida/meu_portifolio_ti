@@ -10,6 +10,7 @@
 * Configurar seu e-mail no Git.
 * Verificar as configurações realizadas.
 * Descobrir onde essas informações são armazenadas.
+* Entender a diferença entre configurações globais e locais.
 
 ---
 
@@ -30,6 +31,12 @@
 
 ---
 
+# Objetivo deste capítulo
+
+Aprender a configurar sua identidade no Git, compreender por que essas informações são necessárias e verificar onde elas ficam armazenadas no sistema.
+
+---
+
 # Pré-requisitos
 
 Recomenda-se ter concluído o capítulo anterior, no qual foi realizada a instalação do Git.
@@ -40,16 +47,20 @@ Recomenda-se ter concluído o capítulo anterior, no qual foi realizada a instal
 
 ## O que é a identidade do Git?
 
-Sempre que um **commit** é realizado, o Git registra quem fez aquela alteração.
-
-**commit** → *comprometer* → *um compromisso registrado* → *registro*
+Sempre que um **commit** é realizado, o Git registra quem foi o autor daquela alteração.
 
 Para isso, é necessário configurar duas informações:
 
-* nome do usuário;
-* endereço de e-mail.
+- nome do usuário;
+- endereço de e-mail.
 
-Esses dados passam a identificar a autoria dos seus commits.
+Esses dados passam a identificar a autoria de todos os commits realizados.
+
+**commit** → *comprometer* → *assumir um compromisso* → *registro permanente de uma alteração no histórico do projeto.*
+
+> **Observação**
+>
+> O nome e o e-mail configurados no Git não precisam, obrigatoriamente, ser os mesmos utilizados em sua conta do GitHub. Entretanto, utilizar o mesmo e-mail facilita a associação dos commits ao seu perfil.
 
 ---
 
@@ -60,11 +71,25 @@ Esses dados passam a identificar a autoria dos seus commits.
 ```bash
 git config --global user.name "Seu Nome"
 ```
+
 Exemplo:
 
 ```bash
 git config --global user.name "Laerte Costa"
 ```
+
+### Explicação
+
+Esse comando configura o nome que será utilizado para identificar a autoria dos seus commits.
+
+**git** → *programa executado.*
+
+**config** → *configurar.*
+
+**--global** → *aplica a configuração para todos os repositórios do usuário.*
+
+**user.name** → *nome do autor dos commits.*
+
 ---
 
 # Configurando o e-mail
@@ -81,16 +106,27 @@ Exemplo:
 git config --global user.email "laerte@email.com"
 ```
 
-Esse nome e e-mail serão registrados em todos os commits.
+### Explicação
 
-**git** → *programa executado*
-**config** → *configuração*
-**--global** → *global, para todos os registros*
-**user.name** → *nome do usuário*
-**user.email** → *email do usuário*
+Esse comando configura o endereço de e-mail associado aos seus commits.
+
+**user.email** → *endereço de e-mail do autor dos commits.*
+
+---
+
+## O que significa a opção `--global`?
+
+Ao utilizar a opção `--global`, a configuração será válida para todos os repositórios Git criados ou utilizados por esse usuário no computador.
+
+Caso essa opção não seja utilizada, a configuração será aplicada apenas ao repositório atual.
+
+Essa diferença será estudada com mais detalhes em capítulos futuros.
+
 ---
 
 # Verificando as configurações
+
+Após realizar as configurações, é recomendável verificar se elas foram gravadas corretamente.
 
 Consultar o nome configurado:
 
@@ -100,15 +136,15 @@ Consultar o nome configurado:
 git config --global user.name
 ```
 
-Consulta o nome configurado:
+Consultar o e-mail configurado:
 
 ### Comando
 
 ```bash
 git config --global user.email
 ```
-Consulta o email configurado:
 
+Consultar todas as configurações do Git:
 
 ### Comando
 
@@ -116,7 +152,11 @@ Consulta o email configurado:
 git config --list
 ```
 
-Exibe todas as configurações atualmente utilizadas pelo Git.
+### Explicação
+
+O comando `git config --list` exibe todas as configurações atualmente utilizadas pelo Git.
+
+**list** → *listar* → *exibir todas as configurações disponíveis.*
 
 ---
 
@@ -128,13 +168,19 @@ Ao utilizar a opção `--global`, o Git salva essas configurações no arquivo:
 ~/.gitconfig
 ```
 
-Para visualizar seu conteúdo:
+Para visualizar o conteúdo do arquivo `.gitconfig`, utilize o comando abaixo.
 
 ### Comando
 
 ```bash
 cat ~/.gitconfig
 ```
+
+### Explicação
+
+O comando `cat` exibe o conteúdo de um ou mais arquivos diretamente no terminal.
+
+Nesse exemplo, ele mostra o conteúdo do arquivo `.gitconfig`, permitindo verificar as configurações globais do Git.
 
 Exemplo:
 
@@ -144,23 +190,25 @@ Exemplo:
     email = laerte@email.com
 ```
 
-Se essas informações forem exibidas, a configuração foi realizada com sucesso.
+Se essas informações forem exibidas, significa que a configuração foi realizada com sucesso.
 
-**~** →  *sinal "til" ~ no debian informa que o ambiente de trabalho sendo utilizado é o usuário local*
-**/** → *sinal "barra" / depois do nome no debian, informa que é um diretório*
-**~/** → *diretório do usuário local*
-**cat** → *concatenate* → *concatenar* → *visualizar o conteúdo do arquivo*
-**.** → *o "ponto" . no debian antes do arquivo, indica que o arquivo está oculto*
+**cat** → *concatenate* → *concatenar* → *originalmente criado para unir (concatenar) o conteúdo de arquivos, mas é amplamente utilizado para exibir o conteúdo de arquivos no terminal.*
+
+**~** → *representa o diretório pessoal (home) do usuário.*
+
+**/** → *separa diretórios no sistema Linux.*
+
+**~/** → *diretório pessoal do usuário atual.*
+
+**.gitconfig** → *o ponto (.) no início do nome indica que o arquivo é oculto no Linux.*
 
 ---
 
-# O que foi aprendido
+## Curiosidade
 
-* o Git registra o autor de cada commit;
-* `git config --global user.name` configura o nome do usuário;
-* `git config --global user.email` configura o e-mail do usuário;
-* `git config --list` exibe as configurações do Git;
-* `cat ~/.gitconfig` permite visualizar onde essas configurações são armazenadas.
+O arquivo `.gitconfig` é um arquivo de texto simples.
+
+Isso significa que ele pode ser visualizado ou editado utilizando qualquer editor de texto, como `nano`, `vim` ou `gedit`.
 
 ---
 
@@ -168,13 +216,27 @@ Se essas informações forem exibidas, a configuração foi realizada com sucess
 
 Neste capítulo você configurou sua identidade no Git.
 
-A partir de agora, seus commits serão identificados pelo nome e endereço de e-mail configurados.
+A partir de agora, todos os commits realizados serão identificados pelo nome e endereço de e-mail configurados.
+
+Você também aprendeu onde essas informações ficam armazenadas e como consultá-las sempre que necessário.
+
+---
+
+# O que você aprendeu
+
+Ao concluir este capítulo, você é capaz de:
+
+- ✅ Configurar o nome do usuário.
+- ✅ Configurar o endereço de e-mail.
+- ✅ Verificar as configurações realizadas.
+- ✅ Entender a função da opção `--global`.
+- ✅ Localizar o arquivo `.gitconfig`.
 
 ---
 
 # Próximo capítulo
 
-## 04 - Criando o Primeiro Repositório Git
+## Capítulo 04 — Criando o Primeiro Repositório Git
 
 No próximo capítulo você aprenderá como criar seu primeiro repositório utilizando o comando `git init` e dará os primeiros passos no controle de versão.
 
@@ -183,4 +245,3 @@ No próximo capítulo você aprenderá como criar seu primeiro repositório util
 > **"Conhecimento só tem valor quando é compartilhado."**
 >
 > **— Laerte Costa**
-
