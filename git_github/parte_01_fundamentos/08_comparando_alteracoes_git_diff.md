@@ -103,16 +103,16 @@ index e69de29..c8d3f81 100644
 ## Explicando linha por linha
 
 diff --git a/README.md b/README.md
-mostra registros a b, diferenças do arquivo README.*
+mostra registros a b, diferenças do arquivo README
 
 index e69de29..c8d3f81 1000644
-código de referência*
+código de referência (hash)
 
 --- a/README.md (sinal de menos, versão antiga)
-houve um registro a de tudo que foi retirado do arquivo*
+houve um registro a de tudo que foi retirado do arquivo
 
 +++ b/README.md (sinal de mais, versão atual)
-houve um registro b de tudo que foi adicionado/modificado no arquivo*
+houve um registro b de tudo que foi adicionado/modificado no arquivo
 
 @@ -1,1 +1,3 @@
 -1,1 começa na linha 1 e tem 1 linha
@@ -193,11 +193,11 @@ ou
 git diff --cached
 ```
 
-**staged** → *encenado* → *separado para registro*
-**cached** → *em cache* → *separado para registro*
- 
-Agora o Git exibirá as alterações que estão na Área de Preparação e que serão registradas no próximo commit.
+**staged** → *encenado* 
+**cached** → *em cache*
 
+*staged ou cached ignoram (não mostram) as partes modificadas do arquivo que ainda não foram adicionadas para área de preparação(git add) mostrando apenas as partes do arquivo que já estão adicionadas*
+ 
 ---
 
 # Por que utilizar o `git diff`?
@@ -214,7 +214,7 @@ Isso ajuda a identificar erros, alterações indesejadas ou informações que n�
 
 # Navegar pelo diff
 
-Na pesquisa diff, o Git abre o paginador less.
+Na pesquisa diff, o Git abre o paginador less para visualização.
 
 Use:
 
@@ -230,15 +230,25 @@ q → sair
 
 **git diff <nome_do_arquivo>** → *exibe as modificações de arquivo específico*
 
-**git diff state** → *stat* → *imediatamete* → *alterações resumidas*  
+**git diff --stat** → *stat* → *imediatamete* → *resumidas* → *mostra as quantidades de alterações em números*
 
-**git diff --color-words** → *color words* → *palavras de cor* → *destaca palavras alteradas*
+ | 7 ++++---
+1 file changed, 4 insertions(+), 3 deletions(-)
+
+**1 file changed** → *file* → *arquivo* → *changed* → *mudado* 
+1 arquivo mudado
+
+**insertions(+)** → *inserções* → *conteúdos adcionados no arquivo*
+
+**deletions(-)** → *exclusões* → *conteúdos apagados do arquivo*
+
+**git diff --color-words** → *color words* → *palavras de cor (coloridas)* → *antes de adicionar,(add), o conteúdo da última mudança fica verde e a que foi tirada fica em vermelho*
 
 **git difftool** → *toll* → *ferramenta* → *ferramenta de comparação de diferencas* → *abre duas janelas e mostra as diferenças de cada linha* → *para sair da ferramenta, executar :q duas vezes
 
 **git diff -U1 <nome_do-arquivo>** → *-U* → *Unified Context → *texto unificado* → *-U1* → *1* → *quantidade de linhas* → *mostra a modificação antes e depois*   
----
 
+---
 
 # O que foi aprendido
 
