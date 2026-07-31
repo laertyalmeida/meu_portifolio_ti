@@ -9,6 +9,7 @@
 * Visualizar o histórico de commits.
 * Entender as principais informações exibidas pelo Git.
 * Consultar um histórico resumido.
+* Limitar a quantidade de commits exibidos.
 * Conhecer algumas opções do comando `git log`.
 
 ---
@@ -30,6 +31,12 @@
 
 ---
 
+# Objetivo deste capítulo
+
+Aprender a consultar o histórico de alterações de um repositório Git e interpretar as principais informações registradas em cada commit.
+
+---
+
 # Pré-requisitos
 
 Recomenda-se ter concluído os capítulos anteriores, principalmente o capítulo sobre criação de commits.
@@ -38,13 +45,13 @@ Recomenda-se ter concluído os capítulos anteriores, principalmente o capítulo
 
 # Conceito teórico
 
-## O que é o histórico de commits? (histórico de registros)
+## O que é o histórico de commits?
 
 Sempre que um **commit** é realizado, o Git registra uma nova versão do projeto.
 
-Essas versões formam um histórico que permite acompanhar a evolução do projeto ao longo do tempo.
+Essas versões formam um histórico que permite acompanhar toda a evolução do projeto ao longo do tempo.
 
-Para consultar esse histórico, utiliza-se o comando `git log`.
+Esse histórico pode ser consultado a qualquer momento utilizando o comando `git log`.
 
 ---
 
@@ -56,7 +63,13 @@ Para consultar esse histórico, utiliza-se o comando `git log`.
 git log
 ```
 
-**log** → *registro*
+### Explicação
+
+O comando `git log` exibe todos os commits do repositório, do mais recente para o mais antigo.
+
+**git** → *programa executado.*
+
+**log** → *registro* → *histórico de registros realizados no repositório.*
 
 Exemplo:
 
@@ -68,20 +81,33 @@ Date:   Wed Jul 22 20:15:30 2026 -0300
     Primeiro commit
 ```
 
-Cada commit apresenta informações importantes sobre a alteração realizada.
-
 ---
 
 # Entendendo a saída
 
-O comando `git log` exibe, entre outras informações:
+Cada commit apresenta diversas informações importantes.
 
-* **Commit:** identificador único da alteração.
-* **Author:** nome e e-mail do autor.
-* **Date:** data e hora do commit.
-* **Mensagem:** descrição informada no momento do commit.
+### Commit
 
-Essas informações ajudam a identificar quando uma alteração foi realizada e por quem.
+Identificador único gerado pelo Git para cada registro realizado.
+
+Nenhum commit possui o mesmo identificador.
+
+### Author
+
+Nome e endereço de e-mail do autor do commit.
+
+Essas informações são obtidas da configuração realizada com `git config`.
+
+### Date
+
+Data e horário em que o commit foi realizado.
+
+### Mensagem
+
+Descrição informada pelo usuário no momento do commit.
+
+Uma boa mensagem facilita a compreensão do histórico do projeto.
 
 ---
 
@@ -95,7 +121,11 @@ Caso deseje visualizar apenas uma linha para cada commit, utilize:
 git log --oneline
 ```
 
-**oneline** → *uma linha* → *somente a mensagem do registro, o nome atribuido ao registro no momento do commit*
+### Explicação
+
+A opção `--oneline` apresenta cada commit em apenas uma linha.
+
+**oneline** → *uma linha.*
 
 Exemplo:
 
@@ -103,7 +133,7 @@ Exemplo:
 9c3f4d7 Primeiro commit
 ```
 
-Essa opção facilita a visualização quando o projeto possui muitos commits, ele mostra uma lista decrescente por ordem de realização.
+Essa opção facilita a leitura do histórico quando o projeto possui muitos commits.
 
 ---
 
@@ -117,20 +147,45 @@ Também é possível limitar a quantidade de registros exibidos.
 git log -2
 ```
 
-Exemplo:
+### Explicação
 
-```text
-Exibe apenas os dois commits mais recentes.
-```
+O número informado após o comando define quantos commits serão exibidos.
 
-Substitua o número `2` pela quantidade desejada.
+No exemplo acima, apenas os dois commits mais recentes serão apresentados.
+
+Você pode substituir o número `2` por qualquer outra quantidade desejada.
 
 ---
 
-* `git log` exibe o histórico de commits;
-* cada commit possui um identificador único;
-* `git log --oneline` mostra um histórico resumido;
-* `git log -2` limita a quantidade de commits exibidos.
+# Exibindo estatísticas dos commits
+
+Caso deseje visualizar quais arquivos foram alterados em cada commit, utilize:
+
+### Comando
+
+```bash
+git log --stat
+```
+
+### Explicação
+
+Essa opção exibe um resumo mostrando:
+
+- arquivos modificados;
+- quantidade de linhas adicionadas;
+- quantidade de linhas removidas.
+
+É uma forma rápida de compreender o impacto de cada commit.
+
+**stat** → *statistics* → *estatísticas.*
+
+---
+
+## Curiosidade
+
+Cada commit recebe um identificador gerado por um algoritmo de criptografia chamado **SHA-1**.
+
+Esse identificador é praticamente único, permitindo que o Git encontre qualquer versão do projeto com precisão.
 
 ---
 
@@ -138,19 +193,30 @@ Substitua o número `2` pela quantidade desejada.
 
 Neste capítulo você aprendeu a consultar o histórico do repositório utilizando o comando `git log`.
 
-Também conheceu as principais informações exibidas em um commit e formas de visualizar o histórico de maneira resumida.
+Também conheceu as principais informações exibidas em um commit e diferentes formas de visualizar esse histórico.
+
+---
+
+# O que você aprendeu
+
+Ao concluir este capítulo, você é capaz de:
+
+- ✅ Visualizar o histórico de commits.
+- ✅ Identificar as informações exibidas em cada commit.
+- ✅ Utilizar o histórico resumido com `git log --oneline`.
+- ✅ Limitar a quantidade de commits exibidos.
+- ✅ Exibir estatísticas utilizando `git log --stat`.
 
 ---
 
 # Próximo capítulo
 
-## 07 - Entendendo a Área de Trabalho do Git
+## Capítulo 07 — Comparando Alterações com git diff
 
-No próximo capítulo você aprenderá como o Git organiza os arquivos entre a área de trabalho, a área de preparação (Staging Area) e o repositório.
+No próximo capítulo você aprenderá a utilizar o comando `git diff` para comparar alterações realizadas nos arquivos antes e depois dos commits.
 
 ---
 
 > **"Conhecimento só tem valor quando é compartilhado."**
 >
 > **— Laerte Costa**
-
