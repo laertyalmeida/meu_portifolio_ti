@@ -10,6 +10,7 @@
 * Remover arquivos com `git rm`.
 * Entender por que utilizar os comandos do Git.
 * Verificar as alterações utilizando `git status`.
+* Entender como o Git acompanha alterações estruturais.
 
 ---
 
@@ -40,7 +41,17 @@ Recomenda-se ter concluído os capítulos anteriores.
 
 ## Por que utilizar os comandos do Git?
 
-Arquivos podem ser renomeados ou removidos utilizando comandos do próprio sistema operacional, como `mv` e `rm`.
+Arquivos podem ser renomeados ou removidos utilizando comandos do próprio sistema operacional, como:
+
+```bash
+mv
+```
+
+e
+
+```bash
+rm
+```
 
 No entanto, o Git também oferece comandos específicos para essas tarefas.
 
@@ -74,7 +85,23 @@ O arquivo passará a ter o novo nome.
 
 O comando `git mv` utiliza a palavra **move**, pois renomear um arquivo também é uma forma de movê-lo dentro do sistema de arquivos.
 
-Além de renomear ou mover o arquivo, o Git registra essa alteração automaticamente para o próximo commit.
+Quando utilizamos:
+
+```bash
+git mv
+```
+
+o Git realiza duas ações:
+
+1. Move ou renomeia o arquivo no sistema.
+2. Adiciona essa alteração à Área de Preparação (*Staging Area*).
+
+Internamente, seria semelhante a executar:
+
+```bash
+mv README.md APRESENTACAO.md
+git add APRESENTACAO.md
+```
 
 ---
 
@@ -96,7 +123,21 @@ Changes to be committed:
     renamed: README.md -> APRESENTACAO.md
 ```
 
-O Git identifica que o arquivo foi renomeado.
+O Git identifica que o arquivo foi renomeado e que essa alteração está preparada para o próximo commit.
+
+---
+
+# Como o Git identifica uma renomeação?
+
+O Git não guarda uma operação chamada "renomear arquivo".
+
+Ele identifica uma possível renomeação comparando o conteúdo dos arquivos.
+
+Quando percebe que um arquivo removido possui grande semelhança com um arquivo criado, o Git apresenta essa alteração como:
+
+```text
+renamed:
+```
 
 ---
 
@@ -110,7 +151,7 @@ Para remover um arquivo do projeto, utilize:
 git rm APRESENTACAO.md
 ```
 
-O arquivo será removido do diretório e o Git registrará essa remoção.
+O arquivo será removido do diretório e a remoção será preparada para o próximo commit.
 
 ---
 
@@ -118,13 +159,42 @@ O arquivo será removido do diretório e o Git registrará essa remoção.
 
 **rm** → *remove* → remover
 
-O comando `git rm` remove um arquivo do diretório e informa ao Git que essa alteração deverá ser registrada no próximo commit.
+O comando `git rm` realiza duas ações:
+
+1. Remove o arquivo do diretório.
+2. Informa ao Git que essa remoção deverá ser registrada.
 
 ---
 
-# Confirmando as alterações
+# Diferença entre `rm` e `git rm`
 
-Após remover o arquivo, execute novamente:
+Utilizando somente:
+
+```bash
+rm arquivo.txt
+```
+
+o arquivo será removido apenas do sistema operacional.
+
+O Git perceberá a alteração posteriormente através do:
+
+```bash
+git status
+```
+
+Já utilizando:
+
+```bash
+git rm arquivo.txt
+```
+
+a remoção já será preparada automaticamente para o próximo commit.
+
+---
+
+# Verificando a remoção
+
+Após remover o arquivo, execute:
 
 ### Comando
 
@@ -160,7 +230,19 @@ A partir desse momento, as alterações passam a fazer parte do histórico do pr
 
 # Boa prática
 
-Sempre que possível, utilize os comandos `git mv` e `git rm` em vez dos comandos do sistema operacional.
+Sempre que possível, utilize os comandos:
+
+```bash
+git mv
+```
+
+e
+
+```bash
+git rm
+```
+
+em vez dos comandos comuns do sistema operacional.
 
 Embora o Git consiga identificar muitas dessas alterações posteriormente, utilizar seus próprios comandos torna o fluxo de trabalho mais claro e facilita a compreensão do histórico do projeto.
 
@@ -170,6 +252,7 @@ Embora o Git consiga identificar muitas dessas alterações posteriormente, util
 
 * `git mv` renomeia ou move arquivos;
 * `git rm` remove arquivos do projeto;
+* `git mv` e `git rm` já preparam alterações para o próximo commit;
 * `git status` permite verificar as alterações realizadas;
 * as alterações devem ser registradas com um novo commit.
 
@@ -187,7 +270,7 @@ Também conheceu a importância de utilizar essas ferramentas para manter o hist
 
 ## 11 - Restaurando Alterações com Git Restore
 
-No próximo capítulo você aprenderá a restaurar arquivos
+No próximo capítulo você aprenderá a restaurar arquivos modificados utilizando o comando `git restore`, recuperando versões anteriores antes de criar um commit.
 
 ---
 
