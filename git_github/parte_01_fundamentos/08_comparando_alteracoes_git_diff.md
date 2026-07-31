@@ -44,7 +44,7 @@ Durante o desenvolvimento de um projeto, é comum modificar um ou mais arquivos 
 
 O comando `git diff` permite visualizar exatamente quais alterações foram realizadas.
 
-Isso ajuda a revisar o trabalho antes de registrá-lo no histórico do projeto.
+Ele ajuda a revisar o trabalho antes de registrar as modificações no histórico do projeto.
 
 ---
 
@@ -85,7 +85,8 @@ O Git informará que o arquivo foi modificado.
 ```bash
 git diff
 ```
-**diff** → *difference* → diferença → *mostra as diferenças dos registros, o antes e o depois*
+
+**diff** → *difference* → diferença → mostra as diferenças entre duas versões de um arquivo.
 
 Exemplo:
 
@@ -100,56 +101,104 @@ index e69de29..c8d3f81 100644
 +Este projeto foi criado para aprender Git.
 ```
 
-## Explicando linha por linha
+---
 
+# Explicando linha por linha
+
+```text
 diff --git a/README.md b/README.md
-mostra registros a b, diferenças do arquivo README
+```
 
-index e69de29..c8d3f81 1000644
-código de referência (hash)
+Mostra os dois lados da comparação:
 
---- a/README.md (sinal de menos, versão antiga)
-houve um registro a de tudo que foi retirado do arquivo
+* `a/README.md` → versão anterior do arquivo.
+* `b/README.md` → versão atual do arquivo.
 
-+++ b/README.md (sinal de mais, versão atual)
-houve um registro b de tudo que foi adicionado/modificado no arquivo
-
-@@ -1,1 +1,3 @@
--1,1 começa na linha 1 e tem 1 linha
-+1,3 começa na linha 1 e tem 3 linhas
-
-Meu projeto 
-mensagem já existia no arquivo, não foi modificado
-
-+
-adicionado uma linha em branco
-
-+Este projeto foi criado para aprendere Git
-mensagem adicionada no arquivo 
+As letras `a` e `b` são apenas identificadores usados pelo Git para representar as duas versões comparadas.
 
 ---
 
-# Entendendo a saída do comando
+```text
+index e69de29..c8d3f81 100644
+```
 
-Ao utilizar `git diff`, algumas linhas possuem significados especiais.
+Mostra informações internas do Git:
 
-As linhas iniciadas com:
+* `e69de29` → hash da versão anterior.
+* `c8d3f81` → hash da versão atual.
+* `100644` → permissão do arquivo no sistema Linux.
+
+---
+
+```text
+--- a/README.md
+```
+
+Indica a versão anterior do arquivo.
+
+O símbolo `---` representa o arquivo antigo que será comparado.
+
+---
+
+```text
++++ b/README.md
+```
+
+Indica a versão atual do arquivo.
+
+O símbolo `+++` representa o arquivo novo após as alterações.
+
+---
+
+```text
+@@ -1,1 +1,3 @@
+```
+
+Mostra o trecho onde ocorreu a alteração.
+
+Parte antiga:
+
+```text
+-1,1
+```
+
+Significa:
+
+* começa na linha 1;
+* mostra 1 linha da versão antiga.
+
+Parte nova:
+
+```text
++1,3
+```
+
+Significa:
+
+* começa na linha 1;
+* mostra 3 linhas da versão nova.
+
+---
+
+# Entendendo os símbolos
+
+Linhas iniciadas com:
 
 ```text
 +
 ```
 
-indicam conteúdo **adicionado**.
+indicam conteúdo adicionado.
 
-As linhas iniciadas com:
+Linhas iniciadas com:
 
 ```text
 -
 ```
 
-indicam conteúdo **removido**.
+indicam conteúdo removido.
 
-As demais linhas servem para mostrar o contexto da alteração.
+As demais linhas mostram o contexto da alteração.
 
 ---
 
@@ -157,15 +206,11 @@ As demais linhas servem para mostrar o contexto da alteração.
 
 Execute:
 
-### Comando
-
 ```bash
 git add README.md
 ```
 
 Agora execute novamente:
-
-### Comando
 
 ```bash
 git diff
@@ -173,7 +218,9 @@ git diff
 
 Nenhuma alteração será exibida.
 
-Isso acontece porque o `git diff` compara apenas as alterações que ainda estão na Área de Trabalho.
+Isso acontece porque o `git diff` compara a **Área de Trabalho (Working Tree)** com a **Área de Preparação (Staging Area)**.
+
+Após o `git add`, a alteração foi enviada para a Área de Preparação, deixando esses dois estados iguais.
 
 ---
 
@@ -184,7 +231,7 @@ Depois do `git add`, utilize:
 ### Comando
 
 ```bash
-git diff --staged 
+git diff --staged
 ```
 
 ou
@@ -193,11 +240,14 @@ ou
 git diff --cached
 ```
 
-**staged** → *encenado* 
-**cached** → *em cache*
+Significados:
 
-*staged ou cached ignoram (não mostram) as partes modificadas do arquivo que ainda não foram adicionadas para área de preparação(git add) mostrando apenas as partes do arquivo que já estão adicionadas*
- 
+**staged** → preparado → alterações que estão na Área de Preparação.
+
+**cached** → armazenado no índice (*index*) → nome antigo utilizado pelo Git para acessar a Área de Preparação.
+
+Esses comandos mostram as alterações que já foram adicionadas pelo `git add` e que serão incluídas no próximo commit.
+
 ---
 
 # Por que utilizar o `git diff`?
@@ -212,51 +262,146 @@ Isso ajuda a identificar erros, alterações indesejadas ou informações que n�
 
 ---
 
+# Fluxo de comparação no Git
+
+O processo de revisão segue este fluxo:
+
+```text
+Arquivo modificado
+        |
+        v
+   git diff
+        |
+        v
+     git add
+        |
+        v
+git diff --staged
+        |
+        v
+   git commit
+```
+
+O `git diff` permite revisar alterações antes de enviá-las para a Área de Preparação.
+
+O `git diff --staged` permite revisar aquilo que já foi preparado para o próximo commit.
+
+---
+
 # Navegar pelo diff
 
-Na pesquisa diff, o Git abre o paginador less para visualização.
+Durante a visualização do diff, o Git utiliza o paginador `less`.
 
-Use:
+Comandos:
 
+```
 Espaço → próxima página
 b → página anterior
 /texto → pesquisar
 n → próxima ocorrência
 q → sair
+```
 
-## Alguns tipos de pesquisas
+---
 
-**git diff --name-only** → *name only* → *apenas o nome* → *exibe os nomes dos registros alterados*
+# Alguns tipos de pesquisas
 
-**git diff <nome_do_arquivo>** → *exibe as modificações de arquivo específico*
+### Mostrar apenas nomes dos arquivos alterados
 
-**git diff --stat** → *stat* → *imediatamete* → *resumidas* → *mostra as quantidades de alterações em números*
+```bash
+git diff --name-only
+```
 
- | 7 ++++---
+**name only** → apenas nome → exibe somente os nomes dos arquivos modificados.
+
+---
+
+### Comparar um arquivo específico
+
+```bash
+git diff <nome_do_arquivo>
+```
+
+Exibe somente as modificações de um arquivo específico.
+
+---
+
+### Mostrar resumo das alterações
+
+```bash
+git diff --stat
+```
+
+**stat** → estatística → mostra um resumo das alterações.
+
+Exemplo:
+
+```text
 1 file changed, 4 insertions(+), 3 deletions(-)
+```
 
-**1 file changed** → *file* → *arquivo* → *changed* → *mudado* 
-1 arquivo mudado
+Significado:
 
-**insertions(+)** → *inserções* → *conteúdos adcionados no arquivo*
+**1 file changed** → 1 arquivo modificado.
 
-**deletions(-)** → *exclusões* → *conteúdos apagados do arquivo*
+**insertions(+)** → inserções → conteúdos adicionados ao arquivo.
 
-**git diff --color-words** → *color words* → *palavras de cor (coloridas)* → *antes de adicionar,(add), o conteúdo da última mudança fica verde e a que foi tirada fica em vermelho*
+**deletions(-)** → exclusões → conteúdos removidos do arquivo.
 
-**git difftool** → *toll* → *ferramenta* → *ferramenta de comparação de diferencas* → *abre duas janelas e mostra as diferenças de cada linha* → *para sair da ferramenta, executar :q duas vezes
+---
 
-**git diff -U1 <nome_do-arquivo>** → *-U* → *Unified Context → *texto unificado* → *-U1* → *1* → *quantidade de linhas* → *mostra a modificação antes e depois*   
+### Mostrar diferenças por palavras
+
+```bash
+git diff --color-words
+```
+
+**color words** → palavras coloridas → mostra alterações individuais por palavras.
+
+Normalmente:
+
+* verde → conteúdo adicionado;
+* vermelho → conteúdo removido.
+
+---
+
+### Utilizar uma ferramenta visual de comparação
+
+```bash
+git difftool
+```
+
+**tool** → ferramenta → ferramenta de comparação de diferenças.
+
+Pode abrir uma interface visual mostrando as diferenças entre versões.
+
+Para sair da ferramenta no terminal:
+
+```bash
+:q
+```
+
+---
+
+### Controlar quantidade de linhas exibidas
+
+```bash
+git diff -U1 <nome_do_arquivo>
+```
+
+**-U** → *Unified Context* → contexto unificado.
+
+**-U1** → mostra 1 linha de contexto antes e depois da alteração.
 
 ---
 
 # O que foi aprendido
 
-* `git diff` compara alterações na Área de Trabalho;
+* `git diff` compara alterações da Área de Trabalho;
 * `git diff --staged` exibe alterações da Área de Preparação;
 * o símbolo `+` representa conteúdo adicionado;
 * o símbolo `-` representa conteúdo removido;
-* Tipos de buscas;
+* existem diferentes formas de pesquisar e visualizar alterações;
 * revisar alterações antes de criar um commit é uma boa prática.
 
 ---
