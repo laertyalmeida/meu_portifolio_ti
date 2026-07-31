@@ -57,7 +57,7 @@ Esses arquivos podem mudar constantemente e não fazem parte do projeto.
 
 Se forem versionados, o histórico ficará desorganizado com alterações desnecessárias.
 
-O `.gitignore` evita que isso aconteça.
+O `.gitignore` evita que esses arquivos sejam adicionados ao controle de versão.
 
 ---
 
@@ -77,11 +77,11 @@ touch .gitignore
 
 **touch** → tocar
 
-Originalmente, o comando `touch` foi criado para atualizar a data e a hora de modificação de um arquivo.
+Originalmente, o comando `touch` foi criado para atualizar a data e hora de modificação de um arquivo.
 
-Se o arquivo não existir, ele será criado.
+Caso o arquivo não exista, ele será criado.
 
-Por esse motivo, é muito utilizado para criar arquivos vazios no Linux.
+Por esse motivo, é muito utilizado no Linux para criar arquivos vazios.
 
 ---
 
@@ -99,9 +99,9 @@ cache/
 
 Nesse exemplo:
 
-* `*.log` ignora todos os arquivos com extensão `.log`;
-* `*.tmp` ignora todos os arquivos com extensão `.tmp`;
-* `cache/` ignora todo o diretório `cache`.
+* `*.log` → ignora todos os arquivos com extensão `.log`;
+* `*.tmp` → ignora todos os arquivos com extensão `.tmp`;
+* `cache/` → ignora todo o diretório `cache`.
 
 ---
 
@@ -121,15 +121,39 @@ Agora execute:
 git status
 ```
 
-O arquivo `teste.log` não será exibido, pois está sendo ignorado pelo Git.
+O arquivo `teste.log` não será exibido como arquivo novo (*untracked*), pois corresponde a uma regra definida no `.gitignore`.
+
+---
+
+# Verificando qual regra ignorou o arquivo
+
+O Git possui um comando para descobrir qual regra do `.gitignore` está sendo aplicada.
+
+### Comando
+
+```bash
+git check-ignore -v teste.log
+```
+
+Exemplo:
+
+```text
+.gitignore:1:*.log    teste.log
+```
+
+Significado:
+
+* `.gitignore:1` → regra encontrada na linha 1 do arquivo `.gitignore`;
+* `*.log` → padrão responsável por ignorar o arquivo;
+* `teste.log` → arquivo afetado pela regra.
 
 ---
 
 # Como funciona o `.gitignore`?
 
-Sempre que o Git verifica os arquivos do projeto, ele consulta primeiro o arquivo `.gitignore`.
+O Git utiliza as regras definidas no `.gitignore` para determinar quais arquivos não devem aparecer como arquivos não rastreados (*untracked*) no repositório.
 
-Se um arquivo corresponder a uma das regras definidas, ele será ignorado e não aparecerá como um novo arquivo no `git status`.
+Quando um arquivo corresponde a uma regra, ele não será exibido normalmente pelo `git status` e não será adicionado com `git add .`.
 
 ---
 
@@ -137,7 +161,15 @@ Se um arquivo corresponder a uma das regras definidas, ele será ignorado e não
 
 O `.gitignore` ignora apenas arquivos que **ainda não estão sendo controlados pelo Git**.
 
-Se um arquivo já foi adicionado anteriormente com `git add` e registrado em um commit, apenas incluí-lo no `.gitignore` não será suficiente para que ele deixe de ser versionado.
+Se um arquivo já foi adicionado anteriormente com:
+
+```bash
+git add
+```
+
+e registrado em um commit, apenas incluí-lo no `.gitignore` não será suficiente para que ele deixe de ser versionado.
+
+Será necessário removê-lo da Área de Preparação e do controle do Git utilizando comandos específicos.
 
 Esse procedimento será estudado em capítulos mais avançados.
 
@@ -148,7 +180,8 @@ Esse procedimento será estudado em capítulos mais avançados.
 * o arquivo `.gitignore` define quais arquivos o Git deve ignorar;
 * arquivos temporários normalmente não devem ser versionados;
 * `touch` cria o arquivo `.gitignore`;
-* o `git status` permite verificar se uma regra está funcionando corretamente.
+* o `git status` permite verificar se uma regra está funcionando;
+* `git check-ignore` mostra qual regra ignorou determinado arquivo.
 
 ---
 
@@ -170,5 +203,5 @@ No próximo capítulo você aprenderá como renomear e remover arquivos utilizan
 
 > **"Conhecimento só tem valor quando é compartilhado."**
 >
-> **— Laerte Costa **
+> **— Laerte Costa**
 
