@@ -7,9 +7,9 @@
 ## Neste capítulo você aprenderá
 
 * Como o Git organiza as alterações.
-* O que é a Área de Trabalho (Working Tree).
-* O que é a Área de Preparação (Staging Area).
-* O que é o Repositório (Repository).
+* O que é a Área de Trabalho (*Working Tree*).
+* O que é a Área de Preparação (*Staging Area*).
+* O que é o Repositório (*Repository*).
 * Como os comandos `git add` e `git commit` atuam nesse processo.
 
 ---
@@ -31,6 +31,12 @@
 
 ---
 
+# Objetivo deste capítulo
+
+Compreender como o Git organiza as alterações realizadas nos arquivos antes de registrá-las definitivamente no histórico do projeto.
+
+---
+
 # Pré-requisitos
 
 Recomenda-se ter concluído os capítulos anteriores.
@@ -41,17 +47,17 @@ Recomenda-se ter concluído os capítulos anteriores.
 
 ## Como o Git organiza um projeto?
 
-Ao contrário do que muitos imaginam, o Git não grava imediatamente todas as alterações realizadas em um arquivo.
+Ao contrário do que muitos imaginam, o Git **não grava imediatamente** todas as alterações realizadas em um arquivo.
 
-Antes que uma alteração seja registrada definitivamente, ela passa por algumas etapas.
+Antes que uma alteração seja registrada definitivamente, ela passa por etapas intermediárias.
 
-Esse processo permite selecionar exatamente quais alterações farão parte de um commit.
+Esse processo permite selecionar exatamente quais alterações farão parte do próximo commit.
 
 ---
 
 # As três áreas do Git
 
-O Git organiza o trabalho em três áreas principais:
+O Git organiza o trabalho em três áreas principais.
 
 ```text
 Área de Trabalho
@@ -67,19 +73,19 @@ Cada uma possui uma função específica.
 
 ---
 
-# Área de Trabalho (Working Tree)
+# Área de Trabalho (*Working Tree*)
 
-É onde os arquivos são criados, modificados, renomeados ou removidos.
+A Área de Trabalho é onde os arquivos são criados, modificados, renomeados ou removidos.
 
-Sempre que você altera um arquivo, essa alteração acontece primeiro na Área de Trabalho.
+Sempre que você altera um arquivo, essa alteração acontece primeiro nessa área.
 
 Nesse momento, o Git ainda não registrou nenhuma mudança.
 
 ---
 
-# Área de Preparação (Staging Area)
+# Área de Preparação (*Staging Area*)
 
-A Área de Preparação funciona como uma etapa intermediária.
+A Área de Preparação funciona como uma etapa intermediária entre os arquivos e o histórico do projeto.
 
 Quando você executa:
 
@@ -89,15 +95,21 @@ Quando você executa:
 git add README.md
 ```
 
-**add** → *adicionar* 
+### Explicação
 
-o Git copia a versão atual do arquivo para a Área de Preparação.
+O comando `git add` copia a versão atual do arquivo para a Área de Preparação.
 
 Isso significa que esse arquivo está pronto para fazer parte do próximo commit.
 
+**git** → *programa executado.*
+
+**add** → *adicionar.*
+
+**README.md** → *arquivo que será preparado para o próximo commit.*
+
 ---
 
-# Repositório (Repository)
+# Repositório (*Repository*)
 
 Quando você executa:
 
@@ -107,15 +119,21 @@ Quando você executa:
 git commit -m "Mensagem do commit"
 ```
 
-o Git registra definitivamente todas as alterações que estavam na Área de Preparação.
+### Explicação
 
-Esse registro passa a fazer parte do histórico do projeto.
+O comando `git commit` registra definitivamente todas as alterações que estavam na Área de Preparação.
+
+A partir desse momento, elas passam a fazer parte do histórico do projeto.
+
+**commit** → *registro permanente das alterações.*
+
+**-m** → *message* → *mensagem do commit.*
 
 ---
 
 # Fluxo de trabalho
 
-O fluxo básico do Git é:
+O fluxo básico do Git pode ser representado da seguinte forma:
 
 ```text
 Criar ou modificar um arquivo
@@ -123,12 +141,14 @@ Criar ou modificar um arquivo
               ▼
       Área de Trabalho
               │
-       git add (adicionando)
+       git add
+(adiciona à Área de Preparação)
               │
               ▼
      Área de Preparação
               │
-      git commit (registrando)
+      git commit
+(registra no histórico)
               │
               ▼
         Repositório
@@ -140,21 +160,21 @@ Criar ou modificar um arquivo
 
 Imagine que você alterou o arquivo `README.md`.
 
-Ao executar:
+Primeiro, execute:
 
 ```bash
 git status
 ```
 
-o Git informa que existe uma alteração na Área de Trabalho.
+O Git informará que existe uma alteração na Área de Trabalho.
 
-Depois:
+Depois execute:
 
 ```bash
 git add README.md
 ```
 
-essa alteração é enviada para a Área de Preparação.
+Agora essa alteração foi enviada para a Área de Preparação.
 
 Por fim:
 
@@ -162,7 +182,7 @@ Por fim:
 git commit -m "Atualiza README"
 ```
 
-a alteração passa a fazer parte do histórico do projeto.
+A alteração passa a fazer parte do histórico permanente do projeto.
 
 ---
 
@@ -172,35 +192,45 @@ A Área de Preparação permite escolher exatamente quais alterações serão re
 
 Imagine que você modificou cinco arquivos, mas deseja registrar apenas dois.
 
-Basta adicionar somente esses dois arquivos com `git add`.
+Basta adicionar somente esses dois arquivos utilizando `git add`.
 
 Assim, o commit conterá apenas as alterações desejadas.
 
-Essa é uma das principais vantagens do Git.
+Esse é um dos recursos mais importantes do Git.
 
 ---
 
-# O que foi aprendido
+## Curiosidade
 
-* o Git organiza as alterações em três áreas;
-* a Área de Trabalho contém os arquivos modificados;
-* `git add` envia arquivos para a Área de Preparação;
-* `git commit` registra as alterações no repositório;
-* `git status` ajuda a acompanhar esse processo.
+Muitos sistemas de controle de versão registram todas as alterações diretamente.
+
+O Git utiliza uma Área de Preparação justamente para oferecer maior controle sobre o conteúdo de cada commit.
 
 ---
 
 # Resumo
 
-Neste capítulo você aprendeu como o Git organiza as alterações antes de registrá-las.
+Neste capítulo você aprendeu como o Git organiza as alterações antes de registrá-las definitivamente.
 
-Compreender esse fluxo facilita o entendimento dos próximos comandos e torna o uso do Git muito mais natural.
+Compreender esse fluxo facilita o entendimento dos próximos comandos e torna o uso do Git muito mais intuitivo.
+
+---
+
+# O que você aprendeu
+
+Ao concluir este capítulo, você é capaz de:
+
+- ✅ Identificar as três áreas do Git.
+- ✅ Compreender a função da Área de Trabalho.
+- ✅ Entender o papel da Área de Preparação.
+- ✅ Saber quando um arquivo passa a fazer parte do histórico.
+- ✅ Relacionar os comandos `git add` e `git commit` com cada etapa do processo.
 
 ---
 
 # Próximo capítulo
 
-## 08 - Comparando Alterações com git diff
+## Capítulo 08 — Comparando Alterações com `git diff`
 
 No próximo capítulo você aprenderá a visualizar exatamente quais linhas foram adicionadas, removidas ou modificadas antes de criar um commit.
 
@@ -209,4 +239,3 @@ No próximo capítulo você aprenderá a visualizar exatamente quais linhas fora
 > **"Conhecimento só tem valor quando é compartilhado."**
 >
 > **— Laerte Costa**
-
