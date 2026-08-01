@@ -194,6 +194,8 @@ Resultado:
 * ele deixa de estar preparado para o próximo commit.
 
 Esse comando desfaz o efeito do `git add`, mas não perde as alterações realizadas.
+Ou seja você desfaz o efeito git add, ele volta para o modificado e depois você faz o git restore para voltar como estava.
+
 
 ---
 
