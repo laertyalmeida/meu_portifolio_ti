@@ -1,6 +1,6 @@
 # Tempo estimado de leitura
 
-**10 minutos**
+**12 minutos**
 
 **Nível:** Iniciante
 
@@ -10,6 +10,7 @@
 * Por que alguns arquivos não devem ser versionados.
 * Criar um arquivo `.gitignore`.
 * Ignorar arquivos e diretórios.
+* Ignorar arquivos em subdiretórios.
 * Verificar o efeito do `.gitignore` no repositório.
 
 ---
@@ -63,7 +64,7 @@ O `.gitignore` evita que esses arquivos sejam adicionados ao controle de versão
 
 # Criando o arquivo
 
-Crie um arquivo chamado `.gitignore` no diretório do projeto.
+Crie um arquivo chamado `.gitignore` no diretório raiz do repositório.
 
 ### Comando
 
@@ -75,13 +76,37 @@ touch .gitignore
 
 # Significado do comando
 
-**touch** → tocar
+**touch** → tocar.
 
 Originalmente, o comando `touch` foi criado para atualizar a data e hora de modificação de um arquivo.
 
 Caso o arquivo não exista, ele será criado.
 
 Por esse motivo, é muito utilizado no Linux para criar arquivos vazios.
+
+---
+
+# Onde criar o arquivo `.gitignore`?
+
+Na maioria dos projetos existe apenas um arquivo `.gitignore`, localizado na raiz do repositório, ou seja, no mesmo diretório onde está a pasta `.git`.
+
+Exemplo:
+
+```text
+meu_projeto/
+├── .git/
+├── .gitignore
+├── README.md
+├── docs/
+├── src/
+└── imagens/
+```
+
+Quando o `.gitignore` está na raiz, suas regras são válidas para todo o repositório, incluindo todos os seus subdiretórios.
+
+Na maioria dos projetos pessoais e profissionais, um único arquivo `.gitignore` é suficiente.
+
+Embora seja possível criar outros arquivos `.gitignore` em subdiretórios, essa prática normalmente é utilizada apenas em projetos maiores, nos quais diferentes módulos possuem regras específicas.
 
 ---
 
@@ -102,6 +127,52 @@ Nesse exemplo:
 * `*.log` → ignora todos os arquivos com extensão `.log`;
 * `*.tmp` → ignora todos os arquivos com extensão `.tmp`;
 * `cache/` → ignora todo o diretório `cache`.
+
+---
+
+# Ignorando arquivos em subdiretórios
+
+Além de utilizar regras genéricas, também é possível ignorar arquivos e diretórios específicos informando seu caminho relativo no arquivo `.gitignore`.
+
+Exemplo:
+
+```text
+parte1/teste.txt
+```
+
+Ignora apenas o arquivo:
+
+```text
+parte1/teste.txt
+```
+
+---
+
+Também é possível ignorar todos os arquivos de uma determinada extensão dentro de um único diretório.
+
+Exemplo:
+
+```text
+parte1/*.txt
+```
+
+Nesse caso, somente os arquivos `.txt` existentes dentro da pasta `parte1` serão ignorados.
+
+Arquivos `.txt` existentes em outros diretórios continuarão sendo rastreados normalmente.
+
+---
+
+Para ignorar um diretório específico:
+
+```text
+parte1/cache/
+```
+
+Apenas a pasta `cache` localizada dentro de `parte1` será ignorada.
+
+---
+
+Essa abordagem permite centralizar todas as regras em um único arquivo `.gitignore`, facilitando sua manutenção e evitando a criação de vários arquivos `.gitignore` espalhados pelo projeto.
 
 ---
 
@@ -127,7 +198,7 @@ O arquivo `teste.log` não será exibido como arquivo novo (*untracked*), pois c
 
 # Verificando qual regra ignorou o arquivo
 
-O Git possui um comando para descobrir qual regra do `.gitignore` está sendo aplicada.
+O Git possui um comando para descobrir qual regra do `.gitignore` está sendo aplicada a um determinado arquivo.
 
 ### Comando
 
@@ -135,7 +206,29 @@ O Git possui um comando para descobrir qual regra do `.gitignore` está sendo ap
 git check-ignore -v teste.log
 ```
 
-Exemplo:
+---
+
+# Significado do comando
+
+**git** → sistema de controle de versão.
+
+**check** → verificar.
+
+**ignore** → ignorar.
+
+**check-ignore** → verificar se um arquivo está sendo ignorado e identificar qual regra do `.gitignore` foi responsável por isso.
+
+**-v** → *verbose* (detalhado).
+
+Exibe informações completas sobre a regra aplicada, informando:
+
+* qual arquivo `.gitignore` foi utilizado;
+* em qual linha a regra foi encontrada;
+* qual padrão fez com que o arquivo fosse ignorado.
+
+---
+
+Exemplo de saída:
 
 ```text
 .gitignore:1:*.log    teste.log
@@ -143,9 +236,12 @@ Exemplo:
 
 Significado:
 
-* `.gitignore:1` → regra encontrada na linha 1 do arquivo `.gitignore`;
+* `.gitignore` → arquivo onde a regra foi encontrada;
+* `1` → número da linha no arquivo `.gitignore`;
 * `*.log` → padrão responsável por ignorar o arquivo;
 * `teste.log` → arquivo afetado pela regra.
+
+Esse comando é muito útil quando um arquivo está sendo ignorado e você deseja descobrir exatamente qual regra do `.gitignore` está causando esse comportamento.
 
 ---
 
@@ -153,7 +249,11 @@ Significado:
 
 O Git utiliza as regras definidas no `.gitignore` para determinar quais arquivos não devem aparecer como arquivos não rastreados (*untracked*) no repositório.
 
-Quando um arquivo corresponde a uma regra, ele não será exibido normalmente pelo `git status` e não será adicionado com `git add .`.
+Quando um arquivo corresponde a uma regra, ele não será exibido normalmente pelo `git status` e também não será adicionado ao utilizar comandos como:
+
+```bash
+git add .
+```
 
 ---
 
@@ -161,27 +261,44 @@ Quando um arquivo corresponde a uma regra, ele não será exibido normalmente pe
 
 O `.gitignore` ignora apenas arquivos que **ainda não estão sendo controlados pelo Git**.
 
-Se um arquivo já foi adicionado anteriormente com:
+Se um arquivo já foi adicionado anteriormente com `git add` e registrado em um commit, apenas incluí-lo no `.gitignore` não fará com que ele deixe de ser versionado.
+
+Para que ele passe a ser ignorado, primeiro é necessário removê-lo do índice do Git.
+
+### Comando
 
 ```bash
-git add
+git rm --cached nome_do_arquivo
 ```
 
-e registrado em um commit, apenas incluí-lo no `.gitignore` não será suficiente para que ele deixe de ser versionado.
+---
 
-Será necessário removê-lo da Área de Preparação e do controle do Git utilizando comandos específicos.
+# Significado do comando
 
-Esse procedimento será estudado em capítulos mais avançados.
+**git** → sistema de controle de versão.
+
+**rm** → *remove* (remover).
+
+**--cached** → remove o arquivo apenas do índice (cache) do Git, mantendo-o no diretório de trabalho.
+
+Esse comando faz com que o Git deixe de controlar o arquivo, mas o arquivo continua existindo normalmente no computador.
+
+Após essa remoção, o `.gitignore` passará a ignorá-lo normalmente.
 
 ---
 
 # O que foi aprendido
 
 * o arquivo `.gitignore` define quais arquivos o Git deve ignorar;
+* normalmente existe apenas um `.gitignore` na raiz do repositório;
+* um único `.gitignore` pode controlar todo o repositório;
+* é possível ignorar arquivos e diretórios específicos utilizando caminhos relativos;
 * arquivos temporários normalmente não devem ser versionados;
 * `touch` cria o arquivo `.gitignore`;
-* o `git status` permite verificar se uma regra está funcionando;
-* `git check-ignore` mostra qual regra ignorou determinado arquivo.
+* `git check-ignore` identifica qual regra está ignorando um arquivo;
+* a flag `-v` exibe informações detalhadas sobre a regra aplicada;
+* `git status` permite verificar se uma regra está funcionando;
+* `git rm --cached` remove um arquivo do controle de versão sem apagá-lo do computador.
 
 ---
 
@@ -189,7 +306,11 @@ Esse procedimento será estudado em capítulos mais avançados.
 
 Neste capítulo você aprendeu a utilizar o arquivo `.gitignore` para impedir que arquivos desnecessários sejam adicionados ao repositório.
 
-Essa prática ajuda a manter o projeto mais organizado e evita que arquivos temporários façam parte do histórico de commits.
+Também aprendeu que, na maioria dos projetos, existe apenas um arquivo `.gitignore` localizado na raiz do repositório, responsável por controlar quais arquivos e diretórios devem ser ignorados em todo o projeto.
+
+Além disso, viu como criar regras específicas para subdiretórios, como identificar a regra responsável por ignorar um arquivo utilizando o comando `git check-ignore -v` e entendeu por que arquivos que já estão sendo versionados precisam ser removidos do índice do Git antes que passem a ser ignorados.
+
+Essas práticas ajudam a manter o projeto organizado, facilitam a manutenção do repositório e evitam que arquivos temporários ou desnecessários façam parte do histórico de commits.
 
 ---
 
