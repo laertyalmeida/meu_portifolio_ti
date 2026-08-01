@@ -264,7 +264,12 @@ Também conhecerá as boas práticas utilizadas por desenvolvedores e equipes pr
 
 ---
 
+**Documentação desenvolvida por:** Laerte Costa
+
+**Projeto:** Git e GitHub — Do Básico ao Profissional
+
+**Objetivo:** Compartilhar conhecimento de forma clara, prática e acessível.
+
 > **"Conhecimento só tem valor quando é compartilhado."**
 >
 > **— Laerte Costa**
-
