@@ -248,6 +248,9 @@ Embora o Git consiga identificar muitas dessas alterações posteriormente, util
 
 ---
 
+*Sempre que um arquivo for modificado com mv ou removido (deleted) com rm, as mudanças vão aparecer no status com git status, basta adicionar com git add e registrar com commit -m para armazenar os registros dessas mudanças.*
+
+
 # O que foi aprendido
 
 * `git mv` renomeia ou move arquivos;
