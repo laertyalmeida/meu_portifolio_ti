@@ -1,59 +1,69 @@
-# Git e GitHub — Guia de Estudos
+# Git e GitHub
 
-## Sobre o projeto
+Esta seção contém a documentação dos meus estudos sobre controle de versão utilizando Git e integração com GitHub.
 
-Este repositório reúne minha documentação de estudos sobre **Git** e **GitHub**.
-
-O objetivo é aprender de forma gradual, registrando conceitos, comandos e exemplos práticos utilizando uma linguagem simples e acessível.
-
-Cada capítulo foi escrito pensando em quem está iniciando, mostrando não apenas **como executar um comando**, mas também **por que ele existe** e **quando utilizá-lo**.
-
-Além de servir como material de consulta para meus próprios estudos, este projeto também tem como objetivo ajudar outras pessoas que desejam aprender Git desde os primeiros passos.
+O objetivo é compreender desde os fundamentos do Git até o trabalho com repositórios remotos e colaboração.
 
 ---
 
-## Público-alvo
+# Conteúdos
 
-Este material foi desenvolvido para:
+## Parte 01 — Fundamentos do Git
 
-- iniciantes em Git;
-- estudantes de Linux;
-- alunos de cursos técnicos;
-- profissionais que desejam revisar conceitos;
-- qualquer pessoa interessada em controle de versão.
+Nesta etapa foram estudados os conceitos básicos do Git.
 
----
+Conteúdos:
 
-## Organização da coleção
-
-A documentação está dividida em capítulos, seguindo uma sequência lógica de aprendizado.
-
-Cada capítulo pode ser estudado individualmente, mas recomenda-se seguir a ordem apresentada.
+- O que é Git.
+- Instalação e configuração.
+- Criação de repositórios.
+- Área de trabalho, staging e commits.
+- Histórico de alterações.
+- Restauração de arquivos.
 
 ---
 
-## Estrutura
+## Parte 02 — Trabalhando com Branches
 
-```text
-00 - Apresentação
+Nesta etapa foram estudadas ramificações e organização do desenvolvimento.
 
-01 - Início dos Estudos Git
-02 - Instalação do Git no Debian
-03 - Configuração da Identidade do Git
-04 - Criando o Primeiro Repositório Git
-05 - Trabalhando com Branches
-06 - Git Add
-...
-```
+Conteúdos:
 
----
-
-## Objetivo
-
-Mais do que aprender comandos, este projeto busca compreender o funcionamento do Git na prática, construindo uma base sólida para estudos futuros, certificações e projetos profissionais.
+- Criação de Branches.
+- Alternância entre Branches.
+- Desenvolvimento isolado.
+- Merge.
+- Resolução de conflitos.
+- Fluxo de trabalho com Branches.
 
 ---
 
-**"Conhecimento só tem valor quando é compartilhado."**
+## Parte 03 — GitHub
 
-**Laerte Costa**
+Nesta etapa será estudada a integração entre Git e GitHub.
+
+Conteúdos:
+
+- Criar repositórios remotos.
+- Conectar repositório local ao GitHub.
+- git remote.
+- git push.
+- git pull.
+- git clone.
+- Colaboração com repositórios remotos.
+
+---
+
+# Ambiente utilizado
+
+- Debian Linux
+- Terminal GNU/Linux
+- Git
+- Markdown
+- Vim
+
+---
+
+> **"Conhecimento só tem valor quando é compartilhado."**
+>
+> **— Laerte Costa**
