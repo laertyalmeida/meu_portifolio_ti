@@ -43,7 +43,7 @@ Acesse o site oficial do GitHub:
 
 **https://github.com**
 
-Na página inicial, clique em **Sign up**.
+Na página inicial, clique em **Sign up** → *inscever-se* → *criar conta*.
 
 Em seguida, informe:
 
@@ -51,7 +51,7 @@ Em seguida, informe:
 * senha;
 * nome de usuário (*Username*).
 
-Após preencher os dados, siga as instruções apresentadas na tela.
+Após preencher os dados, siga as instruções de credenciamento apresentadas na tela.
 
 ---
 
