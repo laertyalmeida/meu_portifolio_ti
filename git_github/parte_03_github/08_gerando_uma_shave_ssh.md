@@ -78,11 +78,11 @@ Em português:
 
 Juntando todas as partes:
 
-| Termo | Tradução |
-|--------|----------|
-| ssh | Secure Shell |
-| key | Chave |
-| gen | Generate (Gerar) |
+| Termo | Tradução         |
+|-------|------------------|
+| ssh   | Secure Shell     |
+| key   | Chave            |
+| gen   | Generate (Gerar) |
 
 Podemos entender que:
 
