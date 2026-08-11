@@ -1,24 +1,13 @@
-# Tempo estimado de leitura
+# Capítulo 02 — Instalação do Git no Debian
 
-**8 minutos**
-
+**Tempo estimado de leitura:** 8 minutos
 **Nível:** Iniciante
-
-## Neste capítulo você aprenderá
-
-* Verificar se o Git já está instalado no Debian.
-* Atualizar a lista de pacotes do Debian.
-* Instalar o Git utilizando o APT.
-* Confirmar se a instalação foi realizada com sucesso.
-* Localizar o executável do Git no sistema.
 
 ---
 
 # Git e GitHub — Guia de Estudos
 
----
-
-# Informações do capítulo
+## Informações do capítulo
 
 | Campo                   | Informação                  |
 | ----------------------- | --------------------------- |
@@ -27,19 +16,13 @@
 | **Autor**               | Laerte Costa                |
 | **Sistema Operacional** | Debian GNU/Linux            |
 | **Terminal**            | Bash                        |
-| **Última atualização**  | Julho de 2026               |
+| **Última atualização**  | Agosto de 2026              |
 
 ---
 
-# Objetivo deste capítulo
+# Objetivo
 
-Aprender a verificar se o Git já está instalado no Debian, instalar a ferramenta utilizando o APT e confirmar que a instalação foi realizada corretamente.
-
----
-
-# Pré-requisitos
-
-Recomenda-se ter concluído o capítulo anterior, no qual foram apresentados os conceitos de Git e controle de versão.
+Neste capítulo, vamos aprender a verificar se o Git já está instalado no Debian, instalar o Git usando o APT e confirmar se tudo funcionou corretamente.
 
 ---
 
@@ -47,19 +30,25 @@ Recomenda-se ter concluído o capítulo anterior, no qual foram apresentados os 
 
 ## O que é instalar um programa?
 
-Instalar um programa é o processo de copiar seus arquivos para o sistema operacional e realizar as configurações necessárias para que ele possa ser executado corretamente.
+Instalar um programa significa colocar os arquivos necessários no sistema e realizar as configurações para que ele possa ser utilizado.
 
-No Debian, esse processo normalmente é realizado utilizando o **APT**, o gerenciador de pacotes da distribuição.
+No Debian, uma das formas mais comuns de instalar programas é utilizando o **APT**.
 
-**APT** → *Advanced Package Tool* → *Ferramenta Avançada de Pacotes*
+**APT** significa **Advanced Package Tool** e é o gerenciador de pacotes utilizado pelo Debian e por outras distribuições baseadas nele.
 
-O APT é responsável por localizar programas nos repositórios oficiais, realizar o download dos arquivos necessários, instalar, atualizar e remover pacotes de forma automática.
+Com o APT podemos:
+
+* instalar programas;
+* atualizar pacotes;
+* remover programas;
+* consultar informações sobre pacotes;
+* resolver automaticamente algumas dependências.
 
 ---
 
 # Verificando se o Git já está instalado
 
-Antes de instalar qualquer programa, é uma boa prática verificar se ele já está presente no sistema. Isso evita instalações desnecessárias e permite conhecer a versão atualmente instalada.
+Antes de instalar um programa, é uma boa prática verificar se ele já está instalado.
 
 ### Comando
 
@@ -67,25 +56,35 @@ Antes de instalar qualquer programa, é uma boa prática verificar se ele já es
 git --version
 ```
 
-### Explicação
+### O que o comando faz?
 
-Esse comando exibe a versão instalada do Git.
+Mostra a versão do Git instalada no sistema.
 
-Se o Git estiver instalado, será exibido um resultado semelhante a este:
+Exemplo:
 
 ```text
 git version 2.39.5
 ```
 
-Caso seja exibida uma mensagem informando que o comando não foi encontrado, será necessário instalar o Git.
+Se aparecer uma versão, o Git já está instalado.
+
+Se aparecer uma mensagem como:
+
+```text
+bash: git: command not found
+```
+
+significa que o sistema não encontrou o comando `git`.
 
 > **Boa prática**
 >
-> Sempre confirme a instalação utilizando `git --version`. Assim você garante que o Git foi instalado corretamente e identifica rapidamente a versão disponível no sistema.
+> Sempre verifique primeiro se o programa já está instalado. Isso evita fazer uma instalação desnecessária.
 
 ---
 
-Outra forma de verificar consiste em consultar as informações do pacote disponível nos repositórios.
+# Consultando o pacote do Git
+
+Também podemos consultar informações sobre o pacote `git` usando o APT.
 
 ### Comando
 
@@ -93,25 +92,27 @@ Outra forma de verificar consiste em consultar as informações do pacote dispon
 apt list git
 ```
 
-### Explicação
+### O que o comando faz?
 
-Esse comando consulta as informações do pacote **git** disponíveis nos repositórios e informa se ele já está instalado no sistema.
+Mostra informações sobre o pacote **git** disponível nos repositórios configurados no sistema.
 
-**list** → *listar*
-
-**git** → *nome do pacote desejado*
-
-Se o pacote já estiver instalado, será exibido no final da linha:
+Se o Git já estiver instalado, normalmente aparecerá:
 
 ```text
 [installed]
 ```
 
+Aqui:
+
+* `apt` → gerenciador de pacotes;
+* `list` → lista informações sobre um pacote;
+* `git` → nome do pacote que queremos consultar.
+
 ---
 
 # Atualizando a lista de pacotes
 
-Antes de instalar um programa, recomenda-se atualizar a lista de pacotes disponíveis nos repositórios.
+Antes de instalar um programa, é recomendado atualizar a lista de pacotes disponíveis nos repositórios.
 
 ### Comando
 
@@ -119,23 +120,36 @@ Antes de instalar um programa, recomenda-se atualizar a lista de pacotes dispon�
 sudo apt update
 ```
 
-### Explicação
+### O que o comando faz?
 
-Esse comando **não instala nem atualiza programas**.
+O `apt update` consulta os repositórios configurados no Debian e atualiza a lista de programas e versões disponíveis.
 
-Ele apenas atualiza a lista de pacotes disponíveis nos repositórios configurados no sistema, permitindo que o APT conheça as versões mais recentes disponíveis.
+Esse comando **não atualiza os programas instalados**.
 
-**sudo** → *Super User Do* → *executa o comando com privilégios administrativos.*
+Ele apenas atualiza as informações que o APT utiliza para saber quais pacotes estão disponíveis.
 
-**update** → *atualizar* → *atualiza a lista de pacotes disponíveis nos repositórios.*
+### Entendendo o comando
 
-> **Observação**
+**sudo** → executa o comando com privilégios administrativos.
+
+**apt** → gerenciador de pacotes.
+
+**update** → atualiza a lista de pacotes disponíveis.
+
+> **Importante**
 >
-> A atualização dos programas instalados é realizada com outros comandos, como `apt upgrade`, que será estudado posteriormente.
+> `apt update` e `apt upgrade` têm funções diferentes.
+>
+> * `apt update` → atualiza a lista de pacotes.
+> * `apt upgrade` → atualiza os pacotes instalados.
+>
+> O comando `apt upgrade` será estudado posteriormente.
 
 ---
 
 # Instalando o Git
+
+Depois de atualizar a lista de pacotes, podemos instalar o Git.
 
 ### Comando
 
@@ -143,19 +157,27 @@ Ele apenas atualiza a lista de pacotes disponíveis nos repositórios configurad
 sudo apt install git
 ```
 
-### Explicação
+### O que o comando faz?
 
-O APT localizará o pacote Git nos repositórios configurados, fará o download dos arquivos necessários e realizará a instalação automaticamente.
+O APT procura o pacote `git` nos repositórios configurados, baixa os arquivos necessários e realiza a instalação.
 
-Durante a instalação poderá ser solicitada a senha do usuário administrador.
+Durante o processo, o sistema pode solicitar a senha do usuário.
 
-**install** → *instalar*
+### Entendendo o comando
+
+**sudo** → executa o comando com privilégios administrativos.
+
+**apt** → gerenciador de pacotes.
+
+**install** → instala um pacote.
+
+**git** → pacote que será instalado.
 
 ---
 
 # Confirmando a instalação
 
-Após a instalação, execute novamente o comando:
+Depois de instalar o Git, vamos verificar se ele está funcionando corretamente.
 
 ### Comando
 
@@ -163,15 +185,19 @@ Após a instalação, execute novamente o comando:
 git --version
 ```
 
-### Explicação
+Se aparecer a versão do Git, a instalação foi concluída com sucesso.
 
-Se uma versão for exibida, significa que o Git foi instalado corretamente.
+Exemplo:
 
-Caso deseje saber onde o executável foi instalado, utilize o comando abaixo.
+```text
+git version 2.39.5
+```
 
 ---
 
-# Localizando o executável
+# Localizando o executável do Git
+
+Também podemos descobrir onde o executável do Git está localizado no sistema.
 
 ### Comando
 
@@ -185,19 +211,51 @@ Exemplo:
 /usr/bin/git
 ```
 
-### Explicação
+### O que o comando faz?
 
-Sempre que você executa um comando no terminal, o sistema procura seu executável nos diretórios configurados na variável de ambiente **PATH**.
+O `which` mostra o caminho do executável que será utilizado quando o comando for executado no terminal.
 
-O comando `which` informa exatamente qual executável será utilizado.
+**which** → mostra qual executável será utilizado.
 
-**which** → *qual* → *informa o caminho do executável utilizado pelo sistema.*
+Nesse exemplo:
+
+```text
+/usr/bin/git
+```
+
+significa que o executável do Git está localizado no diretório `/usr/bin`.
 
 ---
 
-## Curiosidade
+# Entendendo o PATH
 
-Os repositórios oficiais do Debian priorizam estabilidade e segurança. Por isso, nem sempre disponibilizam a versão mais recente dos programas, mas sim versões amplamente testadas e confiáveis.
+Quando digitamos um comando no terminal, como:
+
+```bash
+git
+```
+
+o sistema procura o programa nos diretórios definidos na variável de ambiente **PATH**.
+
+Podemos visualizar o conteúdo do PATH com:
+
+```bash
+echo $PATH
+```
+
+O comando `which git` ajuda a descobrir qual arquivo executável será encontrado pelo sistema.
+
+---
+
+# Curiosidade
+
+O Debian prioriza **estabilidade e segurança**.
+
+Por isso, a versão de um programa disponível nos repositórios oficiais pode não ser a versão mais recente lançada pelo desenvolvedor.
+
+Isso acontece porque os pacotes passam por testes antes de serem disponibilizados para a versão estável do Debian.
+
+Para quem está começando, utilizar os pacotes dos repositórios oficiais é uma forma simples e segura de instalar programas.
 
 ---
 
@@ -216,20 +274,35 @@ Verificar se o Git está instalado
  Confirmar a instalação
               │
               ▼
- Localizar o executável (opcional)
+ Localizar o executável
 ```
+
+---
+
+# Comandos utilizados
+
+| Comando                | Função                                  |
+| ---------------------- | --------------------------------------- |
+| `git --version`        | Verifica a versão do Git                |
+| `apt list git`         | Consulta informações sobre o pacote Git |
+| `sudo apt update`      | Atualiza a lista de pacotes             |
+| `sudo apt install git` | Instala o Git                           |
+| `which git`            | Mostra o caminho do executável          |
+| `echo $PATH`           | Mostra os diretórios presentes no PATH  |
 
 ---
 
 # O que você aprendeu
 
-Ao concluir este capítulo, você é capaz de:
+Neste capítulo, você aprendeu a:
 
-- ✅ Verificar se o Git já está instalado.
-- ✅ Atualizar a lista de pacotes do Debian.
-- ✅ Instalar o Git utilizando o APT.
-- ✅ Confirmar se a instalação foi concluída com sucesso.
-- ✅ Localizar o executável do Git no sistema.
+* verificar se o Git está instalado;
+* consultar informações sobre o pacote Git;
+* atualizar a lista de pacotes do Debian;
+* instalar o Git usando o APT;
+* confirmar se a instalação foi realizada corretamente;
+* localizar o executável do Git;
+* entender de forma básica o funcionamento do `PATH`.
 
 ---
 
@@ -237,10 +310,21 @@ Ao concluir este capítulo, você é capaz de:
 
 ## Capítulo 03 — Configuração da Identidade do Git
 
-No próximo capítulo você aprenderá a configurar seu nome de usuário e endereço de e-mail, informações que o Git utiliza para identificar a autoria de cada commit realizado.
+No próximo capítulo, vamos configurar o **nome** e o **e-mail** utilizados pelo Git.
+
+Essas informações são registradas nos commits e permitem identificar quem realizou cada alteração no projeto.
+
+---
+
+## 📚 Fonte de estudo
+
+Este capítulo foi elaborado a partir dos meus estudos sobre **Git, GitHub, Linux e gerenciamento de pacotes no Debian**, utilizando os conteúdos estudados como referência e organizando as informações com minhas próprias palavras para facilitar a revisão e o aprendizado.
+
+> **Observação:** este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo original das disciplinas e materiais utilizados como referência não deve ser reproduzido integralmente neste repositório.
 
 ---
 
 > **"Conhecimento só tem valor quando é compartilhado."**
 >
 > **— Laerte Costa**
+

@@ -1,8 +1,11 @@
-# Tempo estimado de leitura
+# Git e GitHub — Guia de Estudos
 
-**12 minutos**
+## Capítulo 11 — Restaurando Alterações com `git restore`
 
+**Tempo estimado de leitura:** 12 minutos
 **Nível:** Iniciante
+
+---
 
 ## Neste capítulo você aprenderá
 
@@ -10,11 +13,8 @@
 * Desfazer alterações realizadas em arquivos.
 * Restaurar arquivos removidos.
 * Remover arquivos da Área de Preparação (*Staging Area*).
-* Recuperar versões de arquivos utilizando commits anteriores.
-
----
-
-# Git e GitHub — Guia de Estudos
+* Recuperar o conteúdo de arquivos de commits anteriores.
+* Entender a diferença entre restaurar um arquivo e alterar o histórico de commits.
 
 ---
 
@@ -27,29 +27,61 @@
 | **Autor**               | Laerte Costa                             |
 | **Sistema Operacional** | Debian GNU/Linux                         |
 | **Terminal**            | Bash                                     |
-| **Última atualização**  | Julho de 2026                            |
+| **Última atualização**  | Agosto de 2026                           |
+
+---
+
+# Objetivo deste capítulo
+
+Neste capítulo, você vai aprender a utilizar o comando `git restore` para desfazer alterações realizadas nos arquivos e recuperar versões conhecidas pelo Git.
+
+Também vamos entender como retirar arquivos da Área de Preparação sem perder as alterações feitas neles.
 
 ---
 
 # Pré-requisitos
 
-Recomenda-se ter concluído os capítulos anteriores.
+É recomendado ter concluído os capítulos anteriores, principalmente os capítulos sobre:
+
+* `git status`;
+* `git add`;
+* `git commit`;
+* Área de Trabalho;
+* Área de Preparação;
+* `git diff`.
 
 ---
 
-# Conceito teórico
+# 1. O que é o `git restore`?
 
-## O que é o `git restore`?
+Durante o desenvolvimento, podemos alterar um arquivo e depois perceber que a alteração não deveria permanecer.
 
-Durante o desenvolvimento de um projeto, é comum realizar alterações e depois perceber que determinada modificação não deveria permanecer.
+Por exemplo:
 
-O comando `git restore` permite recuperar arquivos para um estado anterior, desfazendo alterações realizadas na Área de Trabalho ou removendo arquivos da Área de Preparação.
+```text
+README.md
+```
 
-Ele facilita a recuperação de arquivos sem a necessidade de navegar pelo histórico de commits.
+foi modificado, mas queremos voltar ao estado anterior.
+
+O comando:
+
+```bash
+git restore
+```
+
+permite restaurar arquivos para um estado conhecido pelo Git.
+
+Ele pode ser utilizado para:
+
+* descartar alterações na Área de Trabalho;
+* recuperar arquivos removidos;
+* retirar arquivos da Área de Preparação;
+* restaurar o conteúdo de um arquivo a partir de outro commit.
 
 ---
 
-# O que significa `restore`?
+# 2. O que significa `restore`?
 
 A palavra:
 
@@ -61,55 +93,233 @@ significa:
 
 > restaurar
 
-No Git, o comando `git restore` devolve um arquivo para um estado específico.
+No Git, o comando `git restore` trabalha principalmente com o **conteúdo dos arquivos**.
 
-Dependendo da opção utilizada, ele pode:
-
-* descartar alterações locais;
-* recuperar arquivos removidos;
-* retirar arquivos da Área de Preparação (*Staging Area*);
-* restaurar uma versão existente em outro commit.
+Dependendo da opção utilizada, ele pode atuar na Área de Trabalho ou na Área de Preparação.
 
 ---
 
-# Quando utilizar o `git restore`?
+# 3. Quando utilizar o `git restore`?
 
-Algumas situações comuns:
+Algumas situações comuns são:
 
 * alterei um arquivo por engano;
 * removi um arquivo acidentalmente;
-* quero voltar para a última versão salva no commit;
-* adicionei um arquivo com `git add` e quero removê-lo da Área de Preparação.
+* quero recuperar a última versão registrada;
+* adicionei um arquivo com `git add` e quero retirá-lo da Área de Preparação;
+* quero recuperar o conteúdo de um arquivo de um commit anterior.
 
 ---
 
-# Restaurando alterações de um arquivo
+# 4. Descartando alterações de um arquivo
 
-Suponha que o arquivo:
+Imagine que o arquivo:
 
 ```text
 README.md
 ```
 
-tenha sido modificado.
+já esteja sendo controlado pelo Git e tenha sido modificado.
 
-Verifique o estado do repositório:
-
-### Comando
+Primeiro, verifique:
 
 ```bash
 git status
 ```
 
-Exemplo:
+O Git poderá mostrar:
 
 ```text
 modified: README.md
 ```
 
-Para descartar as alterações feitas nesse arquivo:
+Para descartar a alteração:
 
-### Comando
+```bash
+git restore README.md
+```
+
+O arquivo voltará para o conteúdo registrado no `HEAD`, ou seja, para a versão que está no commit atualmente apontado pelo `HEAD`.
+
+---
+
+# 5. Atenção ao utilizar `git restore`
+
+Este comando pode descartar alterações que ainda não foram registradas em um commit.
+
+Por exemplo:
+
+```text
+Versão do commit
+       ↓
+README.md
+       ↓
+Você modifica o arquivo
+       ↓
+git restore README.md
+       ↓
+Alteração descartada
+```
+
+Por isso, antes de utilizar o comando, é uma boa prática verificar:
+
+```bash
+git diff
+```
+
+Assim você consegue visualizar o que será perdido.
+
+> ⚠️ **Atenção**
+>
+> Se você utilizar `git restore` para descartar uma alteração que ainda não foi registrada em um commit, essa alteração pode ser perdida.
+
+---
+
+# 6. Restaurando vários arquivos
+
+Também podemos informar vários arquivos:
+
+```bash
+git restore arquivo1.md arquivo2.md
+```
+
+Nesse caso, somente os arquivos informados serão restaurados.
+
+---
+
+# 7. Restaurando todos os arquivos modificados
+
+Também podemos utilizar:
+
+```bash
+git restore .
+```
+
+O ponto:
+
+```text
+.
+```
+
+representa o diretório atual.
+
+Esse comando restaura os arquivos rastreados que possuem alterações na Área de Trabalho.
+
+> **Cuidado**
+>
+> Antes de utilizar `git restore .`, verifique as alterações com `git status` e `git diff`. Alterações não salvas em commits podem ser descartadas.
+
+---
+
+# 8. Restaurando um arquivo removido
+
+Imagine que o arquivo:
+
+```text
+README.md
+```
+
+foi removido utilizando:
+
+```bash
+rm README.md
+```
+
+Agora execute:
+
+```bash
+git status
+```
+
+O Git poderá mostrar:
+
+```text
+deleted: README.md
+```
+
+Como o arquivo ainda está registrado no Git, podemos recuperá-lo utilizando:
+
+```bash
+git restore README.md
+```
+
+O arquivo será recriado com o conteúdo da versão registrada no `HEAD`.
+
+---
+
+# 9. Retirando um arquivo da Área de Preparação
+
+Agora imagine que modificamos:
+
+```text
+README.md
+```
+
+e executamos:
+
+```bash
+git add README.md
+```
+
+O arquivo está agora na Área de Preparação.
+
+Mas percebemos que ainda não queremos incluí-lo no próximo commit.
+
+Podemos utilizar:
+
+```bash
+git restore --staged README.md
+```
+
+---
+
+# 10. O que acontece com `git restore --staged`?
+
+Esse comando retira o arquivo da Área de Preparação.
+
+Importante:
+
+> **As alterações do arquivo não são apagadas.**
+
+O fluxo fica:
+
+```text
+Arquivo modificado
+       ↓
+   git add
+       ↓
+Staging Area
+       ↓
+git restore --staged
+       ↓
+Arquivo volta para
+a Área de Trabalho
+```
+
+Depois disso, o arquivo continuará modificado.
+
+Podemos confirmar com:
+
+```bash
+git status
+```
+
+O Git poderá mostrar:
+
+```text
+Changes not staged for commit:
+    modified: README.md
+```
+
+---
+
+# 11. Diferença entre `git restore` e `git restore --staged`
+
+Essa diferença é muito importante.
+
+### `git restore arquivo`
+
+Descarta a alteração da **Área de Trabalho**.
 
 ```bash
 git restore README.md
@@ -117,72 +327,17 @@ git restore README.md
 
 Resultado:
 
-* as alterações realizadas na Área de Trabalho serão descartadas;
-* o arquivo retornará ao estado do último commit.
-
-> **Atenção:** as alterações descartadas dessa forma não poderão ser recuperadas facilmente.
-
----
-
-# Restaurando vários arquivos
-
-É possível restaurar vários arquivos informando seus nomes:
-
-```bash
-git restore arquivo1.md arquivo2.md
-```
-
-Também é possível restaurar todos os arquivos modificados:
-
-```bash
-git restore .
-```
-
-O ponto (`.`) representa o diretório atual e seus arquivos rastreados pelo Git.
-
----
-
-# Restaurando um arquivo removido
-
-Imagine que um arquivo foi removido utilizando o comando:
-
-```bash
-rm README.md
-```
-
-O Git identificará a remoção:
-
-```bash
-git status
-```
-
-Saída:
-
 ```text
-deleted: README.md
+Alteração local
+      ↓
+   descartada
 ```
-
-Para recuperar o arquivo:
-
-```bash
-git restore README.md
-```
-
-O arquivo será restaurado conforme a última versão registrada no commit.
 
 ---
 
-# Removendo um arquivo da Área de Preparação
+### `git restore --staged arquivo`
 
-Imagine que você adicionou um arquivo:
-
-```bash
-git add README.md
-```
-
-Depois percebeu que ainda não deseja incluí-lo no próximo commit.
-
-Para retirar o arquivo da Área de Preparação:
+Retira o arquivo da **Área de Preparação**, mas mantém sua alteração.
 
 ```bash
 git restore --staged README.md
@@ -190,132 +345,325 @@ git restore --staged README.md
 
 Resultado:
 
-* o arquivo continua modificado na Área de Trabalho;
-* ele deixa de estar preparado para o próximo commit.
+```text
+Staging Area
+     ↓
+Área de Trabalho
+```
 
-Esse comando desfaz o efeito do `git add`, mas não perde as alterações realizadas.
-Ou seja você desfaz o efeito git add, ele volta para o modificado e depois você faz o git restore para voltar como estava.
-
+A alteração continua existindo.
 
 ---
 
-# Restaurando uma versão de outro commit
+# 12. Restaurando conteúdo de outro commit
 
-O Git também permite recuperar o conteúdo de um arquivo presente em outro commit.
+O Git também permite restaurar o conteúdo de um arquivo a partir de outro commit.
 
-Exemplo:
+Por exemplo:
 
 ```bash
 git restore --source=HEAD~1 README.md
 ```
 
-Significado:
+Vamos entender:
 
-* `--source` → define a origem da versão que será restaurada;
-* `HEAD~1` → representa o commit anterior ao atual;
-* `README.md` → arquivo que será restaurado.
+### `--source`
 
-Nesse caso, o conteúdo do arquivo será substituído pela versão existente no commit anterior.
+Define de onde o Git deve obter o conteúdo.
 
----
+### `HEAD~1`
 
-# Diferença entre restaurar e voltar um commit
+Representa o commit anterior ao `HEAD`.
 
-O comando:
+### `README.md`
 
-```bash
-git restore
-```
+É o arquivo que receberá o conteúdo dessa versão.
 
-atua sobre arquivos.
+Nesse exemplo, o Git pega o conteúdo de `README.md` do commit anterior e coloca esse conteúdo na Área de Trabalho.
 
-Ele não remove commits nem altera o histórico do projeto.
+> **Importante**
+>
+> Isso não cria automaticamente um novo commit e também não apaga o commit anterior. O conteúdo do arquivo é apenas restaurado na Área de Trabalho.
 
-Para trabalhar com alterações no histórico de commits existem outros comandos, como:
-
-```bash
-git reset
-git revert
-```
-
-Esses comandos serão estudados futuramente.
-
----
-
-# Boas práticas
-
-✔ Sempre execute:
+Depois disso, podemos verificar a alteração com:
 
 ```bash
 git status
 ```
 
-antes de utilizar `git restore`.
-
-✔ Utilize:
+e:
 
 ```bash
 git diff
 ```
 
-para revisar alterações antes de descartá-las.
-
-✔ Antes de realizar mudanças importantes, crie um commit.
-
-Assim, caso algo dê errado, será possível recuperar o trabalho através do histórico.
-
-✔ Utilize branches para testar alterações sem comprometer a branch principal.
-
 ---
 
-# Resumo dos comandos
+# 13. Restaurando e preparando ao mesmo tempo
 
-| Comando                               | Função                                              |
-| ------------------------------------- | --------------------------------------------------- |
-| `git restore arquivo`                 | Descarta alterações locais do arquivo               |
-| `git restore .`                       | Descarta alterações de todos os arquivos rastreados |
-| `git restore --staged arquivo`        | Remove arquivo da Área de Preparação                |
-| `git restore --source=HEAD~1 arquivo` | Recupera conteúdo de uma versão anterior            |
+Também existe uma forma de restaurar um arquivo a partir de uma fonte e atualizar a Área de Preparação.
 
----
-
-# Observação
-
-O comando `git restore` funciona principalmente com arquivos que já são conhecidos pelo Git.
-
-Arquivos novos que ainda não foram adicionados com:
+Por exemplo:
 
 ```bash
-git add
+git restore --source=HEAD~1 --staged README.md
 ```
 
-não possuem uma versão registrada no histórico e, por isso, não podem ser recuperados utilizando esse comando.
+Nesse caso, o conteúdo de `README.md` será obtido do commit anterior e colocado na Área de Preparação.
+
+Esse uso é mais avançado e será mais fácil de entender depois que você estiver confortável com `git add`, `git commit` e `git diff`.
+
+---
+
+# 14. `git restore` não apaga commits
+
+É importante não confundir:
+
+```bash
+git restore
+```
+
+com comandos que alteram o histórico.
+
+O `git restore` trabalha principalmente com o conteúdo dos arquivos.
+
+Ele não remove commits do histórico.
+
+Existem outros comandos para trabalhar com o histórico, como:
+
+```bash
+git reset
+```
+
+e:
+
+```bash
+git revert
+```
+
+Esses comandos serão estudados posteriormente.
+
+---
+
+# 15. Comparando os principais usos
+
+| Comando                               | O que acontece                                                  |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `git restore arquivo`                 | Descarta alterações do arquivo na Área de Trabalho.             |
+| `git restore .`                       | Descarta alterações dos arquivos rastreados no diretório atual. |
+| `git restore --staged arquivo`        | Retira o arquivo da Área de Preparação, mantendo a alteração.   |
+| `git restore --source=HEAD~1 arquivo` | Recupera o conteúdo do arquivo a partir do commit anterior.     |
+
+---
+
+# 16. Exemplo prático completo
+
+Imagine que o arquivo:
+
+```text
+README.md
+```
+
+está no projeto.
+
+Faça uma alteração nele.
+
+Depois execute:
+
+```bash
+git status
+```
+
+O arquivo aparecerá como modificado.
+
+Agora veja a alteração:
+
+```bash
+git diff
+```
+
+Se você decidir que quer manter a alteração:
+
+```bash
+git add README.md
+```
+
+Se mudar de ideia e quiser retirar o arquivo da Área de Preparação:
+
+```bash
+git restore --staged README.md
+```
+
+A alteração continuará no arquivo.
+
+Se depois decidir que realmente não quer mais a alteração:
+
+```bash
+git restore README.md
+```
+
+Agora o arquivo voltará para a versão registrada no `HEAD`.
+
+---
+
+# 17. Fluxo visual
+
+O funcionamento pode ser representado assim:
+
+```text
+             Arquivo modificado
+                    │
+                    ▼
+              git status
+                    │
+                    ▼
+                git diff
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+      git add            git restore
+          │                   │
+          ▼                   ▼
+   Staging Area          Alteração
+          │                descartada
+          ▼
+git restore --staged
+          │
+          ▼
+Arquivo volta para
+Área de Trabalho
+```
+
+---
+
+# 18. Boas práticas
+
+Antes de utilizar `git restore`:
+
+* Execute `git status`.
+* Utilize `git diff` para verificar as alterações.
+* Tenha certeza de que deseja descartar o conteúdo.
+* Faça commits frequentes de alterações importantes.
+* Evite utilizar `git restore .` sem verificar antes o que será descartado.
+
+Uma boa prática é:
+
+```bash
+git status
+git diff
+```
+
+e somente depois decidir se deve utilizar:
+
+```bash
+git restore arquivo
+```
+
+---
+
+# Comandos vistos neste capítulo
+
+| Comando                               | Função                                                          |
+| ------------------------------------- | --------------------------------------------------------------- |
+| `git restore arquivo`                 | Descarta alterações do arquivo.                                 |
+| `git restore .`                       | Descarta alterações dos arquivos rastreados no diretório atual. |
+| `git restore --staged arquivo`        | Retira o arquivo da Área de Preparação.                         |
+| `git restore --source=HEAD~1 arquivo` | Recupera o conteúdo de um commit anterior.                      |
+| `git status`                          | Mostra o estado do repositório.                                 |
+| `git diff`                            | Mostra alterações que ainda não foram preparadas.               |
 
 ---
 
 # O que foi aprendido
 
-* `git restore` desfaz alterações em arquivos;
-* arquivos removidos podem ser recuperados;
-* `git restore --staged` remove arquivos da Área de Preparação;
-* o comando trabalha com arquivos, não com o histórico de commits;
-* revisar antes de descartar alterações é uma boa prática.
+Ao concluir este capítulo, você consegue:
+
+* ✅ Entender o que é `git restore`.
+* ✅ Descartar alterações feitas em arquivos.
+* ✅ Recuperar arquivos removidos.
+* ✅ Retirar arquivos da Área de Preparação.
+* ✅ Manter uma alteração ao removê-la da Staging Area.
+* ✅ Recuperar o conteúdo de um arquivo de outro commit.
+* ✅ Diferenciar `git restore` de comandos que alteram o histórico.
+* ✅ Utilizar `git status` e `git diff` antes de descartar alterações.
 
 ---
 
 # Resumo
 
-Neste capítulo você aprendeu a utilizar o comando `git restore` para recuperar arquivos e desfazer alterações antes da criação de um commit.
+O comando `git restore` é utilizado principalmente para restaurar o conteúdo de arquivos.
 
-Esse comando aumenta a segurança durante o desenvolvimento, permitindo testar mudanças e retornar a estados anteriores quando necessário.
+Para descartar uma alteração local:
+
+```bash
+git restore arquivo
+```
+
+Para retirar um arquivo da Área de Preparação sem perder sua alteração:
+
+```bash
+git restore --staged arquivo
+```
+
+Para recuperar o conteúdo de uma versão anterior:
+
+```bash
+git restore --source=HEAD~1 arquivo
+```
+
+A principal diferença é:
+
+```text
+git restore arquivo
+        ↓
+descarta a alteração
+
+git restore --staged arquivo
+        ↓
+remove da Staging Area,
+mas mantém a alteração
+```
+
+Antes de descartar qualquer alteração, lembre-se de verificar:
+
+```bash
+git status
+git diff
+```
+
+Assim você reduz o risco de perder trabalho por engano.
 
 ---
 
 # Próximo capítulo
 
-## 12 - Visualizando o Histórico com `git log`
+## Capítulo 12 — Revisão Prática da Parte 1
 
-No próximo capítulo você aprenderá como consultar o histórico do projeto, visualizar commits realizados e entender como o Git registra a evolução dos arquivos.
+Neste capítulo, você vai revisar os principais conceitos aprendidos até aqui e praticar o fluxo básico do Git:
+
+```text
+criar/modificar
+      ↓
+git status
+      ↓
+git add
+      ↓
+git diff --staged
+      ↓
+git commit
+      ↓
+git log
+```
+
+A revisão ajudará a fixar os comandos antes de avançar para os próximos assuntos do Git.
+
+---
+
+# 📚 Fonte de estudo
+
+Este resumo foi elaborado a partir dos estudos e da prática do autor sobre **Git e GitHub**, utilizando os conteúdos da disciplina e materiais de estudo como referência.
+
+**Observação:** este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo original das disciplinas e materiais utilizados como referência não deve ser reproduzido ou disponibilizado integralmente neste repositório.
 
 ---
 

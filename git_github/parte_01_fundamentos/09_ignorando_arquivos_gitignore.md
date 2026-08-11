@@ -1,21 +1,21 @@
-# Tempo estimado de leitura
+# Git e GitHub — Guia de Estudos
 
-**12 minutos**
+## Capítulo 09 — Ignorando Arquivos com `.gitignore`
 
+**Tempo estimado de leitura:** 12 minutos
 **Nível:** Iniciante
+
+---
 
 ## Neste capítulo você aprenderá
 
 * O que é o arquivo `.gitignore`.
 * Por que alguns arquivos não devem ser versionados.
-* Criar um arquivo `.gitignore`.
-* Ignorar arquivos e diretórios.
-* Ignorar arquivos em subdiretórios.
-* Verificar o efeito do `.gitignore` no repositório.
-
----
-
-# Git e GitHub — Guia de Estudos
+* Como criar um `.gitignore`.
+* Como ignorar arquivos e diretórios.
+* Como ignorar arquivos dentro de subdiretórios.
+* Como verificar se uma regra do `.gitignore` está funcionando.
+* O que fazer quando um arquivo já está sendo rastreado pelo Git.
 
 ---
 
@@ -28,43 +28,80 @@
 | **Autor**               | Laerte Costa                        |
 | **Sistema Operacional** | Debian GNU/Linux                    |
 | **Terminal**            | Bash                                |
-| **Última atualização**  | Julho de 2026                       |
+| **Última atualização**  | Agosto de 2026                      |
+
+---
+
+# Objetivo deste capítulo
+
+Neste capítulo, você vai aprender a utilizar o arquivo `.gitignore` para informar ao Git quais arquivos e diretórios não devem fazer parte do controle de versão.
+
+Isso é útil para evitar que arquivos temporários, logs, arquivos de configuração local e outros conteúdos desnecessários sejam adicionados ao repositório.
 
 ---
 
 # Pré-requisitos
 
-Recomenda-se ter concluído os capítulos anteriores.
+É recomendado ter concluído os capítulos anteriores, principalmente os capítulos sobre:
+
+* `git status`;
+* `git add`;
+* `git commit`;
+* Área de Trabalho;
+* Área de Preparação.
 
 ---
 
-# Conceito teórico
+# 1. O que é o `.gitignore`?
 
-## O que é o `.gitignore`?
+Nem todos os arquivos existentes em um projeto precisam ser controlados pelo Git.
 
-Nem todos os arquivos de um projeto precisam ser registrados pelo Git.
+Alguns arquivos são criados automaticamente pelo sistema ou pelos programas utilizados durante o desenvolvimento.
 
-Arquivos temporários, logs, caches, arquivos compilados e configurações específicas da máquina normalmente não fazem parte do código-fonte e, por isso, não devem ser versionados.
+Exemplos:
 
-Para informar ao Git quais arquivos devem ser ignorados, utiliza-se o arquivo `.gitignore`.
+```text
+arquivos temporários
+logs
+cache
+arquivos compilados
+configurações locais
+arquivos gerados automaticamente
+```
+
+Esses arquivos podem não fazer parte do projeto e, em muitos casos, não devem ser enviados para o repositório.
+
+Para informar ao Git quais arquivos devem ser ignorados, utilizamos o arquivo:
+
+```text
+.gitignore
+```
 
 ---
 
-# Por que utilizar o `.gitignore`?
+# 2. Por que utilizar o `.gitignore`?
 
-Imagine que, durante o desenvolvimento, um programa gere arquivos temporários automaticamente.
+Imagine que um programa gere automaticamente arquivos de log:
 
-Esses arquivos podem mudar constantemente e não fazem parte do projeto.
+```text
+app.log
+erro.log
+debug.log
+```
 
-Se forem versionados, o histórico ficará desorganizado com alterações desnecessárias.
+Esses arquivos podem mudar constantemente e não precisam fazer parte do histórico do projeto.
 
-O `.gitignore` evita que esses arquivos sejam adicionados ao controle de versão.
+Se fossem adicionados ao Git, poderiam gerar muitos *commits* desnecessários.
+
+O `.gitignore` permite informar ao Git:
+
+> "Esses arquivos não precisam ser considerados pelo controle de versão."
 
 ---
 
-# Criando o arquivo
+# 3. Criando o `.gitignore`
 
-Crie um arquivo chamado `.gitignore` no diretório raiz do repositório.
+Primeiro, crie o arquivo `.gitignore` na raiz do projeto.
 
 ### Comando
 
@@ -72,25 +109,19 @@ Crie um arquivo chamado `.gitignore` no diretório raiz do repositório.
 touch .gitignore
 ```
 
----
+O comando `touch` cria um arquivo vazio caso ele ainda não exista.
 
-# Significado do comando
-
-**touch** → tocar.
-
-Originalmente, o comando `touch` foi criado para atualizar a data e hora de modificação de um arquivo.
-
-Caso o arquivo não exista, ele será criado.
-
-Por esse motivo, é muito utilizado no Linux para criar arquivos vazios.
+> **Resumo**
+>
+> `touch .gitignore` → cria o arquivo `.gitignore`.
 
 ---
 
-# Onde criar o arquivo `.gitignore`?
+# 4. Onde colocar o `.gitignore`?
 
-Na maioria dos projetos existe apenas um arquivo `.gitignore`, localizado na raiz do repositório, ou seja, no mesmo diretório onde está a pasta `.git`.
+Na maioria dos projetos, o `.gitignore` principal fica na **raiz do repositório**.
 
-Exemplo:
+Por exemplo:
 
 ```text
 meu_projeto/
@@ -102,19 +133,21 @@ meu_projeto/
 └── imagens/
 ```
 
-Quando o `.gitignore` está na raiz, suas regras são válidas para todo o repositório, incluindo todos os seus subdiretórios.
+A pasta `.git` identifica o diretório que contém o repositório.
 
-Na maioria dos projetos pessoais e profissionais, um único arquivo `.gitignore` é suficiente.
+Um `.gitignore` localizado na raiz pode definir regras que afetam arquivos e diretórios existentes em diferentes partes do projeto.
 
-Embora seja possível criar outros arquivos `.gitignore` em subdiretórios, essa prática normalmente é utilizada apenas em projetos maiores, nos quais diferentes módulos possuem regras específicas.
+Também é possível utilizar arquivos `.gitignore` dentro de subdiretórios quando um projeto possui necessidades específicas.
+
+Para projetos pequenos, normalmente um único `.gitignore` na raiz já é suficiente.
 
 ---
 
-# Editando o arquivo
+# 5. Criando regras
 
-Abra o arquivo `.gitignore` com o editor de sua preferência e adicione algumas regras.
+Abra o `.gitignore` no editor de sua preferência.
 
-Exemplo:
+Por exemplo:
 
 ```text
 *.log
@@ -122,203 +155,547 @@ Exemplo:
 cache/
 ```
 
-Nesse exemplo:
+Cada linha representa uma regra.
 
-* `*.log` → ignora todos os arquivos com extensão `.log`;
-* `*.tmp` → ignora todos os arquivos com extensão `.tmp`;
-* `cache/` → ignora todo o diretório `cache`.
+### `*.log`
+
+```text
+*.log
+```
+
+Ignora arquivos que terminam com `.log`.
+
+Exemplos:
+
+```text
+app.log
+erro.log
+sistema.log
+```
 
 ---
 
-# Ignorando arquivos em subdiretórios
+### `*.tmp`
 
-Além de utilizar regras genéricas, também é possível ignorar arquivos e diretórios específicos informando seu caminho relativo no arquivo `.gitignore`.
+```text
+*.tmp
+```
 
-Exemplo:
+Ignora arquivos que terminam com `.tmp`.
+
+Exemplos:
+
+```text
+arquivo.tmp
+teste.tmp
+backup.tmp
+```
+
+---
+
+### `cache/`
+
+```text
+cache/
+```
+
+Ignora o diretório `cache` e seu conteúdo.
+
+---
+
+# 6. Ignorando arquivos em um subdiretório
+
+Também podemos criar regras para caminhos específicos.
+
+Imagine esta estrutura:
+
+```text
+meu_projeto/
+├── parte1/
+│   ├── teste.txt
+│   └── exemplo.py
+├── parte2/
+│   └── teste.txt
+└── .gitignore
+```
+
+Se quisermos ignorar apenas:
 
 ```text
 parte1/teste.txt
 ```
 
-Ignora apenas o arquivo:
+podemos colocar no `.gitignore`:
 
 ```text
 parte1/teste.txt
 ```
 
+Nesse caso, o arquivo:
+
+```text
+parte2/teste.txt
+```
+
+não será ignorado por essa regra.
+
 ---
 
-Também é possível ignorar todos os arquivos de uma determinada extensão dentro de um único diretório.
+# 7. Ignorando uma extensão em um diretório específico
 
-Exemplo:
+Também podemos utilizar:
 
 ```text
 parte1/*.txt
 ```
 
-Nesse caso, somente os arquivos `.txt` existentes dentro da pasta `parte1` serão ignorados.
+Essa regra ignora arquivos `.txt` diretamente dentro de `parte1`.
 
-Arquivos `.txt` existentes em outros diretórios continuarão sendo rastreados normalmente.
+Por exemplo:
+
+```text
+parte1/teste.txt
+parte1/anotacoes.txt
+parte1/exemplo.txt
+```
+
+serão ignorados.
+
+Mas um arquivo como:
+
+```text
+parte2/teste.txt
+```
+
+não será afetado por essa regra.
 
 ---
 
-Para ignorar um diretório específico:
+# 8. Ignorando um diretório específico
+
+Para ignorar um diretório dentro de uma determinada pasta:
 
 ```text
 parte1/cache/
 ```
 
-Apenas a pasta `cache` localizada dentro de `parte1` será ignorada.
+Nesse caso, a regra afeta o diretório `cache` localizado dentro de `parte1`.
+
+Exemplo:
+
+```text
+meu_projeto/
+├── parte1/
+│   └── cache/
+├── parte2/
+│   └── cache/
+└── .gitignore
+```
+
+A regra:
+
+```text
+parte1/cache/
+```
+
+ignora apenas:
+
+```text
+parte1/cache/
+```
+
+O diretório:
+
+```text
+parte2/cache/
+```
+
+continua sendo tratado normalmente pelo Git.
 
 ---
 
-Essa abordagem permite centralizar todas as regras em um único arquivo `.gitignore`, facilitando sua manutenção e evitando a criação de vários arquivos `.gitignore` espalhados pelo projeto.
+# 9. Testando o `.gitignore`
 
----
+Vamos testar se uma regra está funcionando.
 
-# Testando o funcionamento
+Suponha que seu `.gitignore` contenha:
 
-Crie um arquivo chamado:
+```text
+*.log
+```
+
+Agora crie um arquivo:
 
 ```text
 teste.log
 ```
 
-Agora execute:
+Você pode criá-lo com:
 
-### Comando
+```bash
+touch teste.log
+```
+
+Depois execute:
 
 ```bash
 git status
 ```
 
-O arquivo `teste.log` não será exibido como arquivo novo (*untracked*), pois corresponde a uma regra definida no `.gitignore`.
+O arquivo `teste.log` não deverá aparecer como um novo arquivo (*untracked*).
+
+Isso significa que a regra do `.gitignore` está funcionando.
 
 ---
 
-# Verificando qual regra ignorou o arquivo
+# 10. Descobrindo qual regra está ignorando um arquivo
 
-O Git possui um comando para descobrir qual regra do `.gitignore` está sendo aplicada a um determinado arquivo.
-
-### Comando
+Quando um arquivo é ignorado e você não sabe o motivo, o Git possui um comando muito útil:
 
 ```bash
 git check-ignore -v teste.log
 ```
 
----
-
-# Significado do comando
-
-**git** → sistema de controle de versão.
-
-**check** → verificar.
-
-**ignore** → ignorar.
-
-**check-ignore** → verificar se um arquivo está sendo ignorado e identificar qual regra do `.gitignore` foi responsável por isso.
-
-**-v** → *verbose* (detalhado).
-
-Exibe informações completas sobre a regra aplicada, informando:
-
-* qual arquivo `.gitignore` foi utilizado;
-* em qual linha a regra foi encontrada;
-* qual padrão fez com que o arquivo fosse ignorado.
+Esse comando verifica se o arquivo está sendo ignorado e mostra qual regra foi responsável por isso.
 
 ---
 
-Exemplo de saída:
+# 11. Entendendo `git check-ignore -v`
+
+Vamos dividir o comando:
+
+```text
+git check-ignore -v teste.log
+│   │           │
+│   │           └── arquivo que será verificado
+│   └────────────── verifica regras de arquivos ignorados
+└────────────────── comando do Git
+```
+
+### `check-ignore`
+
+Significa verificar se um arquivo está sendo ignorado.
+
+### `-v`
+
+Significa *verbose*, ou seja, **detalhado**.
+
+A opção mostra informações adicionais sobre a regra encontrada.
+
+---
+
+# 12. Exemplo de saída
+
+Imagine que o `.gitignore` contenha:
+
+```text
+*.log
+```
+
+Ao executar:
+
+```bash
+git check-ignore -v teste.log
+```
+
+podemos obter:
 
 ```text
 .gitignore:1:*.log    teste.log
 ```
 
-Significado:
+Podemos interpretar assim:
 
-* `.gitignore` → arquivo onde a regra foi encontrada;
-* `1` → número da linha no arquivo `.gitignore`;
-* `*.log` → padrão responsável por ignorar o arquivo;
-* `teste.log` → arquivo afetado pela regra.
+```text
+.gitignore → arquivo que contém a regra
+1          → número da linha
+*.log      → regra aplicada
+teste.log  → arquivo afetado
+```
 
-Esse comando é muito útil quando um arquivo está sendo ignorado e você deseja descobrir exatamente qual regra do `.gitignore` está causando esse comportamento.
+Esse comando é muito útil para descobrir por que determinado arquivo está sendo ignorado.
 
 ---
 
-# Como funciona o `.gitignore`?
+# 13. Como o `.gitignore` funciona?
 
-O Git utiliza as regras definidas no `.gitignore` para determinar quais arquivos não devem aparecer como arquivos não rastreados (*untracked*) no repositório.
+Quando o Git encontra um arquivo que ainda não está sendo rastreado e esse arquivo corresponde a uma regra do `.gitignore`, ele normalmente não o apresenta como um arquivo novo no `git status`.
 
-Quando um arquivo corresponde a uma regra, ele não será exibido normalmente pelo `git status` e também não será adicionado ao utilizar comandos como:
+Por exemplo:
+
+```text
+*.log
+```
+
+Faz com que:
+
+```text
+app.log
+erro.log
+teste.log
+```
+
+sejam ignorados.
+
+Assim, comandos como:
+
+```bash
+git status
+```
+
+e:
 
 ```bash
 git add .
 ```
 
+não tratarão esses arquivos como arquivos novos para serem adicionados normalmente.
+
 ---
 
-# Atenção
+# 14. Atenção: arquivos já rastreados
 
-O `.gitignore` ignora apenas arquivos que **ainda não estão sendo controlados pelo Git**.
+Existe um detalhe muito importante:
 
-Se um arquivo já foi adicionado anteriormente com `git add` e registrado em um commit, apenas incluí-lo no `.gitignore` não fará com que ele deixe de ser versionado.
+> O `.gitignore` não faz um arquivo já rastreado pelo Git deixar de ser rastreado.
 
-Para que ele passe a ser ignorado, primeiro é necessário removê-lo do índice do Git.
+Imagine que você tenha:
 
-### Comando
+```text
+config.txt
+```
+
+e já tenha feito:
 
 ```bash
-git rm --cached nome_do_arquivo
+git add config.txt
+```
+
+e depois:
+
+```bash
+git commit -m "Adiciona configuração"
+```
+
+Agora o Git já conhece e controla esse arquivo.
+
+Se você adicionar:
+
+```text
+config.txt
+```
+
+ao `.gitignore`, isso **não fará o Git parar de rastreá-lo**.
+
+---
+
+# 15. Removendo um arquivo do controle do Git
+
+Para deixar de rastrear o arquivo, mas mantê-lo no computador, utilize:
+
+```bash
+git rm --cached config.txt
+```
+
+O `--cached` é importante porque remove o arquivo do **índice do Git**, mas não apaga o arquivo do diretório de trabalho.
+
+Depois disso, se o arquivo estiver listado no `.gitignore`, o Git passará a ignorá-lo.
+
+---
+
+# 16. Entendendo o `git rm --cached`
+
+Podemos dividir o comando:
+
+```text
+git rm --cached config.txt
+│   │       │
+│   │       └── arquivo que será removido do controle
+│   └────────── remove
+└────────────── comando do Git
+```
+
+### `rm`
+
+Vem de *remove*, ou seja, remover.
+
+### `--cached`
+
+Indica que o arquivo deve ser removido do índice do Git, mas continuar no diretório de trabalho.
+
+Assim:
+
+```text
+Git
+ ↓
+para de controlar o arquivo
+
+Computador
+ ↓
+arquivo continua existindo
 ```
 
 ---
 
-# Significado do comando
+# 17. Exemplo completo
 
-**git** → sistema de controle de versão.
+Imagine que você não quer mais versionar:
 
-**rm** → *remove* (remover).
+```text
+config.txt
+```
 
-**--cached** → remove o arquivo apenas do índice (cache) do Git, mantendo-o no diretório de trabalho.
+Primeiro, adicione ao `.gitignore`:
 
-Esse comando faz com que o Git deixe de controlar o arquivo, mas o arquivo continua existindo normalmente no computador.
+```text
+config.txt
+```
 
-Após essa remoção, o `.gitignore` passará a ignorá-lo normalmente.
+Depois, se o arquivo já estiver sendo rastreado:
+
+```bash
+git rm --cached config.txt
+```
+
+Verifique:
+
+```bash
+git status
+```
+
+Depois crie um *commit* registrando essa mudança:
+
+```bash
+git commit -m "Ignora arquivo de configuração"
+```
+
+O arquivo continuará no computador, mas deixará de ser controlado pelo Git.
 
 ---
 
-# O que foi aprendido
+# 18. Exemplos comuns de regras
 
-* o arquivo `.gitignore` define quais arquivos o Git deve ignorar;
-* normalmente existe apenas um `.gitignore` na raiz do repositório;
-* um único `.gitignore` pode controlar todo o repositório;
-* é possível ignorar arquivos e diretórios específicos utilizando caminhos relativos;
-* arquivos temporários normalmente não devem ser versionados;
-* `touch` cria o arquivo `.gitignore`;
-* `git check-ignore` identifica qual regra está ignorando um arquivo;
-* a flag `-v` exibe informações detalhadas sobre a regra aplicada;
-* `git status` permite verificar se uma regra está funcionando;
-* `git rm --cached` remove um arquivo do controle de versão sem apagá-lo do computador.
+Um `.gitignore` pode conter várias regras.
+
+Por exemplo:
+
+```text
+*.log
+*.tmp
+cache/
+*.bak
+.env
+```
+
+Nesse exemplo:
+
+| Regra    | O que ignora              |
+| -------- | ------------------------- |
+| `*.log`  | Arquivos `.log`           |
+| `*.tmp`  | Arquivos `.tmp`           |
+| `cache/` | Diretórios `cache`        |
+| `*.bak`  | Arquivos de backup `.bak` |
+| `.env`   | Arquivo `.env`            |
+
+A regra ideal depende das necessidades de cada projeto.
+
+---
+
+# 19. Boas práticas
+
+Ao criar um `.gitignore`:
+
+* Coloque o arquivo na raiz do projeto quando ele tiver regras gerais.
+* Ignore arquivos temporários e gerados automaticamente quando eles não fizerem parte do projeto.
+* Evite colocar no repositório arquivos com configurações locais que não deveriam ser compartilhadas.
+* Revise as regras do `.gitignore` antes de criar o primeiro *commit*.
+* Utilize `git check-ignore -v` quando não entender por que um arquivo está sendo ignorado.
+* Lembre-se de que o `.gitignore` não remove automaticamente arquivos que já estão sendo rastreados.
+
+---
+
+# Comandos vistos neste capítulo
+
+| Comando                       | Função                                                          |
+| ----------------------------- | --------------------------------------------------------------- |
+| `touch .gitignore`            | Cria o arquivo `.gitignore`.                                    |
+| `git status`                  | Mostra o estado do repositório.                                 |
+| `git check-ignore -v arquivo` | Mostra qual regra está ignorando um arquivo.                    |
+| `git rm --cached arquivo`     | Remove o arquivo do controle do Git sem apagá-lo do computador. |
 
 ---
 
 # Resumo
 
-Neste capítulo você aprendeu a utilizar o arquivo `.gitignore` para impedir que arquivos desnecessários sejam adicionados ao repositório.
+O `.gitignore` é um arquivo utilizado para informar ao Git quais arquivos e diretórios devem ser ignorados.
 
-Também aprendeu que, na maioria dos projetos, existe apenas um arquivo `.gitignore` localizado na raiz do repositório, responsável por controlar quais arquivos e diretórios devem ser ignorados em todo o projeto.
+Ele é muito útil para evitar que arquivos desnecessários façam parte do repositório.
 
-Além disso, viu como criar regras específicas para subdiretórios, como identificar a regra responsável por ignorar um arquivo utilizando o comando `git check-ignore -v` e entendeu por que arquivos que já estão sendo versionados precisam ser removidos do índice do Git antes que passem a ser ignorados.
+Um exemplo simples:
 
-Essas práticas ajudam a manter o projeto organizado, facilitam a manutenção do repositório e evitam que arquivos temporários ou desnecessários façam parte do histórico de commits.
+```text
+*.log
+*.tmp
+cache/
+```
+
+Também aprendemos que:
+
+```bash
+git check-ignore -v arquivo
+```
+
+ajuda a descobrir qual regra está ignorando determinado arquivo.
+
+E, quando um arquivo já está sendo rastreado pelo Git, podemos utilizar:
+
+```bash
+git rm --cached arquivo
+```
+
+para removê-lo do controle de versão sem apagar o arquivo do computador.
+
+---
+
+# O que você aprendeu
+
+Ao concluir este capítulo, você consegue:
+
+* ✅ Entender o que é o `.gitignore`.
+* ✅ Criar um arquivo `.gitignore`.
+* ✅ Ignorar arquivos por extensão.
+* ✅ Ignorar diretórios.
+* ✅ Criar regras para subdiretórios.
+* ✅ Testar se uma regra está funcionando.
+* ✅ Descobrir qual regra está ignorando um arquivo.
+* ✅ Entender a função do `git check-ignore -v`.
+* ✅ Remover um arquivo do controle do Git usando `git rm --cached`.
+* ✅ Entender por que o `.gitignore` não afeta automaticamente arquivos já rastreados.
 
 ---
 
 # Próximo capítulo
 
-## 10 - Renomeando e Removendo Arquivos
+## Capítulo 10 — Renomeando e Removendo Arquivos
 
-No próximo capítulo você aprenderá como renomear e remover arquivos utilizando os comandos `git mv` e `git rm`, mantendo o histórico do projeto organizado.
+No próximo capítulo, você aprenderá a trabalhar com arquivos que precisam ser renomeados ou removidos do projeto.
+
+Serão apresentados os comandos:
+
+```bash
+git mv
+git rm
+```
+
+Esses comandos permitem informar ao Git sobre essas alterações e ajudam a manter o histórico do projeto organizado.
+
+---
+
+# 📚 Fonte de estudo
+
+Este resumo foi elaborado a partir dos estudos e da prática do autor sobre **Git e GitHub**, utilizando os conteúdos da disciplina e materiais de estudo como referência.
+
+**Observação:** este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo original das disciplinas e materiais utilizados como referência não deve ser reproduzido ou disponibilizado integralmente neste repositório.
 
 ---
 

@@ -1,179 +1,330 @@
-# Tempo estimado de leitura
+# 📚 Capítulo 01 — Início dos Estudos com Git
 
-**5 minutos**
+## 🎯 Objetivo
 
-**Nível:** Iniciante
+Neste capítulo, vamos entender:
 
-## Neste capítulo você aprenderá
-
-* O que é Git.
-* O que é controle de versão.
-* O que significa um sistema distribuído.
-* A diferença entre Git e GitHub.
-* Onde o Git é utilizado.
+* O que é Git;
+* O que é controle de versão;
+* O que significa Git ser distribuído;
+* Qual a diferença entre Git e GitHub;
+* Onde o Git pode ser usado;
 * Por que aprender Git.
 
 ---
 
-# Git e GitHub — Guia de Estudos
+# 1. O que é Git?
+
+O **Git** é uma ferramenta usada para **controlar as mudanças de um projeto ao longo do tempo**.
+
+Imagine que você está criando um projeto e modifica vários arquivos.
+
+Sem o Git, você poderia acabar criando vários arquivos:
+
+```text
+projeto_final
+projeto_final_2
+projeto_final_agora_vai
+projeto_final_definitivo
+```
+
+😅 Isso pode virar uma bagunça.
+
+Com o Git, as alterações ficam registradas em um **histórico**.
+
+Assim, você pode:
+
+* Ver o que mudou;
+* Saber quando uma alteração foi feita;
+* Comparar versões;
+* Voltar para uma versão anterior;
+* Trabalhar em diferentes partes do projeto;
+* Trabalhar com outras pessoas.
+
+📌 **Para lembrar:**
+
+> **Git = ferramenta para controlar as versões de um projeto.**
 
 ---
 
-# Informações do capítulo
+# 2. O que é controle de versão?
 
-| Campo                   | Informação             |
-| ----------------------- | ---------------------- |
-| **Capítulo**            | 01                     |
-| **Título**              | Início dos Estudos Git |
-| **Autor**               | Laerte Costa           |
-| **Sistema Operacional** | Debian GNU/Linux       |
-| **Terminal**            | Bash                   |
-| **Última atualização**  | Julho de 2026          |
+**Controle de versão** é uma forma de acompanhar as mudanças que acontecem em um projeto.
 
----
+Imagine que você começou um arquivo e fez várias alterações:
 
-# Objetivo deste capítulo
+```text
+Versão 1
+   ↓
+Versão 2
+   ↓
+Versão 3
+   ↓
+Versão 4
+```
 
-Compreender o que é o Git, como funciona o controle de versão e por que essa ferramenta se tornou um padrão no desenvolvimento de software e em diversas áreas da tecnologia.
+O Git registra essas mudanças.
 
----
-
-# Pré-requisitos
-
-Nenhum.
-
-Este é o primeiro capítulo da coleção e foi desenvolvido para quem está iniciando seus estudos com Git.
-
----
-
-# Conceito teórico
-
-## O que é Git?
-
-O **Git** é um sistema de **controle de versão distribuído**, criado para registrar todas as alterações realizadas em um projeto.
-
-Em vez de substituir um arquivo antigo por um novo, o Git mantém um histórico completo das modificações, permitindo consultar, comparar e restaurar versões anteriores sempre que necessário.
-
-Com o Git é possível:
-
-* registrar alterações em arquivos;
-* recuperar versões anteriores;
-* acompanhar a evolução de um projeto;
-* trabalhar em equipe com segurança;
-* desenvolver novas funcionalidades sem comprometer a versão principal do projeto.
-
-Hoje o Git é uma das ferramentas mais utilizadas por desenvolvedores, administradores de sistemas, profissionais de DevOps e diversas outras áreas da tecnologia.
-
-Além disso, ao publicar seus projetos no GitHub, você pode compartilhar conhecimento, construir um portfólio técnico e demonstrar sua evolução profissional.
-
----
-
-## O que significa "distribuído"?
-
-O Git é chamado de sistema **distribuído** porque cada desenvolvedor possui uma cópia completa do repositório em seu computador, incluindo todo o histórico de alterações.
-
-Isso torna o trabalho mais rápido, seguro e permite realizar diversas operações mesmo sem conexão com a internet.
-
----
-
-## O que é Controle de Versão?
-
-Controle de versão é o processo de registrar todas as alterações realizadas em um projeto ao longo do tempo.
-
-Em vez de criar vários arquivos com nomes diferentes para cada modificação, o Git mantém um histórico organizado de todas as versões.
-
-Assim, sempre que necessário, é possível consultar, comparar ou restaurar uma versão anterior.
+Se alguma coisa der errado, você consegue consultar o histórico e entender o que aconteceu.
 
 ### Exemplo
 
-Imagine que você esteja escrevendo um relatório.
+Você está criando um programa.
 
-Sem controle de versão, é comum criar arquivos como:
+Na segunda-feira, ele funciona:
 
-* relatorio.docx
-* relatorio_final.docx
-* relatorio_final_agora_sim.docx
-* relatorio_final_definitivo.docx
+```text
+Programa funcionando
+```
 
-Com o Git, todas essas alterações ficam registradas no histórico do projeto, eliminando a necessidade de criar vários arquivos para representar versões diferentes.
+Na terça-feira, você faz algumas alterações:
+
+```text
+Programa com novos recursos
+```
+
+Na quarta-feira, uma alteração causa um problema:
+
+```text
+Programa com erro
+```
+
+Com o Git, você pode consultar o histórico para descobrir **qual alteração causou o problema** e, quando necessário, voltar para uma versão anterior.
+
+📌 **Para lembrar:**
+
+> **Controle de versão = registrar e acompanhar as mudanças de um projeto.**
 
 ---
 
-## Git e GitHub são a mesma coisa?
+# 3. O que significa Git ser distribuído?
+
+O Git é um sistema de controle de versão **distribuído**.
+
+Isso significa que cada computador que possui uma cópia do repositório Git pode ter **o projeto e seu histórico de alterações**.
+
+Por exemplo:
+
+```text
+Computador 1
+     │
+     ├── Projeto
+     └── Histórico
+
+Computador 2
+     │
+     ├── Projeto
+     └── Histórico
+```
+
+Isso permite trabalhar em várias operações sem depender o tempo todo da internet.
+
+📌 **Para lembrar:**
+
+> **Distribuído = cada cópia do repositório pode possuir o projeto e seu histórico.**
+
+---
+
+# 4. Git e GitHub são a mesma coisa?
 
 Não.
 
-Embora trabalhem juntos, Git e GitHub possuem funções diferentes.
+Eles trabalham juntos, mas são coisas diferentes.
 
-O **Git** é o sistema de controle de versão instalado no computador.
+## Git
 
-O **GitHub** é uma plataforma online que hospeda repositórios Git, facilitando o compartilhamento de projetos, o trabalho em equipe e a criação de portfólios.
+O **Git** é o programa de controle de versão que você instala no computador.
 
-Durante este guia você aprenderá a utilizar os dois.
+Ele funciona principalmente pelo terminal.
 
----
+Exemplo:
 
-## Por que aprender Git?
-
-Mesmo trabalhando sozinho, o Git ajuda a organizar projetos, acompanhar sua evolução e recuperar alterações quando necessário.
-
-Além disso, é uma habilidade muito valorizada no mercado de tecnologia e amplamente utilizada por empresas de todos os portes.
-
-Aprender Git também facilita o trabalho em equipe e permite manter um histórico organizado de todos os seus projetos.
+```bash
+git status
+```
 
 ---
 
-## Onde o Git é utilizado?
+## GitHub
 
-O Git não é utilizado apenas por programadores.
+O **GitHub** é uma plataforma online onde podemos armazenar e compartilhar repositórios Git.
 
-Ele pode ser aplicado em qualquer projeto que evolua ao longo do tempo, como:
+Ele também facilita:
 
-* desenvolvimento de software;
-* scripts e automações;
-* documentação técnica;
-* infraestrutura como código;
-* estudos pessoais;
-* projetos colaborativos.
+* Compartilhar projetos;
+* Trabalhar em equipe;
+* Guardar uma cópia do projeto online;
+* Criar um portfólio;
+* Acompanhar projetos.
 
-Sempre que um arquivo sofrer alterações ao longo do tempo, ele poderá ser versionado utilizando Git.
+Uma forma simples de entender:
 
----
+```text
+Git
+↓
+Controla as versões no computador
 
-## Curiosidade
+GitHub
+↓
+Hospeda e compartilha o repositório online
+```
 
-O Git foi criado em **2005** por **Linus Torvalds**, o mesmo criador do Linux, para controlar o desenvolvimento do kernel Linux de forma rápida, eficiente e confiável.
+📌 **Para lembrar:**
 
----
+> **Git = ferramenta de controle de versão.**
 
-# Resumo
-
-Neste primeiro capítulo foram apresentados os conceitos fundamentais do Git e do controle de versão.
-
-Você também conheceu o significado de um sistema distribuído, a diferença entre Git e GitHub e as principais situações em que essa ferramenta pode ser utilizada.
-
----
-
-# O que você aprendeu
-
-Ao concluir este capítulo, você é capaz de:
-
--  Compreender o que é Git.
--  Entender o conceito de controle de versão.
--  Saber o que significa um sistema distribuído.
--  Diferenciar Git de GitHub.
--  Conhecer as principais aplicações do Git.
+> **GitHub = plataforma online que trabalha com repositórios Git.**
 
 ---
 
-# Próximo capítulo
+# 5. Onde o Git pode ser usado?
+
+O Git ficou muito conhecido no desenvolvimento de software, mas ele não serve apenas para programadores.
+
+Podemos utilizá-lo para controlar diferentes tipos de arquivos e projetos.
+
+Por exemplo:
+
+* 🐍 Programas em Python;
+* 💻 Scripts;
+* 🐧 Configurações do Linux;
+* 🌐 Projetos de redes;
+* 📚 Documentação;
+* 📝 Arquivos Markdown;
+* ⚙️ Automação;
+* 🏗️ Projetos de infraestrutura;
+* 🎓 Estudos pessoais.
+
+No meu caso, posso utilizar o Git para organizar meus estudos e manter meu **portfólio de tecnologia**.
+
+---
+
+# 6. Por que aprender Git?
+
+O Git ajuda a organizar melhor nossos projetos.
+
+Mesmo quando estamos estudando sozinhos, ele pode ser muito útil.
+
+Com ele podemos:
+
+* Acompanhar nossa evolução;
+* Guardar o histórico dos projetos;
+* Testar mudanças com mais segurança;
+* Recuperar versões anteriores;
+* Organizar nossos arquivos;
+* Compartilhar nossos projetos.
+
+Além disso, Git é muito utilizado no mercado de tecnologia.
+
+Por isso, aprender Git é importante para quem trabalha ou pretende trabalhar com:
+
+* Desenvolvimento;
+* Linux;
+* Redes;
+* DevOps;
+* Infraestrutura;
+* Automação;
+* Administração de sistemas.
+
+---
+
+# 7. Git no Linux
+
+No Linux, o Git pode ser utilizado diretamente pelo **terminal**.
+
+Depois de instalado, podemos executar comandos como:
+
+```bash
+git --version
+```
+
+Esse comando mostra a versão do Git instalada no computador.
+
+Exemplo:
+
+```text
+git version 2.x.x
+```
+
+📌 **Significado do comando:**
+
+```text
+git
+```
+
+Executa o Git.
+
+```text
+--version
+```
+
+Pede para o Git mostrar sua versão.
+
+---
+
+# 8. Curiosidade
+
+O Git foi criado em **2005 por Linus Torvalds**, conhecido principalmente por ter criado o kernel Linux.
+
+O Git foi desenvolvido para ajudar no controle do desenvolvimento do kernel Linux.
+
+---
+
+# 🧠 Resumo rápido
+
+```text
+GIT
+│
+├── 📚 Controle de versão
+│   └── Registra as alterações
+│
+├── 💻 Distribuído
+│   └── Cada cópia pode possuir o histórico
+│
+├── 🌐 GitHub
+│   └── Hospeda e compartilha repositórios
+│
+├── 🐧 Linux
+│   └── Pode ser usado pelo terminal
+│
+└── 🚀 Utilização
+    ├── Programação
+    ├── Scripts
+    ├── Documentação
+    ├── Estudos
+    ├── Redes
+    └── Infraestrutura
+```
+
+---
+
+# 🎯 O que você aprendeu
+
+Neste capítulo você aprendeu que:
+
+* **Git** é uma ferramenta de controle de versão;
+* O controle de versão registra as alterações de um projeto;
+* Git é um sistema distribuído;
+* **Git e GitHub não são a mesma coisa**;
+* O Git pode ser usado em vários tipos de projetos;
+* No Linux, o Git pode ser utilizado pelo terminal;
+* Git é uma ferramenta importante para quem trabalha ou pretende trabalhar com tecnologia.
+
+---
+
+# 📌 Próximo capítulo
 
 ## Capítulo 02 — Instalação do Git no Debian
 
-No próximo capítulo você aprenderá como instalar o Git no Debian, verificar se a instalação foi realizada corretamente e preparar o ambiente para começar a utilizar o Git na prática.
+No próximo capítulo, vamos instalar o Git no Debian, verificar se ele está funcionando e preparar o ambiente para começar a utilizá-lo na prática.
 
 ---
 
-> **"Conhecimento só tem valor quando é compartilhado."**
->
-> **— Laerte Costa**
+## 📚 Fonte de estudo
+
+Este material foi elaborado a partir dos meus estudos sobre **Git e controle de versão**, combinando o conteúdo estudado com **práticas realizadas por mim no Debian GNU/Linux**.
+
+Os exemplos e comandos apresentados foram utilizados durante meus estudos para facilitar a compreensão e registrar minha evolução.
+
+> **Observação:** este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo original da disciplina/material de referência não foi reproduzido integralmente.
+

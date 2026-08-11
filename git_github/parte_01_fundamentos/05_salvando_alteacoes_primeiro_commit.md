@@ -1,20 +1,19 @@
-# Tempo estimado de leitura
+# Git e GitHub — Guia de Estudos
 
-**12 minutos**
+## Capítulo 05 — Primeiras Alterações em um Repositório Git
 
+**Tempo estimado de leitura:** 12 minutos
 **Nível:** Iniciante
+
+---
 
 ## Neste capítulo você aprenderá
 
 * Criar o primeiro arquivo do projeto.
 * Verificar o estado do repositório.
-* Adicionar arquivos à área de preparação.
-* Registrar a primeira versão do projeto com um commit.
-* Compreender o fluxo básico de trabalho do Git.
-
----
-
-# Git e GitHub — Guia de Estudos
+* Adicionar arquivos à área de preparação (*Staging Area*).
+* Criar o primeiro *commit*.
+* Entender o fluxo básico de trabalho do Git.
 
 ---
 
@@ -27,43 +26,59 @@
 | **Autor**               | Laerte Costa                               |
 | **Sistema Operacional** | Debian GNU/Linux                           |
 | **Terminal**            | Bash                                       |
-| **Última atualização**  | Julho de 2026                              |
+| **Última atualização**  | Agosto de 2026                             |
 
 ---
 
 # Objetivo deste capítulo
 
-Aprender o fluxo básico de trabalho do Git, criando o primeiro arquivo do projeto, adicionando-o à área de preparação e registrando a primeira versão do repositório por meio de um commit.
+Neste capítulo, você vai praticar o fluxo básico de trabalho do Git.
+
+Vamos criar um arquivo dentro do projeto, verificar o estado do repositório, preparar o arquivo para ser salvo no histórico e, por fim, criar o primeiro *commit*.
+
+Esse processo será repetido várias vezes durante o uso do Git.
 
 ---
 
 # Pré-requisitos
 
-Recomenda-se ter concluído os capítulos anteriores.
+É recomendado ter concluído os capítulos anteriores, principalmente os capítulos sobre:
+
+* instalação do Git;
+* configuração da identidade do Git;
+* criação de um repositório.
 
 ---
 
-# Conceito teórico
+# 1. Como o Git acompanha as alterações?
 
-## Como o Git controla os arquivos?
+Depois que um repositório é criado, o Git **não salva automaticamente todas as alterações**.
 
-Depois que um repositório é criado, o Git **não registra automaticamente** as alterações realizadas nos arquivos.
+É necessário informar ao Git quais arquivos devem fazer parte do próximo registro.
 
-Antes de criar um **commit**, é necessário informar ao Git quais arquivos farão parte da próxima versão do projeto.
+O fluxo básico é:
 
-Esse processo ocorre em três etapas:
+```text
+Criar ou modificar um arquivo
+            ↓
+      git status
+            ↓
+        git add
+            ↓
+      git commit
+            ↓
+  Alteração registrada
+```
 
-1. Criar ou modificar um arquivo.
-2. Adicionar o arquivo à área de preparação (*Staging Area*).
-3. Registrar as alterações com um commit.
-
-Esse fluxo será utilizado durante todo o trabalho com Git.
+Vamos entender cada etapa na prática.
 
 ---
 
-# Criando o primeiro arquivo
+# 2. Criando o primeiro arquivo
 
-Dentro do diretório do projeto, crie um arquivo chamado `README.md`.
+Primeiro, entre no diretório do projeto.
+
+Dentro dele, vamos criar um arquivo chamado `README.md`.
 
 ### Comando
 
@@ -71,25 +86,37 @@ Dentro do diretório do projeto, crie um arquivo chamado `README.md`.
 touch README.md
 ```
 
-### Explicação
+### O que esse comando faz?
 
-O comando `touch` pode criar um novo arquivo vazio ou, caso o arquivo já exista, apenas atualizar sua data e hora de modificação.
+O `touch` pode ser usado para:
 
-Nesse exemplo, como o arquivo ainda não existe, ele será criado.
+* criar um arquivo vazio, caso ele não exista;
+* atualizar a data e a hora de um arquivo que já existe.
 
-O arquivo `README.md` normalmente é utilizado para apresentar informações sobre o projeto, como descrição, instruções de uso, documentação e índice do conteúdo.
+Neste exemplo, como o arquivo ainda não existe, ele será criado.
 
-**touch** → *tocar* → *atualiza a data e hora de um arquivo existente ou cria um novo arquivo vazio caso ele ainda não exista.*
+### Entendendo o nome do arquivo
 
-**README** → *Read Me* → *"Leia-me"* → *arquivo utilizado para apresentar informações sobre o projeto.*
+**README** significa *Read Me*, que pode ser entendido como **"Leia-me"**.
 
-**.md** → *Markdown* → *formato de texto utilizado para documentação.*
+Esse tipo de arquivo normalmente contém informações importantes sobre um projeto, como:
+
+* descrição;
+* instruções;
+* documentação;
+* organização do projeto.
+
+O `.md` significa **Markdown**, um formato muito utilizado para criar documentação.
+
+> **Resumo**
+>
+> `touch README.md` → cria um arquivo chamado `README.md`.
 
 ---
 
-# Verificando o estado do repositório
+# 3. Verificando o estado do repositório
 
-Após criar o arquivo, execute:
+Depois de criar o arquivo, vamos verificar o que o Git identificou.
 
 ### Comando
 
@@ -97,11 +124,9 @@ Após criar o arquivo, execute:
 git status
 ```
 
-### Explicação
+O `git status` mostra a situação atual do repositório.
 
-O comando `git status` informa a situação atual do repositório.
-
-Exemplo:
+Um resultado parecido com este pode aparecer:
 
 ```text
 On branch master
@@ -112,17 +137,25 @@ Untracked files:
   README.md
 ```
 
-A mensagem **Untracked files** indica que o arquivo existe no diretório, porém ainda não está sendo controlado pelo Git.
+A parte mais importante neste momento é:
 
-**Untracked** → *não rastreado.*
+```text
+Untracked files:
+```
 
-**Files** → *arquivos.*
+Isso significa que o Git encontrou um arquivo novo, mas ainda **não está acompanhando esse arquivo**.
+
+### O que significa `untracked`?
+
+`Untracked` significa **não rastreado**.
+
+Ou seja, o arquivo existe na pasta do projeto, mas ainda não foi informado ao Git que ele deve fazer parte do próximo registro.
 
 ---
 
-# Adicionando o arquivo
+# 4. Adicionando o arquivo à área de preparação
 
-Para informar ao Git que esse arquivo deverá fazer parte da próxima versão do projeto, utilize:
+Agora vamos informar ao Git que o arquivo deve fazer parte do próximo *commit*.
 
 ### Comando
 
@@ -130,17 +163,31 @@ Para informar ao Git que esse arquivo deverá fazer parte da próxima versão do
 git add README.md
 ```
 
-### Explicação
+O comando `git add` coloca o arquivo na **área de preparação**, também chamada de *Staging Area*.
 
-O comando `git add` adiciona arquivos à área de preparação (*Staging Area*).
+Podemos pensar nessa área como uma espécie de **lista de arquivos que serão incluídos no próximo commit**.
 
-Somente os arquivos adicionados nessa área poderão ser registrados no próximo commit.
+### Entendendo o comando
 
-**add** → *adicionar.*
+```text
+git add README.md
+│   │   │
+│   │   └── arquivo que será preparado
+│   └────── adiciona o arquivo à preparação
+└────────── comando do Git
+```
+
+> **Resumo**
+>
+> `git add README.md` → prepara o arquivo para o próximo *commit*.
 
 ---
 
-Também é possível adicionar todos os arquivos do diretório atual utilizando:
+# 5. Adicionando vários arquivos
+
+Também podemos adicionar vários arquivos de uma só vez.
+
+Uma forma bastante utilizada é:
 
 ### Comando
 
@@ -148,50 +195,64 @@ Também é possível adicionar todos os arquivos do diretório atual utilizando:
 git add .
 ```
 
-### Explicação
+O ponto (`.`) representa o **diretório atual**.
 
-O ponto (`.`) representa o diretório atual.
-
-Assim, todos os arquivos existentes nesse diretório serão adicionados à área de preparação.
-
-**.** → *diretório atual.*
+Dessa forma, o Git adiciona as alterações encontradas no diretório atual à área de preparação.
 
 > **Boa prática**
 >
-> Embora `git add .` seja muito utilizado, acostume-se a executar `git status` antes dele. Assim você evita adicionar arquivos que não deveriam fazer parte do commit.
+> Antes de usar `git add .`, é importante executar:
+>
+> ```bash
+> git status
+> ```
+>
+> Assim você consegue verificar quais arquivos foram modificados ou criados e evita preparar arquivos que não deveriam fazer parte do *commit*.
 
 ---
 
-# Verificando novamente
+# 6. Verificando novamente
 
-Execute novamente:
+Depois de executar:
 
-### Comando
+```bash
+git add README.md
+```
+
+verifique novamente o estado do repositório:
 
 ```bash
 git status
 ```
 
-### Explicação
-
-Agora será exibida uma mensagem semelhante a:
+Agora deverá aparecer algo parecido com:
 
 ```text
 Changes to be committed:
   new file: README.md
 ```
 
-Isso significa que o arquivo foi adicionado à área de preparação e está pronto para ser registrado.
+A mensagem:
 
-**Changes to be committed** → *alterações prontas para serem registradas.*
+```text
+Changes to be committed
+```
 
-**new file** → *novo arquivo.*
+significa que existem alterações **preparadas para serem registradas**.
+
+E:
+
+```text
+new file: README.md
+```
+
+indica que o `README.md` é um novo arquivo que fará parte do próximo *commit*.
 
 ---
 
-# Criando o primeiro commit
+# 7. Criando o primeiro commit
 
-Agora registre a primeira versão do projeto.
+Agora que o arquivo está preparado, podemos criar o primeiro registro no histórico.
 
 ### Comando
 
@@ -199,21 +260,25 @@ Agora registre a primeira versão do projeto.
 git commit -m "Primeiro commit"
 ```
 
-### Explicação
+### O que é um commit?
 
-O comando `git commit` cria um novo registro no histórico do projeto.
+Um *commit* é um registro das alterações realizadas no projeto.
 
-A opção `-m` permite informar uma mensagem descrevendo as alterações realizadas.
+Cada *commit* recebe uma mensagem para ajudar a identificar o que foi alterado.
 
-Essa mensagem facilita a identificação dos commits durante a evolução do projeto.
+A opção `-m` permite escrever essa mensagem diretamente no comando.
 
-**commit** → *comprometer* → *registro permanente das alterações.*
+### Entendendo o comando
 
-**-m** → *message* → *mensagem.*
+```text
+git commit -m "Primeiro commit"
+│   │      │
+│   │      └── mensagem do commit
+│   └───────── cria um registro no histórico
+└───────────── comando do Git
+```
 
-**"Primeiro commit"** → *mensagem que identifica esse registro no histórico.*
-
-Exemplo de saída:
+Uma saída parecida com esta poderá aparecer:
 
 ```text
 [master (root-commit) abc1234] Primeiro commit
@@ -221,23 +286,21 @@ Exemplo de saída:
  create mode 100644 README.md
 ```
 
-A partir desse momento, o Git passa a controlar o arquivo e registra a primeira versão do projeto.
+O texto e os números podem ser diferentes no seu computador.
+
+O importante é entender que o Git registrou o primeiro *commit*.
 
 ---
 
-# Verificando o repositório
+# 8. Verificando o repositório depois do commit
 
-Após o commit, execute novamente:
-
-### Comando
+Depois de criar o *commit*, execute novamente:
 
 ```bash
 git status
 ```
 
-### Explicação
-
-Resultado esperado:
+O resultado esperado será parecido com:
 
 ```text
 On branch master
@@ -245,62 +308,180 @@ On branch master
 nothing to commit, working tree clean
 ```
 
-Essa mensagem indica que todas as alterações foram registradas e que o diretório de trabalho está limpo.
+Isso significa que não existem alterações pendentes para serem registradas.
 
-**nothing to commit** → *não há alterações para registrar.*
+### Entendendo a mensagem
 
-**working tree clean** → *diretório de trabalho limpo.*
+**nothing to commit**
+
+Significa:
+
+> Não há alterações para registrar.
+
+**working tree clean**
+
+Significa:
+
+> A área de trabalho está limpa.
+
+Em outras palavras, tudo que estava preparado foi registrado no último *commit*.
 
 ---
 
-# Fluxo básico do Git
+# 9. Entendendo o fluxo básico do Git
+
+Agora podemos visualizar o processo completo:
 
 ```text
-Criar ou modificar um arquivo
-             │
-             ▼
-       git status
- (verifica o estado do repositório)
-             │
-             ▼
-          git add
- (adiciona os arquivos à área de preparação)
-             │
-             ▼
-        git commit
- (registra as alterações no histórico)
-             │
-             ▼
-      Alteração registrada
+┌──────────────────────────────┐
+│ Criar ou modificar arquivo   │
+└──────────────┬───────────────┘
+               ↓
+        ┌─────────────┐
+        │ git status  │
+        └──────┬──────┘
+               ↓
+     ┌──────────────────┐
+     │     git add      │
+     │                  │
+     │ Área de preparo  │
+     └────────┬─────────┘
+              ↓
+     ┌──────────────────┐
+     │    git commit    │
+     └────────┬─────────┘
+              ↓
+     ┌──────────────────┐
+     │ Histórico do Git │
+     └──────────────────┘
 ```
+
+Esse fluxo será usado diversas vezes durante o trabalho com Git.
 
 ---
 
-## Curiosidade
+# 10. A importância da Staging Area
 
-A área de preparação (*Staging Area*) é um dos recursos que diferencia o Git de muitos outros sistemas de controle de versão.
+A **Staging Area** é a área de preparação do Git.
 
-Ela permite escolher exatamente quais alterações farão parte de cada commit.
+Ela permite escolher quais alterações serão incluídas no próximo *commit*.
+
+Por exemplo, imagine que você tenha três arquivos:
+
+```text
+README.md
+config.txt
+teste.py
+```
+
+Você pode preparar apenas:
+
+```bash
+git add README.md
+```
+
+Nesse caso, somente o `README.md` ficará preparado para o próximo *commit*.
+
+Isso permite ter mais controle sobre o histórico do projeto.
+
+---
+
+# 11. Exemplo completo
+
+Veja novamente todo o processo:
+
+### 1. Criar o arquivo
+
+```bash
+touch README.md
+```
+
+### 2. Verificar o estado
+
+```bash
+git status
+```
+
+### 3. Adicionar o arquivo
+
+```bash
+git add README.md
+```
+
+### 4. Verificar novamente
+
+```bash
+git status
+```
+
+### 5. Criar o commit
+
+```bash
+git commit -m "Primeiro commit"
+```
+
+### 6. Conferir o estado final
+
+```bash
+git status
+```
+
+Se aparecer:
+
+```text
+nothing to commit, working tree clean
+```
+
+significa que o repositório está sem alterações pendentes.
+
+---
+
+# Boas práticas
+
+Ao trabalhar com Git, procure desenvolver alguns hábitos:
+
+* Use `git status` com frequência.
+* Confira os arquivos antes de executar `git add .`.
+* Crie mensagens de *commit* que expliquem o que foi alterado.
+* Evite mensagens muito genéricas, como `coisas`, `teste` ou `alterações`.
+* Faça *commits* pequenos e organizados.
+* Não tenha medo de consultar `git status`; ele é um dos comandos mais úteis para entender o que está acontecendo.
 
 ---
 
 # Resumo
 
-Neste capítulo você criou o primeiro arquivo do projeto, adicionou esse arquivo à área de preparação e registrou a primeira versão do repositório utilizando um commit.
+Neste capítulo, você aprendeu a realizar o fluxo básico de trabalho do Git.
 
-Você também conheceu o fluxo básico de trabalho do Git, que será utilizado em todos os capítulos seguintes.
+O processo pode ser resumido em:
+
+```text
+Criar ou modificar
+        ↓
+   git status
+        ↓
+     git add
+        ↓
+   git commit
+        ↓
+Alteração registrada
+```
+
+Você também aprendeu que o Git possui uma **área de preparação**, chamada *Staging Area*, que permite escolher quais alterações serão incluídas em cada *commit*.
 
 ---
 
 # O que você aprendeu
 
-Ao concluir este capítulo, você é capaz de:
+Ao concluir este capítulo, você consegue:
 
-- ✅ Criar arquivos utilizando `touch`.
-- ✅ Verificar o estado do repositório com `git status`.
-- ✅ Adicionar arquivos à área de preparação utilizando `git add`.
-- ✅ Registrar alterações utilizando `git commit`.
-- ✅ Compreender o fluxo básico de trabalho do Git.
+* ✅ Criar arquivos usando `touch`.
+* ✅ Verificar o estado do repositório usando `git status`.
+* ✅ Identificar arquivos não rastreados (*untracked*).
+* ✅ Adicionar arquivos à *Staging Area* usando `git add`.
+* ✅ Criar um *commit* usando `git commit`.
+* ✅ Entender o fluxo básico de trabalho do Git.
+* ✅ Verificar se o repositório está limpo após um *commit*.
 
 ---
 
@@ -308,10 +489,25 @@ Ao concluir este capítulo, você é capaz de:
 
 ## Capítulo 06 — Consultando o Histórico de Alterações
 
-No próximo capítulo você aprenderá a utilizar o comando `git log` para visualizar todos os commits realizados no repositório.
+No próximo capítulo, você aprenderá a consultar o histórico do repositório usando o comando:
+
+```bash
+git log
+```
+
+Com ele, será possível visualizar os *commits* realizados e entender melhor como o Git registra a evolução do projeto.
+
+---
+
+# 📚 Fonte de estudo
+
+Este resumo foi elaborado a partir dos estudos e da prática do autor sobre **Git e GitHub**, utilizando os conteúdos da disciplina e materiais de estudo como referência.
+
+**Observação:** este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo original das disciplinas e materiais utilizados como referência não deve ser reproduzido ou disponibilizado integralmente neste repositório.
 
 ---
 
 > **"Conhecimento só tem valor quando é compartilhado."**
 >
 > **— Laerte Costa**
+

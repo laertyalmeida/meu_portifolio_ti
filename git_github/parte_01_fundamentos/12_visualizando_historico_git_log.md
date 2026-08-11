@@ -6,11 +6,13 @@
 
 ## Neste capítulo você aprenderá
 
-* O que é o comando `git log`.
-* Consultar o histórico de commits.
-* Entender as informações exibidas pelo Git.
-* Utilizar opções para melhorar a visualização do histórico.
-* Encontrar informações importantes sobre alterações realizadas no projeto.
+* Consultar o histórico de commits com `git log`.
+* Entender as principais informações de um commit.
+* Visualizar o histórico de forma resumida.
+* Limitar a quantidade de commits exibidos.
+* Filtrar commits por autor ou mensagem.
+* Visualizar detalhes de um commit específico.
+* Consultar as alterações registradas no histórico.
 
 ---
 
@@ -27,13 +29,24 @@
 | **Autor**               | Laerte Costa                           |
 | **Sistema Operacional** | Debian GNU/Linux                       |
 | **Terminal**            | Bash                                   |
-| **Última atualização**  | Julho de 2026                          |
+| **Última atualização**  | Agosto de 2026                         |
+
+---
+
+# Objetivo deste capítulo
+
+Aprender a utilizar o histórico do Git para consultar commits, encontrar informações sobre alterações e entender como o projeto evoluiu ao longo do tempo.
 
 ---
 
 # Pré-requisitos
 
-Recomenda-se ter concluído os capítulos anteriores.
+Recomenda-se ter concluído os capítulos anteriores, principalmente os capítulos sobre:
+
+* `git commit`;
+* `git status`;
+* `git diff`;
+* `git restore`.
 
 ---
 
@@ -41,22 +54,35 @@ Recomenda-se ter concluído os capítulos anteriores.
 
 ## O que é o histórico do Git?
 
-Uma das principais características do Git é registrar todas as alterações importantes realizadas em um projeto.
+Cada vez que um commit é criado, o Git registra uma nova versão do projeto.
 
-Cada vez que um commit é criado, o Git armazena informações como:
+Esses registros formam o **histórico do repositório**.
 
-* quem realizou a alteração;
-* quando ela aconteceu;
-* qual mensagem foi registrada;
-* quais arquivos foram modificados.
+O histórico permite descobrir:
 
-Esse conjunto de registros forma o histórico do projeto.
+* quem realizou uma alteração;
+* quando ela foi realizada;
+* qual mensagem foi utilizada;
+* qual commit contém determinada versão;
+* quais alterações foram registradas.
 
-O histórico permite acompanhar a evolução dos arquivos e recuperar informações importantes sobre o desenvolvimento.
+Podemos imaginar o histórico como uma linha do tempo:
+
+```text
+Commit 1
+   ↓
+Commit 2
+   ↓
+Commit 3
+   ↓
+Commit 4
+```
+
+Cada commit representa um ponto registrado na evolução do projeto.
 
 ---
 
-# O que é o `git log`?
+# O comando `git log`
 
 O comando:
 
@@ -64,9 +90,9 @@ O comando:
 git log
 ```
 
-permite visualizar o histórico de commits de um repositório.
+é utilizado para consultar o histórico de commits.
 
-Ele apresenta os registros realizados desde o commit mais recente até os commits mais antigos.
+Por padrão, os commits são apresentados do **mais recente para o mais antigo**.
 
 ---
 
@@ -74,53 +100,51 @@ Ele apresenta os registros realizados desde o commit mais recente até os commit
 
 Execute:
 
-### Comando
-
 ```bash
 git log
 ```
 
-Exemplo:
+Um resultado poderá ser semelhante a:
 
 ```text
-commit a84f91c2d8e7f6a5b4
-Author: Laerte Costa
-Date:   Jul 30 2026
+commit a84f91c2d8e7f6a5b4c3d2e1f0
+Author: Laerte Costa <laerte@email.com>
+Date:   Thu Jul 30 20:15:30 2026 -0300
 
     Adiciona documentação do capítulo 11
 ```
 
 ---
 
-# Entendendo a saída do `git log`
+# Entendendo a saída
 
-## Commit
+## `commit`
 
 Exemplo:
 
 ```text
-commit a84f91c2d8e7f6a5b4
+commit a84f91c2d8e7f6a5b4c3d2e1f0
 ```
 
-Representa o identificador único do commit.
+Esse valor é o **hash do commit**.
 
-Esse código é chamado de **hash**.
+O hash é um identificador usado pelo Git para identificar aquele commit.
 
-O Git utiliza esse identificador para localizar exatamente uma versão registrada do projeto.
+Uma parte desse identificador também pode ser utilizada para fazer referência ao commit, desde que seja suficiente para diferenciá-lo dos demais.
 
 ---
 
-## Author
+## `Author`
 
 Exemplo:
 
 ```text
-Author: Laerte Costa
+Author: Laerte Costa <laerte@email.com>
 ```
 
-Mostra o autor responsável pelo commit.
+Mostra quem realizou o commit.
 
-Essa informação é definida através da configuração:
+Essas informações vêm da configuração do Git:
 
 ```bash
 git config --global user.name
@@ -134,15 +158,15 @@ git config --global user.email
 
 ---
 
-## Date
+## `Date`
 
 Exemplo:
 
 ```text
-Date: Jul 30 2026
+Date: Thu Jul 30 20:15:30 2026 -0300
 ```
 
-Mostra quando o commit foi criado.
+Mostra a data e o horário associados ao commit.
 
 ---
 
@@ -154,43 +178,21 @@ Exemplo:
 Adiciona documentação do capítulo 11
 ```
 
-É a mensagem informada no momento da criação do commit:
+É a mensagem informada quando o commit foi criado:
 
 ```bash
-git commit -m "mensagem"
+git commit -m "Adiciona documentação do capítulo 11"
 ```
 
-Mensagens claras ajudam a entender a evolução do projeto.
+Uma mensagem clara facilita muito a leitura do histórico.
 
 ---
 
-# Navegando pelo histórico
+# Histórico resumido
 
-Assim como no `git diff`, o Git utiliza o paginador `less`.
+Quando o projeto possui muitos commits, o `git log` pode apresentar bastante informação.
 
-Comandos:
-
-```text
-Espaço → próxima página
-
-b → página anterior
-
-/texto → pesquisar
-
-n → próxima ocorrência
-
-q → sair
-```
-
----
-
-# Visualização resumida
-
-O histórico completo pode apresentar muitas informações.
-
-Para visualizar apenas uma linha por commit:
-
-### Comando
+Para visualizar uma versão mais simples:
 
 ```bash
 git log --oneline
@@ -204,48 +206,74 @@ a84f91c Adiciona documentação do capítulo 11
 3bd82ef Cria estrutura inicial do projeto
 ```
 
----
+A opção:
 
-# Entendendo o `--oneline`
+```text
+--oneline
+```
 
-**oneline** → uma linha
+significa:
 
-Essa opção apresenta uma versão resumida do histórico mostrando:
+> mostrar cada commit em uma única linha.
 
-* hash reduzido do commit;
+Normalmente serão exibidos:
+
+* hash abreviado;
 * mensagem do commit.
 
-É muito utilizada para consultar rapidamente a evolução do projeto.
+---
+
+# Limitando a quantidade de commits
+
+Podemos escolher quantos commits queremos visualizar.
+
+Por exemplo:
+
+```bash
+git log -5
+```
+
+Nesse caso, serão exibidos os **5 commits mais recentes**.
+
+Também podemos utilizar:
+
+```bash
+git log -3
+```
+
+para visualizar os três mais recentes.
 
 ---
 
-# Exibindo arquivos alterados
+# Visualizando estatísticas
 
-Para visualizar um resumo das alterações realizadas em cada commit:
-
-### Comando
+O comando:
 
 ```bash
 git log --stat
 ```
 
-Exemplo:
+mostra um resumo das alterações registradas nos commits.
+
+Pode apresentar informações como:
 
 ```text
 3 files changed, 120 insertions(+), 5 deletions(-)
 ```
 
-Mostra:
+Significado:
 
-* quantidade de arquivos modificados;
-* linhas adicionadas;
-* linhas removidas.
+* **files changed** → quantidade de arquivos alterados;
+* **insertions** → quantidade de linhas adicionadas;
+* **deletions** → quantidade de linhas removidas.
+
+**stat** → *statistics* → estatísticas.
 
 ---
 
-# Mostrando as alterações de cada commit
+# Visualizando as alterações dos commits
 
-Para visualizar exatamente quais alterações foram realizadas em cada commit:
+Também podemos pedir ao Git para mostrar as diferenças registradas nos commits.
 
 ### Comando
 
@@ -259,41 +287,15 @@ A opção:
 -p
 ```
 
-vem de:
+vem de *patch* e faz o Git mostrar os detalhes das alterações registradas nos commits.
 
-```text
-patch
-```
-
-e apresenta as diferenças (*diff*) registradas nos commits.
+Isso pode gerar uma saída grande, principalmente em projetos com muitos commits.
 
 ---
 
-# Limitando a quantidade de commits
+# Filtrando por autor
 
-Para mostrar apenas os últimos commits:
-
-### Comando
-
-```bash
-git log -5
-```
-
-Nesse exemplo:
-
-```text
--5
-```
-
-significa:
-
-mostrar os últimos 5 commits.
-
----
-
-# Filtrando commits por autor
-
-É possível pesquisar commits realizados por determinado autor.
+Podemos pesquisar commits realizados por determinado autor.
 
 ### Comando
 
@@ -301,13 +303,15 @@ mostrar os últimos 5 commits.
 git log --author="Laerte"
 ```
 
-O Git exibirá apenas commits relacionados ao autor informado.
+O Git exibirá os commits que correspondem ao autor informado.
+
+Essa opção é especialmente útil em projetos com várias pessoas trabalhando no mesmo repositório.
 
 ---
 
-# Pesquisando mensagens de commits
+# Pesquisando pela mensagem do commit
 
-Para procurar uma palavra dentro das mensagens:
+Também podemos procurar uma palavra dentro das mensagens dos commits.
 
 ### Comando
 
@@ -315,124 +319,323 @@ Para procurar uma palavra dentro das mensagens:
 git log --grep="capítulo"
 ```
 
-O Git exibirá somente commits que possuem a palavra pesquisada na mensagem.
+O Git mostrará os commits cuja mensagem corresponde ao termo pesquisado.
+
+Por exemplo, podemos pesquisar:
+
+```bash
+git log --grep="README"
+```
+
+para encontrar commits relacionados ao README.
 
 ---
 
-# Consultando um commit específico
+# Visualizando um commit específico
 
-Cada commit possui um identificador único.
-
-Para visualizar detalhes de um commit:
-
-### Comando
+Quando encontramos um commit interessante, podemos consultar seus detalhes utilizando:
 
 ```bash
 git show a84f91c
 ```
 
-O comando:
+O comando `git show` pode apresentar:
 
-```text
-git show
-```
-
-apresenta:
-
+* identificação do commit;
 * autor;
 * data;
 * mensagem;
-* arquivos modificados;
-* diferenças realizadas.
+* alterações registradas naquele commit.
 
 ---
 
-# Boa prática
+# O que é `HEAD`?
 
-## Utilize mensagens claras nos commits
+Durante o estudo do Git, você encontrará frequentemente a palavra:
 
-Evite:
+```text
+HEAD
+```
+
+O `HEAD` representa a posição atual do Git no histórico.
+
+De forma simples:
+
+> **HEAD indica o commit que está sendo utilizado como referência na posição atual do repositório.**
+
+Por exemplo:
+
+```bash
+git show HEAD
+```
+
+mostra informações sobre o commit apontado atualmente pelo `HEAD`.
+
+Também podemos consultar o commit anterior:
+
+```bash
+git show HEAD~1
+```
+
+E dois commits anteriores:
+
+```bash
+git show HEAD~2
+```
+
+---
+
+# Navegando pelo histórico
+
+Quando o Git apresenta uma quantidade grande de informações, normalmente utiliza o paginador `less`.
+
+Alguns comandos úteis:
+
+```text
+Espaço  → próxima página
+b       → página anterior
+/texto  → pesquisar
+n       → próxima ocorrência
+q       → sair
+```
+
+---
+
+# Por que consultar o histórico?
+
+O histórico é muito útil para entender o que aconteceu no projeto.
+
+Imagine que você encontrou um problema e deseja descobrir quando determinada alteração foi feita.
+
+Você pode utilizar:
+
+```bash
+git log
+```
+
+e:
+
+```bash
+git show
+```
+
+para investigar os commits.
+
+Assim, o histórico funciona como uma espécie de **linha do tempo do projeto**.
+
+---
+
+# Boa prática: mensagens claras
+
+Evite mensagens muito genéricas:
 
 ```text
 alterações
 ```
 
-Prefira:
+ou:
+
+```text
+teste
+```
+
+Prefira mensagens que expliquem o que foi feito:
 
 ```text
 Adiciona documentação do capítulo 12
 ```
 
-Mensagens bem escritas facilitam localizar mudanças no futuro.
+ou:
+
+```text
+Corrige comando de instalação do Git
+```
+
+Uma mensagem clara facilita a consulta do histórico no futuro.
 
 ---
 
-## Consulte o histórico antes de alterar arquivos importantes
+# Boa prática: commits organizados
 
-O histórico funciona como uma linha do tempo do projeto.
+Procure criar commits que representem alterações relacionadas.
 
-Ele permite entender:
+Por exemplo:
 
-* quando uma alteração foi realizada;
-* quem realizou;
-* qual era o objetivo da mudança.
+```text
+Adiciona capítulo sobre git diff
+```
 
----
+é melhor do que juntar várias alterações diferentes em um único commit sem uma descrição clara.
 
-## Crie commits organizados
+Commits organizados facilitam:
 
-Commits pequenos e bem definidos facilitam:
-
+* consultar o histórico;
 * encontrar problemas;
-* entender mudanças;
+* entender alterações;
 * recuperar versões anteriores.
+
+---
+
+# Exemplo de fluxo
+
+Imagine que você terminou uma alteração no projeto.
+
+Primeiro:
+
+```bash
+git status
+```
+
+Depois revise:
+
+```bash
+git diff
+```
+
+Prepare:
+
+```bash
+git add .
+```
+
+Revise novamente:
+
+```bash
+git diff --staged
+```
+
+Registre:
+
+```bash
+git commit -m "Atualiza documentação do projeto"
+```
+
+Depois consulte o histórico:
+
+```bash
+git log --oneline
+```
+
+O fluxo fica:
+
+```text
+Modificar
+    ↓
+git status
+    ↓
+git diff
+    ↓
+git add
+    ↓
+git diff --staged
+    ↓
+git commit
+    ↓
+git log
+```
+
+Esse é um dos fluxos mais importantes para quem está começando a utilizar Git.
+
+---
+
+# Comandos vistos neste capítulo
+
+| Comando                     | Função                                        |
+| --------------------------- | --------------------------------------------- |
+| `git log`                   | Mostra o histórico de commits.                |
+| `git log --oneline`         | Mostra o histórico de forma resumida.         |
+| `git log -5`                | Mostra os 5 commits mais recentes.            |
+| `git log --stat`            | Mostra estatísticas das alterações.           |
+| `git log -p`                | Mostra as alterações registradas nos commits. |
+| `git log --author="Laerte"` | Filtra commits por autor.                     |
+| `git log --grep="palavra"`  | Pesquisa mensagens de commits.                |
+| `git show <commit>`         | Mostra detalhes de um commit específico.      |
+| `git show HEAD`             | Mostra o commit apontado pelo `HEAD`.         |
 
 ---
 
 # O que foi aprendido
 
-* `git log` exibe o histórico de commits;
-* cada commit possui um identificador único (*hash*);
-* mensagens de commit ajudam a compreender alterações;
-* `--oneline` apresenta uma visão resumida;
-* `git show` permite analisar um commit específico;
-* o histórico ajuda a acompanhar a evolução do projeto.
+Ao concluir este capítulo, você é capaz de:
+
+* ✅ Consultar o histórico com `git log`.
+* ✅ Entender as principais informações de um commit.
+* ✅ Utilizar `git log --oneline`.
+* ✅ Limitar a quantidade de commits exibidos.
+* ✅ Visualizar estatísticas com `git log --stat`.
+* ✅ Consultar alterações com `git log -p`.
+* ✅ Filtrar commits por autor.
+* ✅ Pesquisar mensagens de commits.
+* ✅ Consultar um commit específico com `git show`.
+* ✅ Entender o conceito básico de `HEAD`.
 
 ---
 
 # Resumo
 
-Neste capítulo você aprendeu a consultar o histórico do Git utilizando o comando `git log`.
+O `git log` é uma das principais ferramentas para consultar a evolução de um projeto.
 
-Também aprendeu diferentes formas de visualizar commits, encontrar informações específicas e utilizar o histórico como uma ferramenta de organização e segurança.
+Com ele, podemos visualizar os commits realizados e encontrar informações importantes sobre as alterações.
 
-O histórico do Git não serve apenas para consultar informações, mas também para compreender a evolução de um projeto e tomar decisões com mais segurança.
+Também podemos utilizar opções como:
+
+```bash
+git log --oneline
+```
+
+para uma visualização resumida,
+
+```bash
+git log --stat
+```
+
+para visualizar estatísticas,
+
+e:
+
+```bash
+git show <commit>
+```
+
+para analisar um commit específico.
+
+Entender o histórico é importante porque ele permite acompanhar o desenvolvimento do projeto e investigar alterações realizadas anteriormente.
 
 ---
 
 # Próximo capítulo
 
-## 13 - Revisão da Parte 1 e Desafio Prático
+## Capítulo 13 — Revisão da Parte 1 e Desafio Prático
 
-No próximo capítulo você revisará os principais conceitos aprendidos até aqui e realizará um desafio prático utilizando o fluxo completo do Git:
+No próximo capítulo você revisará os principais conceitos estudados até aqui e realizará um exercício prático utilizando o fluxo completo do Git:
 
 ```text
 Criar
- ↓
+  ↓
 Modificar
- ↓
+  ↓
+Verificar
+  ↓
 Revisar
- ↓
+  ↓
 Preparar
- ↓
+  ↓
 Registrar
- ↓
+  ↓
 Consultar histórico
- ↓
+  ↓
 Restaurar quando necessário
 ```
 
-Esse exercício ajudará a consolidar o aprendizado antes de iniciar a Parte 2, onde serão apresentados conceitos mais avançados como branches e desenvolvimento paralelo.
+Depois dessa revisão, você estará preparado para iniciar a **Parte 2 — Trabalhando com Branches**.
+
+---
+
+# 📚 Fonte de estudo
+
+Este resumo foi elaborado a partir dos estudos e da prática do autor sobre **Git e GitHub**, utilizando os conteúdos da disciplina e materiais de estudo como referência.
+
+**Observação:** este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo original das disciplinas e materiais utilizados como referência não deve ser reproduzido ou disponibilizado integralmente neste repositório.
 
 ---
 
