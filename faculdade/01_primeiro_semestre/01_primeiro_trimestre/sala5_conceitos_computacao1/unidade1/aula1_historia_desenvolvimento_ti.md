@@ -728,3 +728,4 @@ Este resumo foi elaborado a partir dos estudos da disciplina **Conceitos de Comp
 
 > **Observação:** este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo da disciplina não deve ser reproduzido ou disponibilizado integralmente neste repositório.
 
+

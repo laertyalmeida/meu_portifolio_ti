@@ -149,7 +149,7 @@ Assim, o aluno aprende, pesquisa, produz conhecimento e pode contribuir para a s
 
 # 🔬 5. Pesquisa científica
 
-A **pesquisa científica** utiliza métodos e etapas para produzir um conhecimento mais organizado e confiável.
+A **pesquisa científica** segue métodos e etapas para produzir um conhecimento organizado e confiável.
 
 De forma simples:
 
@@ -204,7 +204,7 @@ No Brasil, instituições como o **CNPq** e a **CAPES** participam do apoio e fi
 
 Depois de realizar uma pesquisa, é importante **compartilhar os resultados**.
 
-A divulgação permite que outras pessoas conheçam, analisem e discutam o conhecimento produzido.
+A divulgação permite que outras pessoas conheçam, analisem e discutam os resultados da pesquisa.
 
 Os resultados podem ser apresentados em:
 
@@ -276,5 +276,13 @@ A pesquisa científica não é apenas procurar uma resposta.
 
 Ela envolve **observar, questionar, investigar, analisar e produzir conhecimento**.
 
-Por meio do **ensino, da pesquisa e da extensão**, a universidade ajuda a formar pessoas capazes de aprender continuamente e contribuir para a sociedade.
+Por meio do **ensino, da pesquisa e da extensão**, a universidade ajuda a formar pessoas que aprendem, pesquisam e contribuem para a sociedade.
+
+---
+
+# 📌 Observação
+
+Este arquivo é um **resumo autoral elaborado para fins de estudo**. O conteúdo foi reorganizado e escrito em linguagem simples para facilitar a compreensão e a revisão.
+
+Este resumo **não substitui o material oficial da disciplina** e não tem como objetivo reproduzir integralmente o conteúdo fornecido pela instituição.
 
