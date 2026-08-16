@@ -1,0 +1,164 @@
+# Capítulo 3 — Sistemas de numeração decimal, binário e hexadecimal
+
+## 1. Representação
+
+* Analógico → contínuo
+* Digital → discreto
+
+## 2. Sistemas numéricos
+
+* Decimal → base 10
+* Binário → base 2
+* Hexadecimal → base 16
+
+## 3. Decimal
+
+* Dígitos: `0–9`
+* Pesos → potências de 10
+* Exemplo:
+
+  * `234 = 2×10² + 3×10¹ + 4×10⁰`
+
+## 4. Binário
+
+* Dígitos: `0 e 1`
+* Base 2
+* Utilizado internamente pelos computadores
+* Pesos → potências de 2
+* `2ⁿ` → quantidade de combinações
+
+### Exemplo
+
+* `1011₂ = 11₁₀`
+
+## 5. Bit
+
+* Binary digit
+* `0 ou 1`
+
+### Agrupamentos
+
+* 4 bits → nibble
+* 8 bits → byte
+* 16 bits → word
+* 32 bits → double word
+* 64 bits → quad word
+
+## 6. Armazenamento
+
+* Bit → 0/1
+* Byte → 8 bits
+* KB → ~1.000 bytes
+* 1 KB tradicionalmente → 1.024 bytes
+* MB → ~1 milhão de bytes
+* GB → ~1 bilhão de bytes
+
+## 7. Caracteres
+
+* Caracteres podem ser representados por códigos binários
+* Exemplo:
+
+  * `E → 01000101`
+
+## 8. BCD
+
+* Binary-Coded Decimal
+* Não é sistema numérico
+* É codificação
+* Cada dígito decimal → 4 bits
+
+### Exemplo
+
+* `953`
+* `9 → 1001`
+* `5 → 0101`
+* `3 → 0011`
+* Resultado:
+
+  * `1001 0101 0011`
+
+### Atenção
+
+* Binário normal ≠ BCD
+
+## 9. Hexadecimal
+
+* Base 16
+* Dígitos:
+
+  * `0–9`
+  * `A–F`
+
+### Valores
+
+* A → 10
+* B → 11
+* C → 12
+* D → 13
+* E → 14
+* F → 15
+
+## 10. Hexadecimal e bits
+
+* 1 hexadecimal → 4 bits
+* 2 hexadecimais → 1 byte
+
+### Exemplo
+
+* `01011111₂ → 5F₁₆`
+
+## 11. Aplicações do hexadecimal
+
+* Endereço MAC
+* Cores RGB
+* Representação de valores binários
+
+### Exemplos
+
+* MAC → `00-5F-FF-E0-AA-FF`
+* RGB → `#FF00CC`
+
+## 12. ASCII
+
+* American Standard Code for Information Interchange
+* Código para caracteres
+* 7 bits
+* `2⁷ = 128` combinações
+* Letras
+* Números
+* Pontuação
+* Funções
+
+## 13. Relações importantes
+
+* Decimal → base 10
+* Binário → base 2
+* Hexadecimal → base 16
+* 1 bit → 0/1
+* 4 bits → nibble
+* 8 bits → byte
+* 1 hexadecimal → 4 bits
+* BCD → dígito decimal em 4 bits
+* ASCII → representação de caracteres
+
+## 14. Ideia-chave
+
+**Decimal**
+→ uso humano
+
+**Binário**
+→ funcionamento digital
+
+**Hexadecimal**
+→ representação compacta do binário
+
+**BCD**
+→ decimal codificado em grupos de 4 bits
+
+**ASCII**
+→ representação de caracteres
+
+---
+
+📌 **Observação:** Este arquivo é um resumo autoral elaborado para fins de estudo. O conteúdo foi reorganizado e escrito em linguagem simples para facilitar a compreensão e a revisão. Não substitui o material oficial da disciplina.
+
