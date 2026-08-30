@@ -2,7 +2,7 @@
 
 ## 🧠 1. O QUE É A CPU?
 
-A **CPU (Central Processing Unit)** é o componente responsável por executar as instruções dos programas.
+A **CPU (Central Processing Unit)** é o componente responsável por executar as instruções dos programas (processador).
 
 De forma simples:
 
@@ -67,7 +67,7 @@ Atualmente, sistemas Linux modernos utilizam principalmente arquiteturas de 64 b
 
 ### x86_64
 
-`x86_64` é a extensão de 64 bits da arquitetura x86.
+`x86_64` é a extensão de 64 bits da arquitetura x86 (a AMD fez uma extensão da arquitetura X86 32bits para atender 64bits).
 
 Também pode aparecer como:
 
@@ -149,17 +149,8 @@ CPU
     └── Thread 2
 ```
 
-Uma CPU pode possuir vários cores, e cada core pode apresentar uma ou mais threads.
+Uma CPU pode possuir vários cores (núcleos), e cada core pode apresentar uma ou mais threads.
 
-### ⚠️ NÃO CONFUNDA
-
-```text
-64 bits ≠ cores
-64 bits ≠ threads
-64 bits ≠ GHz
-```
-
----
 
 # 🔍 7. COMANDOS E INTERPRETAÇÃO
 
@@ -202,14 +193,6 @@ uname
 
 x86_64
 └── arquitetura x86 de 64 bits
-```
-
-### 🧠 Para memorizar
-
-```text
-uname -m
-     │
-     └── m = machine
 ```
 
 ---
@@ -270,31 +253,6 @@ O comando mostra informações detalhadas sobre a CPU.
 lscpu
 ```
 
-Exemplo:
-
-```text
-Architecture:        x86_64
-CPU(s):              4
-Core(s) per socket:  4
-Thread(s) per core:  1
-```
-
-### Interpretação:
-
-```text
-Architecture
-└── Arquitetura
-
-CPU(s)
-└── CPUs lógicas apresentadas
-
-Core(s) per socket
-└── Núcleos por processador
-
-Thread(s) per core
-└── Threads por núcleo
-```
-
 ---
 
 ## `lscpu -e`
@@ -305,7 +263,7 @@ Thread(s) per core
 
 **extended = estendido**
 
-Mostra informações estendidas das CPUs em formato de tabela.
+Mostra informações estendidas das CPUs em formato de tabela (itens separados).
 
 ```bash
 lscpu -e
@@ -357,7 +315,7 @@ O arquivo:
 /proc/cpuinfo
 ```
 
-contém informações sobre os processadores fornecidas pelo kernel.
+contém informações sobre os processadores fornecidas pelo kernel (arquivo completo das informações acima).
 
 ### `cpuinfo`
 
@@ -424,7 +382,7 @@ Pode ser entendido como:
 
 > **procurar e imprimir linhas que correspondem a um padrão**
 
-O `grep` é utilizado para pesquisar texto.
+O `grep` é utilizado para pesquisar texto (filtrar partes de acordo com as nomes informadas [expressões]).
 
 Exemplo:
 
@@ -432,7 +390,7 @@ Exemplo:
 grep 'model name' /proc/cpuinfo
 ```
 
-Isso procura por `model name` dentro de `/proc/cpuinfo`.
+Isso procura por `model name`(nome do modelo) dentro de `/proc/cpuinfo`.
 
 ---
 
@@ -449,7 +407,7 @@ Significa:
 Exemplo:
 
 ```bash
-grep -E '^(model name|cpu cores|siblings)' /proc/cpuinfo
+grep -E '^(model name|cpu cores|siblings)' /proc/cpuinfo (extendida, mais de uma busca entre parênteses)
 ```
 
 Interpretação:
@@ -459,110 +417,13 @@ grep
 └── procura um padrão no texto
 
 -E
-└── Extended → expressões regulares estendidas
+└── Extended → expressões regulares estendidas (mais de uma expressão, mais de um nome buscado)
 
 '(...)'
-└── padrão que será procurado
+└── padrão que será procurado (colocar entre parênteses e separar os nomes por pipes |)
 
 /proc/cpuinfo
 └── arquivo onde a pesquisa será realizada
-```
-
----
-
-# 📝 13. COMANDOS PARA MEMORIZAR
-
-## `uname`
-
-```bash
-uname -m
-```
-
-```text
-uname
-└── Unix name → informações do sistema
-
--m
-└── machine → máquina/arquitetura
-```
-
----
-
-## `arch`
-
-```bash
-arch
-```
-
-```text
-arch
-└── architecture → arquitetura
-```
-
----
-
-## `lscpu`
-
-```bash
-lscpu
-```
-
-```text
-ls
-└── list → listar
-
-cpu
-└── Central Processing Unit → Unidade Central de Processamento
-```
-
-### Flags:
-
-```bash
-lscpu -e
-```
-
-```text
--e
-└── extended → estendido
-```
-
-```bash
-lscpu -p
-```
-
-```text
--p
-└── parse → analisar/processar
-```
-
----
-
-## `cat`
-
-```bash
-cat /proc/cpuinfo
-```
-
-```text
-cat
-└── concatenate → concatenar/exibir conteúdo
-```
-
----
-
-## `grep`
-
-```bash
-grep -E 'padrão' arquivo
-```
-
-```text
-grep
-└── Global Regular Expression Print
-    → pesquisar/imprimir correspondências
-
--E
-└── Extended → expressões regulares estendidas
 ```
 
 ---
@@ -600,70 +461,5 @@ Ao terminar esta página, você deve saber:
 - Entender `-E` como **Extended Regular Expressions**.
 
 ---
-
-# 🧠 RESUMO
-
-```text
-CPU
-└── Central Processing Unit
-    └── Unidade Central de Processamento
-
-x86
-└── 32 bits
-
-x86_64 / amd64
-└── 64 bits
-
-ARM
-└── Família de arquitetura
-
-aarch64
-└── ARM de 64 bits
-
-Core
-└── Núcleo de processamento
-
-Thread
-└── Linha de execução
-
-uname
-└── Unix name
-    └── Informações do sistema
-
-uname -m
-└── machine
-    └── Arquitetura da máquina
-
-arch
-└── architecture
-    └── Arquitetura
-
-lscpu
-└── list CPU
-    └── Informações da CPU
-
-lscpu -e
-└── extended
-    └── Informações estendidas
-
-lscpu -p
-└── parse
-    └── Formato para análise
-
-cat
-└── concatenate
-    └── Exibe/concatena conteúdo
-
-grep
-└── Global Regular Expression Print
-    └── Pesquisa padrões
-
-grep -E
-└── Extended Regular Expressions
-    └── Expressões regulares estendidas
-
-/proc/cpuinfo
-└── Informações dos processadores
-```
 
 # ✅ FIM DA PÁGINA 1
