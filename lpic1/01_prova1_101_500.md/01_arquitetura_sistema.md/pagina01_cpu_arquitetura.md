@@ -315,7 +315,7 @@ O arquivo:
 /proc/cpuinfo
 ```
 
-contém informações sobre os processadores fornecidas pelo kernel (arquivo completo das informações acima).
+contém informações sobre os processadores fornecidas pelo kernel (arquivo, local onde ficam as informações completas da cpu).
 
 ### `cpuinfo`
 
@@ -382,7 +382,7 @@ Pode ser entendido como:
 
 > **procurar e imprimir linhas que correspondem a um padrão**
 
-O `grep` é utilizado para pesquisar texto (filtrar partes de acordo com as nomes informadas [expressões]).
+O `grep` é utilizado para pesquisar texto (filtrar partes de acordo com os nomes solicitados, "expressões").
 
 Exemplo:
 
@@ -390,7 +390,7 @@ Exemplo:
 grep 'model name' /proc/cpuinfo
 ```
 
-Isso procura por `model name`(nome do modelo) dentro de `/proc/cpuinfo`.
+Isso procura pelo nome solicitado `model name`(nome do modelo) dentro de `/proc/cpuinfo`.
 
 ---
 
@@ -407,7 +407,7 @@ Significa:
 Exemplo:
 
 ```bash
-grep -E '^(model name|cpu cores|siblings)' /proc/cpuinfo (extendida, mais de uma busca entre parênteses)
+grep -E '^(model name|cpu cores|siblings)' /proc/cpuinfo (extende mais de uma busca entre parênteses separados por | "pipes")
 ```
 
 Interpretação:
@@ -420,7 +420,7 @@ grep
 └── Extended → expressões regulares estendidas (mais de uma expressão, mais de um nome buscado)
 
 '(...)'
-└── padrão que será procurado (colocar entre parênteses e separar os nomes por pipes |)
+└── padrão que será procurado (colocar entre parênteses e separar os nomes por | "pipes")
 
 /proc/cpuinfo
 └── arquivo onde a pesquisa será realizada
@@ -437,28 +437,28 @@ Ao terminar esta página, você deve saber:
 - Diferença entre 32 bits e 64 bits.
 - O que significa `x86`.
 - O que significa `x86_64`.
-- Que `amd64` representa x86 de 64 bits.
+- Que `amd64` significa x86 de 64 bits.
 - O que é ARM.
-- Que `aarch64` representa ARM de 64 bits.
+- Que `aarch64` significa ARM de 64 bits.
 - Diferença entre CPU, core e thread.
-- Que 64 bits não representa quantidade de cores.
-- Que 64 bits não representa quantidade de threads.
-- Que 64 bits não representa GHz.
+- Que 64 bits não significa quantidade de cores.
+- Que 64 bits não significa quantidade de threads.
+- Que 64 bits não significa GHz.
 - Usar `uname -m`.
 - Saber que `uname` significa **Unix name**.
 - Saber que `-m` significa **machine**.
 - Usar `arch`.
 - Saber que `arch` significa **architecture**.
 - Usar `lscpu`.
-- Entender `ls` como **list**.
-- Entender `-e` como **extended**.
-- Entender `-p` como **parse**.
+- Entender `ls` como **list, listar**.
+- Entender `-e` como **extended, extendido**.
+- Entender `-p` como **parse, analisar**.
 - Conhecer `/proc/cpuinfo`.
 - Entender `cpuinfo` como informações da CPU.
 - Usar `cat` para visualizar arquivos.
 - Entender `cat` como **concatenate**.
-- Usar `grep` para pesquisar texto.
-- Entender `-E` como **Extended Regular Expressions**.
+- Usar `grep` para pesquisar texto  **filtro por nome "expressões"**.
+- Entender `-E` como **Extended Regular Expressions "várias buscas"**.
 
 ---
 
