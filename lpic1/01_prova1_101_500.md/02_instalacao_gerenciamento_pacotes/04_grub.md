@@ -1,143 +1,175 @@
-Swap
+# GRUB — Gerenciador de Inicialização
 
-Swap — Área de Troca
+GRUB (**GRand Unified Bootloader**) é o programa responsável por iniciar o Linux.
 
-Swap (Área de Troca) é um espaço no disco que o Linux pode usar quando precisa de memória além da RAM disponível.
+Quando o computador liga:
 
-RAM
+Computador
  ↓
-Fica cheia
+BIOS/UEFI
  ↓
-Linux pode usar
+GRUB
  ↓
-Swap
+Kernel Linux
+ ↓
+Sistema Linux
 
-A swap é mais lenta que a RAM, porque está no armazenamento.
-
----
-
-Para que serve?
-
-A swap pode ajudar quando:
-
-- A RAM está muito ocupada.
-- O sistema precisa liberar espaço na RAM.
-- O computador entra em hibernação — dependendo da configuração.
-
-Swap não substitui a RAM. Ela funciona como um espaço auxiliar.
+O GRUB aparece antes do Linux iniciar.
 
 ---
 
-Swap pode ser:
+## Para que serve?
 
-Swap Partition — Partição Swap
+O GRUB pode:
 
-Uma partição inteira é usada como swap.
-
-/dev/sda3 → swap
-
-Swap File — Arquivo Swap
-
-Um arquivo dentro de um sistema de arquivos é usado como swap.
-
-/swapfile
+- Iniciar o Linux.
+- Escolher entre diferentes sistemas operacionais.
+- Escolher diferentes kernels Linux.
+- Passar parâmetros para o kernel durante a inicialização.
+- Iniciar um modo de recuperação, dependendo da configuração.
 
 ---
 
-Verificar a Swap
+## Onde fica a configuração?
 
-"free" — Free (Livre)
+A configuração principal do GRUB geralmente fica em:
 
-Mostra informações sobre o uso da memória.
+/boot/grub/grub.cfg
 
-free -h
+Esse arquivo contém as entradas que aparecem no menu do GRUB.
 
-"-h" — Human-readable (Legível por humanos)
+**Importante:** normalmente não é recomendado editar esse arquivo diretamente.
 
-Mostra os valores usando unidades mais fáceis de ler, como:
+As configurações usadas para gerar o `grub.cfg` ficam principalmente em:
 
-MiB
-GiB
+/etc/default/grub
 
----
+E scripts relacionados ficam em:
 
-"swapon" — Swap On (Ativar Swap)
-
-Mostra as áreas de swap ativas:
-
-swapon --show
-
-"--show" — Show (Mostrar)
-
-Exibe as áreas de swap ativas.
+/etc/grub.d/
 
 ---
 
-"swapoff" — Swap Off (Desativar Swap)
+## Atualizar a configuração
 
-Desativa uma área de swap.
+Depois de alterar configurações do GRUB, é necessário gerar novamente o arquivo de configuração.
 
-sudo swapoff /dev/sda3
+Em sistemas Debian/Ubuntu, por exemplo:
+
+sudo update-grub
+
+"update-grub" — Update GRUB (Atualizar GRUB)
+
+Atualiza o arquivo de configuração do GRUB.
 
 ---
 
-Criar Swap File
+## Instalar o GRUB
 
-Um arquivo também pode ser usado como swap.
+O GRUB pode ser instalado no dispositivo de inicialização.
 
 Exemplo:
 
-sudo fallocate -l 2G /swapfile
+sudo grub-install /dev/sda
 
-"-l" — Length (Tamanho)
+"grub-install" — GRUB Install (Instalar GRUB)
 
-Define o tamanho do arquivo.
+Instala o GRUB no dispositivo indicado.
 
 Nesse exemplo:
 
-2G → 2 GB
-
-Depois:
-
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-
-"600" — Permissões
-
-Somente o proprietário pode ler e escrever no arquivo.
+/dev/sda → disco
 
 ---
 
-LPIC-1 — O que saber
+## Kernel e GRUB
 
-- Swap é uma área de armazenamento usada como memória auxiliar.
-- Swap é mais lenta que RAM.
-- Pode ser uma partição ou um arquivo.
-- "free -h" mostra memória de forma legível.
-- "swapon" mostra/ativa swap.
-- "swapoff" desativa swap.
-- "mkswap" prepara uma área para ser usada como swap.
-- Um swap file deve ter permissões restritas.
+O GRUB pode apresentar diferentes kernels instalados.
+
+Por exemplo:
+
+GRUB
+├── Linux Kernel 6.x
+├── Linux Kernel 5.x
+└── Recovery Mode
+
+Isso permite escolher qual kernel será iniciado.
 
 ---
 
-Resumo
+## Parâmetros do Kernel
 
-RAM → rápida
+O GRUB também pode passar parâmetros para o kernel.
+
+Exemplo:
+
+quiet
+
+ou:
+
+nomodeset
+
+Esses parâmetros podem alterar o comportamento do Linux durante a inicialização.
+
+---
+
+## GRUB e arquivos importantes
+
+/etc/default/grub
+        ↓
+Configurações
+        ↓
+/etc/grub.d/
+        ↓
+Scripts
+        ↓
+update-grub
+        ↓
+/boot/grub/grub.cfg
+
+---
+
+## LPIC-1 — O que saber
+
+- GRUB é um **bootloader** — Gerenciador de Inicialização.
+- Ele é executado antes do kernel Linux.
+- Pode iniciar diferentes kernels.
+- Pode iniciar diferentes sistemas operacionais.
+- Pode passar parâmetros para o kernel.
+- `/boot/grub/grub.cfg` contém a configuração gerada do GRUB.
+- `/etc/default/grub` contém configurações do GRUB em muitas distribuições.
+- `update-grub` gera/atualiza a configuração em sistemas Debian/Ubuntu.
+- `grub-install` instala o GRUB.
+
+---
+
+## Resumo
+
+Computador
  ↓
-Quando necessário
+BIOS/UEFI
  ↓
-Swap → mais lenta
+GRUB
+ ↓
+Kernel
+ ↓
+Linux
 
-Swap
-├── Partição
-└── Arquivo
+GRUB
+├── Inicia Linux
+├── Escolhe kernel
+├── Escolhe sistema operacional
+└── Passa parâmetros ao kernel
 
-free -h       → memória
-swapon        → swap
-swapoff       → desativar
-mkswap        → preparar swap
+Arquivos:
 
--h → Human-readable
--l → Length
+/etc/default/grub → configurações
+/etc/grub.d/      → scripts
+/boot/grub/grub.cfg → configuração gerada
+
+Comandos:
+
+update-grub  → atualizar configuração
+grub-install → instalar GRUB
+
+GRUB → Bootloader → Gerenciador de Inicialização
