@@ -1,300 +1,97 @@
-Directory Structure — Estrutura de Diretórios
+# 01 — Sistemas de Arquivos e FHS
 
-Como o Linux organiza os arquivos
+## Filesystem — Sistema de Arquivos
 
-No Linux, tudo começa pelo diretório:
+O **filesystem** organiza como os dados são armazenados, localizados e acessados no disco.
 
-/
+    Disco
+      ↓
+    Partição
+      ↓
+    Filesystem
+      ↓
+    Diretórios e arquivos
 
-Ele é chamado de Root Directory — Diretório Raiz.
+Exemplos de filesystems:
 
-Todos os outros diretórios ficam abaixo dele.
-
-/
-├── boot
-├── dev
-├── etc
-├── home
-├── lib
-├── media
-├── mnt
-├── opt
-├── proc
-├── root
-├── run
-├── sbin
-├── tmp
-├── usr
-└── var
+    ext4
+    XFS
+    Btrfs
+    vfat
 
 ---
 
-"/home" — Home Directory (Diretório Pessoal)
+## FHS — Filesystem Hierarchy Standard (Padrão de Hierarquia do Sistema de Arquivos)
 
-Guarda os arquivos pessoais dos usuários.
+O **FHS** define uma organização padrão para os principais diretórios do Linux.
 
-/home/joao
-/home/maria
+A ideia é saber **onde cada tipo de arquivo deve ficar**.
 
-Exemplo:
-
-cd /home
-
-→ entra no diretório onde ficam os diretórios pessoais.
+    /
+    ├── bin
+    ├── boot
+    ├── dev
+    ├── etc
+    ├── home
+    ├── lib
+    ├── media
+    ├── mnt
+    ├── opt
+    ├── proc
+    ├── root
+    ├── run
+    ├── sbin
+    ├── srv
+    ├── sys
+    ├── tmp
+    ├── usr
+    └── var
 
 ---
 
-"/root" — Root Home (Diretório Pessoal do Root)
+## Diretórios principais
 
-É o diretório pessoal do usuário "root".
-
-Não confunda:
-
-/       → Root Directory → Diretório Raiz
-/root   → Root Home     → Diretório pessoal do root
+| Diretório | Inglês | Português | Função |
+|---|---|---|---|
+| `/` | Root | Raiz | Base de todo o sistema |
+| `/bin` | Binaries | Binários | Comandos essenciais |
+| `/sbin` | System Binaries | Binários do Sistema | Comandos administrativos |
+| `/boot` | Boot | Inicialização | Arquivos necessários para iniciar o sistema |
+| `/dev` | Devices | Dispositivos | Arquivos que representam dispositivos |
+| `/etc` | Et Cetera / Configuration | Configuração | Arquivos de configuração |
+| `/home` | Home | Diretórios dos usuários | Dados dos usuários |
+| `/root` | Root Home | Diretório do administrador | Home do usuário `root` |
+| `/lib` | Libraries | Bibliotecas | Bibliotecas necessárias ao sistema |
+| `/media` | Media | Mídias | Montagem automática de mídias removíveis |
+| `/mnt` | Mount | Montagem | Montagens temporárias |
+| `/opt` | Optional | Opcional | Software adicional |
+| `/proc` | Processes | Processos | Informações virtuais do kernel e processos |
+| `/run` | Runtime | Execução | Dados temporários da execução do sistema |
+| `/srv` | Service | Serviços | Dados fornecidos por serviços |
+| `/sys` | System | Sistema | Informações e interface do kernel |
+| `/tmp` | Temporary | Temporário | Arquivos temporários |
+| `/usr` | Unix System Resources | Recursos do Sistema | Programas, bibliotecas e documentação |
+| `/var` | Variable | Variável | Dados que mudam durante a execução |
 
 ---
 
-"/etc" — Configuration (Configurações)
+## Os diretórios que mais caem
 
-Guarda arquivos de configuração do sistema e dos programas.
+### `/etc` — Configuration (Configuração)
+
+    /etc
+      ↓
+    configurações do sistema
 
 Exemplos:
 
-/etc/passwd
-/etc/hosts
-/etc/fstab
-
-Pense:
-
-/etc
- ↓
-configurações
+    /etc/fstab
+    /etc/hosts
+    /etc/passwd
 
 ---
 
-"/bin" — Essential Commands (Comandos Essenciais)
+### `/home` — User Home (Diretórios dos Usuários)
 
-Contém comandos essenciais para o sistema.
-
-Exemplos:
-
-ls
-cp
-mv
-rm
-cat
-
-Em sistemas Linux modernos, "/bin" normalmente é um link para "/usr/bin".
-
----
-
-"/sbin" — System Commands (Comandos do Sistema)
-
-Contém comandos usados principalmente para administração do sistema.
-
-Exemplos:
-
-ip
-fsck
-mount
-
-Em sistemas modernos, "/sbin" normalmente é um link para "/usr/sbin".
-
----
-
-"/usr" — User Programs (Programas do Usuário)
-
-Contém grande parte dos programas, bibliotecas e arquivos usados pelo sistema.
-
-Exemplos:
-
-/usr/bin
-/usr/sbin
-/usr/lib
-/usr/share
-
-É um dos diretórios mais importantes do Linux.
-
----
-
-"/var" — Variable Data (Dados Variáveis)
-
-Guarda dados que mudam enquanto o sistema funciona.
-
-Exemplos:
-
-/var/log
-/var/cache
-/var/lib
-
-"/var/log"
-
-Guarda arquivos de logs — registros.
-
-/var/log/
-
----
-
-"/tmp" — Temporary (Temporário)
-
-Usado para arquivos temporários.
-
-/tmp
-
-Programas podem criar arquivos temporários nesse diretório.
-
----
-
-"/dev" — Devices (Dispositivos)
-
-Contém arquivos que representam dispositivos.
-
-Exemplos:
-
-/dev/sda
-/dev/null
-/dev/tty
-
-No Linux, muitos dispositivos são acessados como arquivos.
-
----
-
-"/proc" — Processes (Processos)
-
-É um sistema de arquivos virtual que fornece informações sobre processos e o kernel.
-
-Exemplos:
-
-/proc/cpuinfo
-/proc/meminfo
-/proc/1234
-
-Podemos consultar:
-
-cat /proc/cpuinfo
-
-→ mostra informações sobre o processador.
-
----
-
-"/sys" — System (Sistema)
-
-É outro sistema de arquivos virtual.
-
-Fornece informações sobre:
-
-hardware
-dispositivos
-kernel
-
-Fica em:
-
-/sys
-
----
-
-"/boot" — Boot (Inicialização)
-
-Contém arquivos necessários para iniciar o Linux.
-
-Pode conter:
-
-kernel
-initramfs
-bootloader
-
----
-
-"/media" — Removable Media (Mídia Removível)
-
-Usado normalmente para montar mídias removíveis automaticamente.
-
-Exemplo:
-
-/media/usuario/USB
-
----
-
-"/mnt" — Mount (Montagem)
-
-Usado tradicionalmente como ponto de montagem temporário.
-
-Exemplo:
-
-mount /dev/sdb1 /mnt
-
----
-
-"/opt" — Optional Software (Software Opcional)
-
-Usado para instalar softwares adicionais que não fazem parte da instalação padrão.
-
-Exemplo:
-
-/opt/programa
-
----
-
-"/run" — Runtime Data (Dados de Execução)
-
-Guarda informações temporárias relacionadas aos programas em execução.
-
-Exemplos:
-
-PID
-sockets
-arquivos temporários de serviços
-
-O conteúdo normalmente desaparece após a reinicialização.
-
----
-
-🧠 Para a LPIC-1
-
-Os diretórios mais importantes:
-
-/       → Diretório Raiz
-/boot   → Inicialização
-/dev    → Dispositivos
-/etc    → Configurações
-/home   → Arquivos dos usuários
-/root   → Diretório pessoal do root
-/tmp    → Temporários
-/usr    → Programas e arquivos do sistema
-/var    → Dados variáveis
-/proc   → Processos e informações do kernel
-/sys    → Hardware e kernel
-/mnt    → Montagem temporária
-/media  → Mídias removíveis
-/opt    → Software adicional
-/run    → Dados de execução
-
-Regra para memorizar
-
-/etc
-→ configurações
-
-/home
-→ usuários
-
-/var
-→ dados que mudam
-
-/tmp
-→ temporários
-
-/dev
-→ dispositivos
-
-/boot
-→ inicialização
-
-/usr
-→ programas
-
-/proc
-→ processos/kernel
-
-/sys
-→ hardware/kernel
+    /home
+      ├── jo
