@@ -2,94 +2,123 @@
 
 ## 06 — passwd e chage
 
-## passwd — Password (Senha)
+### 1. passwd
 
-O comando `passwd` é usado para **criar ou alterar a senha** de usuários e também para controlar alguns aspectos relacionados ao estado da senha.
+**passwd** — *Password* — **Senha**
 
----
+Usado para criar, alterar ou administrar a senha de um usuário.
 
-## 1. Alterar a própria senha
+Alterar a senha do usuário atual:
 
     passwd
 
-O sistema solicitará:
-
-    Current password:
-    New password:
-    Retype new password:
-
----
-
-## 2. Alterar a senha de outro usuário
-
-Normalmente requer privilégios administrativos:
-
-    sudo passwd usuario
-
-Exemplo:
+Alterar a senha de outro usuário:
 
     sudo passwd laerte
 
 ---
 
-## 3. Bloquear e desbloquear senha
+### 2. Principais opções do `passwd`
 
-`-l` — lock (bloquear)
+| Opção | English | Português |
+|---|---|---|
+| `-d` | Delete | Remover a senha |
+| `-l` | Lock | Bloquear a senha |
+| `-u` | Unlock | Desbloquear a senha |
+| `-S` | Status | Mostrar status da senha |
+| `-e` | Expire | Forçar expiração da senha |
+| `-n` | Minimum Days | Definir mínimo de dias |
+| `-x` | Maximum Days | Definir máximo de dias |
+| `-w` | Warning Days | Definir dias de aviso |
+| `-i` | Inactive Days | Definir dias de inatividade |
 
-    sudo passwd -l usuario
+Exemplo:
 
-Bloqueia a autenticação por senha da conta.
+    sudo passwd -S laerte
 
-`-u` — unlock (desbloquear)
+**`-S` — Status — Status**
 
-    sudo passwd -u usuario
-
-Desbloqueia a autenticação por senha.
-
-⚠️ O bloqueio da senha não é necessariamente o mesmo que bloquear toda e qualquer forma de acesso à conta.
-
----
-
-## 4. Forçar troca de senha
-
-`-e` — expire (expirar)
-
-    sudo passwd -e usuario
-
-Faz a senha expirar, normalmente obrigando o usuário a definir uma nova senha no próximo login.
+Mostra informações sobre o estado da senha.
 
 ---
 
-## 5. Remover a senha
+# 3. chage
 
-`-d` — delete (excluir)
+**chage** — *Change Age* — **Alterar validade da senha**
 
-    sudo passwd -d usuario
+É usado para administrar a **expiração e validade da senha** de um usuário.
 
-Remove a senha da conta.
+Exemplo:
 
-⚠️ Isso pode permitir autenticação sem senha dependendo da configuração do sistema. Use com muito cuidado.
+    sudo chage -l laerte
 
----
+**`-l` — List — Listar**
 
-# chage — Change Age (Alterar Validade)
-
-O `chage` controla a **idade e a validade da senha** de um usuário.
-
-É usado principalmente para definir regras como:
-
-- quantidade máxima de dias da senha;
-- quantidade mínima de dias;
-- aviso antes da expiração;
-- data de expiração da conta.
+Mostra as informações de validade da senha.
 
 ---
 
-## 6. Ver informações de validade
+### 4. Principais opções do `chage`
 
-`-l` — list (listar)
+| Opção | English | Português |
+|---|---|---|
+| `-l` | List | Listar informações |
+| `-m` | Minimum Days | Mínimo de dias |
+| `-M` | Maximum Days | Máximo de dias |
+| `-W` | Warning Days | Dias de aviso |
+| `-I` | Inactive Days | Dias de inatividade |
+| `-E` | Expire Date | Data de expiração |
+| `-d` | Last Day | Data da última alteração |
 
-    sudo chage -l usuario
+---
+
+### 5. Definir validade da senha
+
+Exemplo:
+
+    sudo chage -M 90 laerte
+
+A senha deverá ser alterada após **90 dias**.
+
+Definir aviso de 7 dias:
+
+    sudo chage -W 7 laerte
+
+O usuário será avisado durante os últimos 7 dias antes da expiração.
+
+---
+
+### 6. Definir período mínimo
+
+    sudo chage -m 1 laerte
+
+O usuário deverá esperar **1 dia** antes de poder alterar novamente a senha.
+
+---
+
+### 7. Expirar a senha imediatamente
+
+Uma técnica comum:
+
+    sudo chage -d 0 laerte
+
+Isso força o usuário a alterar a senha no próximo login.
+
+---
+
+### 8. Expiração da conta
+
+Podemos definir uma data para expiração da conta:
+
+    sudo chage -E 2026-12-31 laerte
+
+**`-E` — Expire Date — Data de Expiração**
+
+---
+
+### 9. Ver todas as configurações
+
+    sudo chage -l laerte
 
 Exemplo de informações:
 
@@ -101,147 +130,53 @@ Exemplo de informações:
     Maximum number of days
     Number of days of warning
 
----
+Tradução:
 
-## 7. Definir validade máxima da senha
-
-`-M` — maximum days (dias máximos)
-
-    sudo chage -M 90 usuario
-
-A senha deverá ser alterada após 90 dias, conforme a política configurada.
-
----
-
-## 8. Definir período mínimo
-
-`-m` — minimum days (dias mínimos)
-
-    sudo chage -m 1 usuario
-
-O usuário deverá esperar pelo menos 1 dia antes de alterar novamente a senha.
-
----
-
-## 9. Definir aviso de expiração
-
-`-W` — warning (aviso)
-
-    sudo chage -W 7 usuario
-
-O usuário receberá aviso durante os últimos 7 dias antes da expiração da senha.
-
----
-
-## 10. Definir inatividade
-
-`-I` — inactive (inatividade)
-
-    sudo chage -I 30 usuario
-
-Define quantos dias após a expiração da senha a conta poderá permanecer inativa antes de ser desabilitada.
-
----
-
-## 11. Definir data de expiração da conta
-
-`-E` — expire (expirar)
-
-    sudo chage -E 2026-12-31 usuario
-
-Define uma data de expiração para a **conta**.
-
-⚠️ Não confunda:
-
-    Expiração da senha → quando a senha precisa ser alterada.
-
-    Expiração da conta → quando a conta deixa de ser utilizável conforme a política.
-
----
-
-## 12. Forçar troca no próximo login
-
-Também podemos usar:
-
-    sudo chage -d 0 usuario
-
-`-d` — last day (último dia da alteração da senha)
-
-Definir `0` como último dia de alteração faz a senha ser considerada expirada, normalmente forçando a troca no próximo login.
-
----
-
-# 13. passwd × chage
-
-| Comando | Função principal |
+| English | Português |
 |---|---|
-| `passwd` | Gerenciar senha |
-| `chage` | Gerenciar validade/idade da senha |
-
-### `passwd`
-
-    passwd
-    sudo passwd usuario
-    sudo passwd -l usuario
-    sudo passwd -u usuario
-    sudo passwd -e usuario
-
-### `chage`
-
-    sudo chage -l usuario
-    sudo chage -M 90 usuario
-    sudo chage -m 1 usuario
-    sudo chage -W 7 usuario
-    sudo chage -I 30 usuario
-    sudo chage -E 2026-12-31 usuario
+| Last password change | Última alteração da senha |
+| Password expires | Senha expira |
+| Password inactive | Senha inativa |
+| Account expires | Conta expira |
+| Minimum number of days | Número mínimo de dias |
+| Maximum number of days | Número máximo de dias |
+| Number of days of warning | Número de dias de aviso |
 
 ---
 
-# 14. Relação com `/etc/shadow`
+### 10. passwd × chage
 
-As informações controladas pelo `chage` estão relacionadas aos campos de validade presentes em:
+**passwd** trabalha principalmente com a **senha**.
 
-    /etc/shadow
+    sudo passwd laerte
 
-Por isso, `chage` é preferível a editar `/etc/shadow` manualmente.
+**chage** trabalha principalmente com a **validade da senha e da conta**.
+
+    sudo chage -l laerte
+
+Pense assim:
+
+    passwd → senha
+    chage  → validade/expiração
 
 ---
 
-# 15. LPIC-1 — O que lembrar
+## Resumo LPIC-1
 
-### passwd
+- `passwd` → **Password — Senha**.
+- `passwd` → alterar senha.
+- `passwd -S` → mostrar status da senha.
+- `passwd -l` → bloquear senha.
+- `passwd -u` → desbloquear senha.
+- `passwd -e` → forçar expiração da senha.
+- `chage` → **Change Age — Alterar validade da senha**.
+- `chage -l` → listar informações de validade.
+- `chage -m` → mínimo de dias.
+- `chage -M` → máximo de dias.
+- `chage -W` → dias de aviso.
+- `chage -I` → dias de inatividade.
+- `chage -E` → data de expiração da conta.
+- `chage -d 0` → força alteração da senha no próximo login.
+- `/etc/shadow` → armazena informações protegidas relacionadas às senhas e sua validade.
 
-- `passwd` → altera senha.
-- `-l` → lock (bloquear).
-- `-u` → unlock (desbloquear).
-- `-e` → expire (expirar).
-- `-d` → delete (excluir senha).
-
-### chage
-
-- `-l` → list (listar).
-- `-m` → minimum (mínimo).
-- `-M` → maximum (máximo).
-- `-W` → warning (aviso).
-- `-I` → inactive (inatividade).
-- `-E` → expire (expiração da conta).
-- `-d` → last day (último dia da senha).
-
-### Resumo
-
-    passwd
-
-    sudo passwd usuario
-
-    sudo passwd -l usuario
-    sudo passwd -u usuario
-    sudo passwd -e usuario
-
-    sudo chage -l usuario
-    sudo chage -M 90 usuario
-    sudo chage -m 1 usuario
-    sudo chage -W 7 usuario
-    sudo chage -I 30 usuario
-    sudo chage -E 2026-12-31 usuario
-
-> **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**
+**Conhecimento só tem valor quando é compartilhado - Laerte Costa**

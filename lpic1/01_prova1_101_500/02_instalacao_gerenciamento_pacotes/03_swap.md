@@ -1,143 +1,192 @@
-Swap
+# Instalação e Gerenciamento de Pacotes
 
-Swap — Área de Troca
+## 03 — Swap
 
-Swap (Área de Troca) é um espaço no disco que o Linux pode usar quando precisa de memória além da RAM disponível.
+### Swap — Área de Troca
 
-RAM
- ↓
-Fica cheia
- ↓
-Linux pode usar
- ↓
-Swap
+**Swap — Área de Troca** é um espaço em disco usado pelo Linux como extensão da memória RAM.
 
-A swap é mais lenta que a RAM, porque está no armazenamento.
+Quando a RAM está sob pressão, o kernel pode mover algumas páginas de memória para a **Swap**, liberando RAM para outras tarefas.
 
----
+    RAM
+     ↓
+    memória principal
 
-Para que serve?
+    Swap
+     ↓
+    espaço em disco usado como apoio à memória
 
-A swap pode ajudar quando:
-
-- A RAM está muito ocupada.
-- O sistema precisa liberar espaço na RAM.
-- O computador entra em hibernação — dependendo da configuração.
-
-Swap não substitui a RAM. Ela funciona como um espaço auxiliar.
+**Importante:** Swap é muito mais lenta que a RAM.
 
 ---
 
-Swap pode ser:
+## Swap Partition — Partição Swap
 
-Swap Partition — Partição Swap
-
-Uma partição inteira é usada como swap.
-
-/dev/sda3 → swap
-
-Swap File — Arquivo Swap
-
-Um arquivo dentro de um sistema de arquivos é usado como swap.
-
-/swapfile
-
----
-
-Verificar a Swap
-
-"free" — Free (Livre)
-
-Mostra informações sobre o uso da memória.
-
-free -h
-
-"-h" — Human-readable (Legível por humanos)
-
-Mostra os valores usando unidades mais fáceis de ler, como:
-
-MiB
-GiB
-
----
-
-"swapon" — Swap On (Ativar Swap)
-
-Mostra as áreas de swap ativas:
-
-swapon --show
-
-"--show" — Show (Mostrar)
-
-Exibe as áreas de swap ativas.
-
----
-
-"swapoff" — Swap Off (Desativar Swap)
-
-Desativa uma área de swap.
-
-sudo swapoff /dev/sda3
-
----
-
-Criar Swap File
-
-Um arquivo também pode ser usado como swap.
+É uma partição dedicada exclusivamente à Swap.
 
 Exemplo:
 
-sudo fallocate -l 2G /swapfile
+    /dev/sda3
 
-"-l" — Length (Tamanho)
+Para preparar a partição:
 
-Define o tamanho do arquivo.
+    sudo mkswap /dev/sda3
 
-Nesse exemplo:
+- `mkswap` — Make Swap — preparar área Swap
 
-2G → 2 GB
+Ativar:
 
-Depois:
+    sudo swapon /dev/sda3
 
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
+- `swapon` — ativar Swap
 
-"600" — Permissões
+Desativar:
 
-Somente o proprietário pode ler e escrever no arquivo.
+    sudo swapoff /dev/sda3
 
----
-
-LPIC-1 — O que saber
-
-- Swap é uma área de armazenamento usada como memória auxiliar.
-- Swap é mais lenta que RAM.
-- Pode ser uma partição ou um arquivo.
-- "free -h" mostra memória de forma legível.
-- "swapon" mostra/ativa swap.
-- "swapoff" desativa swap.
-- "mkswap" prepara uma área para ser usada como swap.
-- Um swap file deve ter permissões restritas.
+- `swapoff` — desativar Swap
 
 ---
 
-Resumo
+## Swap File — Arquivo Swap
 
-RAM → rápida
- ↓
-Quando necessário
- ↓
-Swap → mais lenta
+Também é possível usar um arquivo em vez de uma partição.
 
-Swap
-├── Partição
-└── Arquivo
+Exemplo:
 
-free -h       → memória
-swapon        → swap
-swapoff       → desativar
-mkswap        → preparar swap
+    sudo fallocate -l 2G /swapfile
 
--h → Human-readable
--l → Length
+- `fallocate` — File Allocation — alocar espaço
+- `-l` — length — tamanho
+- `2G` — 2 gigabytes
+
+Definir permissões:
+
+    sudo chmod 600 /swapfile
+
+- `chmod` — Change Mode — alterar permissões
+- `600` — somente o proprietário pode ler e escrever
+
+Preparar:
+
+    sudo mkswap /swapfile
+
+Ativar:
+
+    sudo swapon /swapfile
+
+---
+
+## Verificar a Swap
+
+### free — Livre
+
+    free -h
+
+- `-h` — human-readable — formato legível para humanos
+
+Exemplo:
+
+    Swap:
+    2Gi    0B    2Gi
+
+Mostra:
+
+- **total** — quantidade total de Swap;
+- **used** — quantidade utilizada;
+- **free** — quantidade livre.
+
+---
+
+### swapon — Ativar/Consultar Swap
+
+    swapon --show
+
+- `--show` — mostrar informações da Swap
+
+Também podemos usar:
+
+    cat /proc/swaps
+
+- `/proc` — Process Information — informações de processos/sistema
+- `/proc/swaps` — informações sobre as áreas Swap ativas
+
+---
+
+## Swappiness — Tendência de Uso da Swap
+
+**Swappiness — Tendência de Uso da Swap** é um parâmetro do kernel que influencia a preferência do Linux em utilizar Swap.
+
+Ver o valor atual:
+
+    cat /proc/sys/vm/swappiness
+
+Exemplo:
+
+    60
+
+Alterar temporariamente:
+
+    sudo sysctl vm.swappiness=10
+
+- `sysctl` — System Control — controle de parâmetros do kernel
+- `vm` — Virtual Memory — memória virtual
+
+A alteração feita dessa forma normalmente não permanece após a reinicialização.
+
+---
+
+## Swap no /etc/fstab
+
+Para ativar a Swap automaticamente durante o boot, ela pode ser configurada no:
+
+    /etc/fstab
+
+- `/etc` — etcetera — arquivos de configuração do sistema
+- `fstab` — File Systems Table — tabela de sistemas de arquivos
+
+Exemplo de uma entrada:
+
+    /swapfile none swap defaults 0 0
+
+Para uma partição:
+
+    /dev/sda3 none swap defaults 0 0
+
+Depois, é possível ativar as entradas configuradas com:
+
+    sudo swapon -a
+
+- `-a` — all — todos
+
+---
+
+## Swap × RAM
+
+| RAM | Swap |
+|---|---|
+| Memória física | Espaço em disco |
+| Muito mais rápida | Muito mais lenta |
+| Uso principal | Apoio à memória |
+| Volátil | Persistente enquanto configurada no disco |
+
+Swap **não substitui** uma quantidade adequada de RAM.
+
+---
+
+## Resumo LPIC-1
+
+- **Swap — Área de Troca** = espaço em disco usado como apoio à memória.
+- **Swap Partition — Partição Swap** = partição dedicada à Swap.
+- **Swap File — Arquivo Swap** = arquivo usado como Swap.
+- `mkswap` = preparar Swap.
+- `swapon` = ativar Swap.
+- `swapoff` = desativar Swap.
+- `free -h` = verificar memória e Swap.
+- `swapon --show` = mostrar Swap ativa.
+- `/proc/swaps` = informações sobre Swap ativa.
+- `swappiness` = influencia a tendência de uso da Swap.
+- `/etc/fstab` = pode configurar a ativação automática da Swap.
+- **RAM é muito mais rápida que Swap.**
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

@@ -1,558 +1,198 @@
 # 10 — Shell e Scripts Básicos
+
 ## 01 — Bash
 
-### O que é Bash?
+**Bash — Bourne Again Shell — Shell Bourne Novamente**
 
-**Bash — Bourne Again SHell (Shell Bourne Novamente)**
+O **Bash** é um dos principais Shells usados no Linux.
 
-O Bash é um **shell**, ou seja, um programa que permite ao usuário interagir com o Linux por meio de comandos.
+Ele interpreta comandos digitados pelo usuário e também pode executar **scripts**.
+
+### 1. O que é Shell?
+
+**Shell — Interpretador de Comandos**
+
+É o programa que recebe comandos e solicita sua execução ao sistema.
+
+Fluxo simplificado:
+
+    Usuário → Bash → Kernel → Hardware
 
 Exemplo:
 
-    ls
-    cd /home
-    mkdir projetos
+    $ ls
 
-O Bash recebe o comando, interpreta e solicita ao sistema que o execute.
+O Bash interpreta `ls` e executa o programa.
 
 ---
 
-# 1. Shell x Terminal
-
-Esses conceitos são diferentes.
-
-### Terminal
-
-**Terminal — Terminal**
-
-É o programa/interface onde você digita comandos.
-
-Exemplos:
-
-    GNOME Terminal
-    Konsole
-    xterm
-
-### Shell
-
-**Shell — Interpretador de comandos**
-
-É o programa que interpreta os comandos.
-
-Exemplos:
-
-    bash
-    sh
-    zsh
-    fish
-
-Uma forma simples de lembrar:
-
-    Terminal → onde você digita
-    Shell    → quem interpreta
-
----
-
-# 2. Ver o Shell atual
-
-Use:
+### 2. Verificar o Shell
 
     echo $SHELL
 
-**echo** → exibir
+Exemplo:
 
-**$SHELL** → variável que normalmente indica o shell de login configurado para o usuário.
+    /bin/bash
 
-Para descobrir o processo do shell atualmente em execução:
+Também é possível verificar o processo atual:
 
-    ps -p $$ -o comm=
+    echo $$
 
-Aqui:
-
-**$$** → PID do shell atual.
+- `$$` — Process ID — ID do Processo atual do Shell.
 
 ---
 
-# 3. Iniciar o Bash
+### 3. Iniciar e sair do Bash
 
-Digite:
+Iniciar uma nova sessão:
 
     bash
 
-Isso inicia uma nova sessão do Bash dentro do shell atual.
-
-Para sair:
+Sair da sessão atual:
 
     exit
 
 ---
 
-# 4. Bash como Shell de Login
+### 4. Bash interativo
 
-O Bash pode ser configurado como shell de login de um usuário.
+**Interactive Shell — Shell Interativo**
 
-Essa informação aparece em:
+É quando o usuário executa comandos diretamente no terminal:
 
-    /etc/passwd
+    pwd
+    ls
+    cd /tmp
+    echo "Olá"
 
-Exemplo:
-
-    laerte:x:1000:1000:Laerte:/home/laerte:/bin/bash
-
-O último campo indica o shell de login:
-
-    /bin/bash
+O Bash interpreta cada comando e mostra o resultado.
 
 ---
 
-# 5. Comandos internos e externos
+### 5. Bash Script
 
-O Bash possui comandos que são **builtins**.
+**Bash Script — Script Bash**
 
-**Builtin — Comando interno**
+É um arquivo contendo comandos que serão executados pelo Bash.
 
-São comandos executados pelo próprio Bash.
+Exemplo:
+
+    #!/bin/bash
+
+    echo "Olá"
+    pwd
+    ls
+
+A primeira linha é:
+
+**Shebang — Linha do Interpretador**
+
+    #!/bin/bash
+
+Ela indica que o script deve ser interpretado pelo Bash.
+
+---
+
+### 6. Executar um script
+
+Podemos executar diretamente pelo Bash:
+
+    bash script.sh
+
+Ou tornar o arquivo executável:
+
+    chmod +x script.sh
+    ./script.sh
+
+- `chmod` — Change Mode — Alterar Permissões.
+- `+x` — Add Execute — Adicionar Execução.
+- `./` — Current Directory — Diretório Atual.
+
+---
+
+### 7. Comandos internos e externos
+
+**Builtin — Comando Interno**
+
+Faz parte do próprio Bash.
 
 Exemplos:
 
     cd
-    echo
     export
     alias
     history
-    pwd
-    read
 
-Existem também programas externos.
+**External Command — Comando Externo**
+
+É um programa separado executado pelo Bash.
 
 Exemplos:
 
     ls
-    cat
     grep
-    mkdir
-    cp
-    mv
+    cat
+    awk
 
----
-
-# 6. Descobrir onde está um comando
-
-### type
+Para verificar:
 
     type cd
-
-Resultado semelhante a:
-
-    cd is a shell builtin
-
-Para um comando externo:
-
     type ls
 
-Pode mostrar:
+Exemplo:
 
-    ls is aliased to ...
-    
-ou:
-
+    cd is a shell builtin
     ls is /usr/bin/ls
 
 ---
 
-### command -v
+### 8. Arquivos importantes
 
-**command -v — verificar localização/tipo do comando**
+**`~/.bashrc` — Bash Run Commands — Configurações do Bash**
 
-    command -v ls
-
-Exemplo:
-
-    /usr/bin/ls
-
----
-
-# 7. PATH
-
-**PATH — Caminho de pesquisa**
-
-É uma variável que informa ao shell onde procurar programas executáveis.
-
-Ver:
-
-    echo $PATH
+Normalmente contém configurações da sessão interativa.
 
 Exemplo:
 
-    /usr/local/bin:/usr/bin:/bin
+    alias ll='ls -la'
 
-Os diretórios são separados por:
+Aplicar as alterações:
 
-    :
+    source ~/.bashrc
 
-Quando você executa:
+**`~/.bash_profile` — Bash Profile — Perfil do Bash**
 
-    ls
-
-o Bash procura o programa nos diretórios definidos pelo `PATH`.
+Pode conter configurações executadas durante o login, dependendo da configuração do sistema.
 
 ---
 
-# 8. Executar um programa pelo caminho
+### 9. Comandos essenciais
 
-Podemos informar o caminho completo:
-
-    /usr/bin/ls
-
-Ou, no diretório atual:
-
-    ./script.sh
-
-**./** → diretório atual.
-
-⚠️ Por segurança, o diretório atual normalmente não faz parte do `PATH`.
-
----
-
-# 9. Variáveis no Bash
-
-Criar uma variável:
-
-    nome="Laerte"
-
-⚠️ Não coloque espaços ao redor do `=`.
-
-Correto:
-
-    nome="Laerte"
-
-Incorreto:
-
-    nome = "Laerte"
-
-Ler a variável:
-
-    echo "$nome"
+| Comando | English | Português |
+|---|---|---|
+| `bash` | Bourne Again Shell | Iniciar Bash |
+| `echo` | Display Text | Exibir Texto |
+| `type` | Identify Command | Identificar Comando |
+| `source` | Read and Execute | Ler e Executar |
+| `export` | Export Variable | Exportar Variável |
+| `alias` | Create Alias | Criar Apelido |
+| `history` | Command History | Histórico de Comandos |
+| `exit` | Exit Shell | Sair do Shell |
 
 ---
 
-# 10. Variáveis de ambiente
-
-Uma variável pode ser exportada para os processos filhos:
-
-    export nome="Laerte"
-
-Ver:
-
-    echo "$nome"
-
-Ou:
-
-    printenv nome
-
-**printenv** → exibir variáveis de ambiente.
-
----
-
-# 11. Variáveis especiais
-
-O Bash possui variáveis especiais.
-
-| Variável | Significado |
-|---|---|
-| `$0` | Nome do script/comando |
-| `$1` | Primeiro argumento |
-| `$2` | Segundo argumento |
-| `$#` | Quantidade de argumentos |
-| `$@` | Todos os argumentos |
-| `$?` | Status do último comando |
-| `$$` | PID do shell atual |
-| `$!` | PID do último processo em background |
-
-Essas variáveis são muito importantes em scripts.
-
----
-
-# 12. Status de saída
-
-Todo comando normalmente termina com um **exit status**.
-
-Ver o status do último comando:
-
-    echo $?
-
-Normalmente:
-
-    0 → sucesso
-    diferente de 0 → erro ou condição diferente de sucesso
-
-Exemplo:
-
-    ls /etc
-
-    echo $?
-
-Se o comando funcionar, normalmente será:
-
-    0
-
----
-
-# 13. Histórico
-
-O Bash mantém um histórico dos comandos executados.
-
-Ver:
-
-    history
-
-Executar novamente um comando pelo número:
-
-    !123
-
-Executar o comando anterior:
-
-    !!
-
-Também podemos usar:
-
-    ↑
-
-para navegar pelos comandos anteriores.
-
----
-
-# 14. Alias
-
-**Alias — Apelido**
-
-Permite criar um nome alternativo para um comando.
-
-Exemplo:
-
-    alias ll='ls -l'
-
-Agora:
-
-    ll
-
-executa:
-
-    ls -l
-
-Ver aliases:
-
-    alias
-
-Remover:
-
-    unalias ll
-
----
-
-# 15. Redirecionamento
-
-O Bash permite redirecionar entrada e saída.
-
-### Saída
-
-    ls > arquivos.txt
-
-**>** → redirecionar saída e substituir o arquivo.
-
-### Acrescentar
-
-    ls >> arquivos.txt
-
-**>>** → acrescentar ao final.
-
-### Erros
-
-    comando 2> erro.txt
-
-**2>** → redirecionar stderr (saída de erro).
-
-### Saída + erro
-
-Uma forma comum:
-
-    comando > saida.txt 2>&1
-
-→ saída normal e erros vão para o mesmo arquivo.
-
----
-
-# 16. Pipe
-
-**Pipe — Tubo**
-
-O símbolo:
-
-    |
-
-envia a saída de um comando para a entrada de outro.
-
-Exemplo:
-
-    ls /etc | grep ssh
-
-Interpretação:
-
-    ls /etc
-       ↓
-    saída
-       ↓
-    grep ssh
-
-O resultado será filtrado pelo `grep`.
-
----
-
-# 17. Quoting — Aspas
-
-As aspas são muito importantes no Bash.
-
-### Aspas simples
-
-    'texto'
-
-Preservam o conteúdo literalmente.
-
-Exemplo:
-
-    echo '$HOME'
-
-Resultado:
-
-    $HOME
-
----
-
-### Aspas duplas
-
-    "texto"
-
-Permitem expansão de variáveis.
-
-Exemplo:
-
-    echo "$HOME"
-
-Resultado semelhante a:
-
-    /home/laerte
-
----
-
-### Escape
-
-A barra invertida:
-
-    \
-
-pode impedir a interpretação de um caractere especial.
-
-Exemplo:
-
-    echo "\$HOME"
-
-Resultado:
-
-    $HOME
-
----
-
-# 18. Comandos úteis do Bash
-
-| Comando | Função |
-|---|---|
-| `pwd` | Mostrar diretório atual |
-| `cd` | Mudar diretório |
-| `echo` | Exibir texto/variáveis |
-| `type` | Identificar tipo/localização do comando |
-| `command -v` | Localizar/verificar comando |
-| `history` | Mostrar histórico |
-| `alias` | Mostrar/criar aliases |
-| `export` | Exportar variável |
-| `read` | Ler entrada |
-| `exit` | Encerrar shell/script |
-
----
-
-# 🎯 LPIC-1 — O que memorizar
-
-### Bash
-
-**Bash — Bourne Again SHell**
-
-→ Shell muito utilizado no Linux.
-
-### Conceitos fundamentais
-
-    Shell
-    ↓
-    interpreta comandos
-
-    PATH
-    ↓
-    procura executáveis
-
-    $?
-    ↓
-    status do último comando
-
-    $$
-    ↓
-    PID do shell atual
-
-    $1, $2...
-    ↓
-    argumentos
-
-    $#
-    ↓
-    quantidade de argumentos
-
-    $@
-    ↓
-    argumentos recebidos
-
-    |
-    ↓
-    pipe
-
-    >
-    ↓
-    sobrescrever saída
-
-    >>
-    ↓
-    acrescentar saída
-
-    2>
-    ↓
-    redirecionar erros
-
----
-
-## 🧠 Pegadinhas LPIC-1
-
-**`$SHELL`** geralmente indica o shell de login configurado, não necessariamente o shell atualmente em execução.
-
-**`$?`** deve ser consultado logo após o comando que você deseja verificar.
-
-**`>`** substitui o conteúdo do arquivo.
-
-**`>>`** acrescenta ao arquivo.
-
-**`$0`** não é o primeiro argumento; normalmente representa o nome do script ou comando.
-
-**`$1`** é o primeiro argumento.
-
-**`$#`** é a quantidade de argumentos.
-
-**`$@`** representa os argumentos posicionais.
-
----
+## Resumo LPIC-1
+
+- **Bash** é um Shell utilizado para interpretar comandos.
+- Também executa **Bash Scripts**.
+- `echo $SHELL` mostra o Shell definido.
+- `$$` representa o PID do Shell atual.
+- `bash` inicia uma nova sessão.
+- `exit` encerra a sessão.
+- `type` identifica comandos internos e externos.
+- `#!/bin/bash` define o Bash como interpretador.
+- `chmod +x` adiciona permissão de execução.
+- `./script.sh` executa um script diretamente.
+- `~/.bashrc` contém configurações comuns do Bash.
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

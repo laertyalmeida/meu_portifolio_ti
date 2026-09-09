@@ -1,214 +1,306 @@
-History and Aliases — Histórico e Aliases
+# Comandos GNU/UNIX
 
-History — Histórico
+## 15 — Histórico e Aliases
 
-O shell guarda os comandos que você executou.
+**History — Histórico**
 
-Para visualizar:
+O histórico guarda comandos executados anteriormente no Shell.
 
-history
+**Alias — Apelido**
 
-Resultado parecido com:
-
-100  ls
-101  cd /home
-102  pwd
-103  grep Linux arquivo.txt
-
-O número identifica cada comando.
+Um alias cria um nome curto para um comando ou conjunto de opções.
 
 ---
 
-"!!" — Last Command (Último Comando)
+## 1. `history` — History — Histórico
 
-Executa novamente o último comando.
+Mostrar os comandos anteriores:
 
-!!
-
-Se o último comando foi:
-
-ls
-
-então:
-
-!!
-
-executa "ls" novamente.
-
----
-
-"!n" — Command Number (Número do Comando)
-
-Executa um comando específico pelo número.
-
-!102
-
-→ executa o comando número "102".
-
----
-
-"Ctrl + R" — Reverse Search (Pesquisa Reversa)
-
-Pressione:
-
-Ctrl + R
-
-e digite parte de um comando anterior.
+    history
 
 Exemplo:
 
-Ctrl + R
-grep
+    101  pwd
+    102  ls -la
+    103  cd /etc
+    104  grep root passwd
 
-O shell procura comandos anteriores que contenham "grep".
-
-É muito útil quando você não lembra exatamente o comando.
+O número identifica a posição do comando no histórico.
 
 ---
 
-Alias — Atalho de Comando
+## 2. Executar um comando pelo número
 
-Um Alias (Atalho) cria um nome mais curto para um comando.
+Use `!` seguido do número:
+
+    !102
+
+Isso executa novamente:
+
+    ls -la
+
+---
+
+## 3. `!!` — Último comando
+
+Executa novamente o último comando:
+
+    !!
 
 Exemplo:
 
-alias ll='ls -l'
+    apt update
+
+Se for necessário repetir:
+
+    !!
+
+O Shell executará novamente `apt update`.
+
+---
+
+## 4. `!texto` — Comando que começa com texto
+
+Executa o comando mais recente que começa com determinado texto:
+
+    !ls
+
+Se o último comando iniciado por `ls` foi:
+
+    ls -la /etc
+
+`!ls` executará esse comando novamente.
+
+---
+
+## 5. `!$` — Último argumento
+
+`!$` representa o último argumento do comando anterior.
+
+Exemplo:
+
+    cat arquivo.txt
+
+Depois:
+
+    nano !$
+
+O Shell interpreta como:
+
+    nano arquivo.txt
+
+---
+
+## 6. Teclas úteis
+
+| Tecla | English | Português |
+|---|---|---|
+| `↑` | Up Arrow | Comando anterior |
+| `↓` | Down Arrow | Próximo comando |
+| `Ctrl+R` | Reverse Search | Busca reversa |
+| `Ctrl+C` | Interrupt | Interromper comando |
+| `Ctrl+L` | Clear Screen | Limpar tela |
+
+### `Ctrl+R`
+
+Permite procurar comandos anteriores:
+
+    (reverse-i-search)`grep':
+
+O Shell procura comandos que contenham `grep`.
+
+Pressione `Ctrl+R` novamente para procurar ocorrências anteriores.
+
+---
+
+## 7. `history -c` — Clear — Limpar
+
+Limpa o histórico da sessão atual:
+
+    history -c
+
+> O comportamento do arquivo de histórico pode depender da configuração do Shell.
+
+---
+
+## 8. Arquivo do histórico do Bash
+
+No Bash, o histórico normalmente é armazenado em:
+
+    ~/.bash_history
+
+`~` — Home Directory — Diretório Pessoal.
+
+Visualizar:
+
+    cat ~/.bash_history
+
+ou:
+
+    less ~/.bash_history
+
+---
+
+# Aliases
+
+## 9. `alias` — Alias — Apelido
+
+Um alias cria um nome alternativo para um comando.
+
+Exemplo:
+
+    alias ll='ls -la'
 
 Agora:
 
-ll
+    ll
 
-é equivalente a:
+equivale a:
 
-ls -l
-
----
-
-"alias" — Mostrar Aliases
-
-Para ver os aliases existentes:
-
-alias
-
-Para consultar um específico:
-
-alias ll
+    ls -la
 
 ---
 
-"unalias" — Remover Alias
+## 10. Ver aliases
 
-Para remover um alias:
+Mostrar todos:
 
-unalias ll
+    alias
 
-"unalias"
+Ver um específico:
 
-un → remover
-alias → atalho
-
----
-
-Alias Temporário
-
-Se você executar:
-
-alias ll='ls -l'
-
-o alias normalmente existe somente naquela sessão do shell.
-
-Ao fechar o terminal, ele pode desaparecer.
-
----
-
-Alias Permanente
-
-Para manter o alias no Bash, normalmente colocamos a configuração em:
-
-~/.bashrc
+    alias ll
 
 Exemplo:
 
-alias ll='ls -l'
-
-Depois podemos carregar novamente:
-
-source ~/.bashrc
-
-"source" — Carregar (Executar no Shell Atual)
-
-O "source" faz o shell ler novamente o arquivo.
+    alias ll='ls -la'
 
 ---
 
-🧠 Para a LPIC-1
+## 11. Criar aliases úteis
 
-Memorize:
+    alias ll='ls -lh'
+    alias la='ls -la'
+    alias cls='clear'
 
-history
-→ mostrar histórico
+Agora:
 
-!!
-→ repetir último comando
+    ll
 
-!n
-→ executar comando pelo número
+executa:
 
-Ctrl + R
-→ procurar no histórico
-
-alias
-→ criar/mostrar atalhos
-
-unalias
-→ remover atalho
-
-~/.bashrc
-→ configurações do Bash do usuário
-
-source
-→ carregar novamente a configuração
+    ls -lh
 
 ---
 
-Exemplo completo
+## 12. Alias com segurança
 
-Criar um alias:
+Um alias comum:
 
-alias ll='ls -l'
+    alias rm='rm -i'
 
-Usar:
+`-i` — interactive — interativo.
 
-ll
+Antes de remover um arquivo, o Shell pergunta:
 
-Remover:
+    rm: remove regular file 'arquivo.txt'?
 
-unalias ll
-
-Tornar permanente:
-
-echo "alias ll='ls -l'" >> ~/.bashrc
-
-Carregar:
-
-source ~/.bashrc
+Isso ajuda a evitar exclusões acidentais.
 
 ---
 
-Regra simples
+## 13. Remover um alias
 
-history
-↓
-lembrar comandos
+Use:
 
-alias
-↓
-criar atalhos
+    unalias ll
 
-unalias
-↓
-remover atalhos
+Verificar:
 
-.bashrc
-↓
-guardar configurações do Bash
+    alias ll
+
+Se não existir, o alias foi removido.
+
+---
+
+## 14. Alias temporário × permanente
+
+Criado diretamente no terminal:
+
+    alias ll='ls -la'
+
+Normalmente vale apenas para aquela sessão do Shell.
+
+Para carregar automaticamente no Bash, coloque o alias em:
+
+    ~/.bashrc
+
+Exemplo:
+
+    alias ll='ls -la'
+    alias la='ls -la'
+    alias rm='rm -i'
+
+Depois recarregue:
+
+    source ~/.bashrc
+
+---
+
+## 15. Ignorar um alias
+
+Se existir:
+
+    alias rm='rm -i'
+
+Podemos executar o comando original usando:
+
+    \rm arquivo.txt
+
+A barra invertida `\` impede a expansão do alias naquele comando.
+
+Também podemos usar:
+
+    command rm arquivo.txt
+
+`command` solicita ao Shell que execute o comando sem utilizar um alias com esse nome.
+
+---
+
+## 16. Histórico + Aliases
+
+Exemplo:
+
+    alias ll='ls -la'
+
+Executando:
+
+    ll
+
+O Bash registra o comando digitado no histórico conforme sua configuração.
+
+Podemos verificar com:
+
+    history
+
+---
+
+## Resumo LPIC-1
+
+- `history` → mostra o histórico de comandos.
+- `!n` → executa o comando de número `n`.
+- `!!` → executa novamente o último comando.
+- `!texto` → executa o último comando iniciado com `texto`.
+- `!$` → representa o último argumento do comando anterior.
+- `Ctrl+R` → pesquisa comandos anteriores.
+- `~/.bash_history` → arquivo comum de histórico do Bash.
+- `history -c` → limpa o histórico da sessão.
+- `alias` → mostra ou cria apelidos para comandos.
+- `alias ll='ls -la'` → cria o alias `ll`.
+- `unalias ll` → remove o alias.
+- `~/.bashrc` → arquivo comum para aliases permanentes no Bash.
+- `source ~/.bashrc` → recarrega o arquivo.
+- `\comando` → evita a expansão de um alias naquele comando.
+- `command comando` → executa o comando sem usar um alias com esse nome.
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

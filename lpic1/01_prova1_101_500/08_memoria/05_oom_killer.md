@@ -1,209 +1,196 @@
-# 08 — Memória
+# Memória
+
 ## 05 — OOM Killer
 
-### OOM Killer — Out Of Memory Killer (Finalizador por Falta de Memória)
+### 1. O que é OOM Killer
 
-O **OOM Killer** é um mecanismo do kernel Linux usado quando o sistema enfrenta uma situação grave de **falta de memória**.
+**OOM — Out Of Memory — Sem Memória**
 
-**OOM** significa:
+O **OOM Killer** é um mecanismo do **kernel Linux** usado quando o sistema fica sem memória suficiente para continuar funcionando normalmente.
 
-    Out Of Memory
-    → Sem Memória Disponível
-
-Quando a memória disponível fica extremamente baixa e o sistema não consegue atender novas solicitações, o kernel pode escolher um ou mais processos para encerrar e liberar memória.
-
----
-
-### Por que o OOM Killer existe?
-
-Imagine:
+Quando a memória disponível se esgota e o kernel não consegue atender novas solicitações, ele pode escolher um processo e encerrá-lo para liberar memória.
 
     RAM + Swap
-         ↓
-    Memória muito pressionada
-         ↓
-    Sistema não consegue atender
-    novas solicitações de memória
-         ↓
+          ↓
+    Memória insuficiente
+          ↓
+    Kernel
+          ↓
     OOM Killer
-         ↓
-    Processo(s) encerrado(s)
-         ↓
+          ↓
+    Processo escolhido é encerrado
+          ↓
     Memória liberada
 
-O objetivo é tentar manter o sistema funcionando.
+---
+
+### 2. Por que ele existe?
+
+Sem o OOM Killer, uma situação extrema de falta de memória poderia deixar o sistema gravemente comprometido.
+
+O objetivo é:
+
+> **Liberar memória para permitir que o sistema continue funcionando.**
+
+O processo encerrado pode ser um dos maiores consumidores de memória, mas a escolha é feita pelo kernel com base em vários fatores.
 
 ---
 
-### OOM não significa simplesmente "RAM cheia"
-
-O kernel considera diversos fatores ao avaliar a pressão de memória.
-
-Por isso:
-
-    RAM cheia ≠ necessariamente OOM
-
-Linux utiliza RAM livre para cache e buffers. Uma grande quantidade de memória marcada como `used` não significa automaticamente que existe um problema.
-
-O problema ocorre quando o sistema **não consegue satisfazer as necessidades de memória** adequadamente.
-
----
-
-### Qual processo é escolhido?
-
-O kernel calcula uma pontuação chamada:
-
-    oom_score
-
-Quanto maior a pontuação, maior a tendência de o processo ser escolhido pelo OOM Killer.
-
-Consultar:
-
-    cat /proc/PID/oom_score
+### 3. Quando pode acontecer?
 
 Exemplo:
 
-    cat /proc/1250/oom_score
+    Programa A → 2 GB
+    Programa B → 4 GB
+    Programa C → 8 GB
 
-Resultado:
+Se a RAM estiver praticamente cheia e a Swap não conseguir resolver a situação, uma nova solicitação de memória pode provocar uma condição de **OOM**.
 
-    350
+O kernel pode então acionar o OOM Killer.
 
 ---
 
-### oom_score_adj — Ajuste da Pontuação
+### 4. O processo escolhido
+
+O kernel calcula uma pontuação relacionada à possibilidade de um processo ser terminado.
+
+Um conceito importante é:
+
+**OOM Score — Pontuação OOM**
+
+Pode ser consultado em:
+
+    /proc/PID/oom_score
+
+Exemplo:
+
+    cat /proc/1234/oom_score
+
+Quanto maior a pontuação, maior tende a ser a possibilidade de o processo ser escolhido.
+
+> A decisão real do kernel é mais complexa do que simplesmente escolher o processo que usa mais RAM.
+
+---
+
+### 5. Ajustando a prioridade OOM
 
 Existe também:
 
     /proc/PID/oom_score_adj
 
-Consultar:
+Exemplo:
 
-    cat /proc/1250/oom_score_adj
+    cat /proc/1234/oom_score_adj
 
-O valor permite ajustar a preferência do kernel para selecionar determinado processo em uma situação de OOM.
+O valor pode influenciar a preferência do kernel ao escolher processos durante uma situação de OOM.
 
-Faixa típica:
+Valores:
 
-    -1000 → proteção máxima contra OOM
-     0    → padrão
-    +1000 → maior preferência para ser finalizado
+    -1000 → proteção máxima contra OOM Killer
+     0    → valor padrão
+    1000  → maior preferência para ser escolhido
 
-⚠️ Alterar esse valor normalmente exige privilégios adequados.
+Exemplo:
 
----
+    sudo sh -c 'echo -500 > /proc/1234/oom_score_adj'
 
-### Identificando um OOM Killer
-
-Mensagens do OOM Killer podem aparecer nos logs do kernel.
-
-Use:
-
-    dmesg | grep -i "out of memory"
-
-ou:
-
-    dmesg | grep -i "killed process"
-
-- `grep` — search (pesquisar)
-- `-i` — ignore case (ignorar maiúsculas/minúsculas)
-- `|` — pipe (encaminhar a saída)
-
-Em sistemas que utilizam o `journalctl`:
-
-    journalctl -k | grep -i "out of memory"
-
-- `-k` — kernel (mostrar mensagens do kernel)
+> Alterar esse valor exige cuidado. Proteger muitos processos contra o OOM Killer pode deixar menos opções para o kernel liberar memória.
 
 ---
 
-### Exemplo de mensagem
+### 6. Como identificar um OOM Killer
 
-Uma mensagem de log pode indicar algo semelhante a:
+As mensagens do kernel podem ser consultadas com:
 
-    Out of memory: Killed process 1250 (programa)
-
-Isso significa que o kernel detectou uma condição de falta de memória e encerrou o processo indicado para tentar liberar recursos.
-
----
-
-### OOM Killer × kill
-
-Não confunda:
-
-    kill PID
-
-com:
-
-    OOM Killer
-
-**`kill`**
-→ usuário ou processo envia um sinal para outro processo.
-
-**OOM Killer**
-→ mecanismo do kernel usado em condições de falta grave de memória.
-
----
-
-### Como reduzir o risco de OOM?
-
-Algumas medidas:
-
-- adicionar mais RAM;
-- configurar Swap adequadamente;
-- identificar processos que consomem muita memória;
-- corrigir vazamentos de memória;
-- limitar recursos de serviços quando apropriado;
-- monitorar o uso de memória.
-
-Para observar rapidamente:
-
-    free -h
-
-Para acompanhar processos:
-
-    top
+    dmesg
 
 Ou:
 
-    htop
+    dmesg | grep -i 'out of memory\|killed process'
+
+`-i` — **Ignore Case — Ignorar Maiúsculas/Minúsculas**
+
+Também é comum consultar o journal:
+
+    journalctl -k
+
+`-k` — **Kernel — Mensagens do Kernel**
+
+Procurando mensagens relacionadas:
+
+    journalctl -k | grep -i 'oom\|out of memory\|killed process'
 
 ---
 
-### ⚠️ Atenção para a prova LPIC-1
+### 7. OOM Killer × Swap
 
-Memorize:
+A existência de Swap **não impede necessariamente** o OOM Killer.
 
-**OOM**
-→ Out Of Memory — falta de memória.
+O fluxo pode ser:
 
-**OOM Killer**
-→ mecanismo do kernel que pode encerrar processos para liberar memória em uma situação crítica.
+    RAM começa a ficar cheia
+            ↓
+    Kernel pode utilizar Swap
+            ↓
+    Memória continua insuficiente
+            ↓
+    Não é possível atender novas alocações
+            ↓
+    OOM Killer pode ser acionado
 
-**`oom_score`**
-→ pontuação usada para ajudar a determinar quais processos são candidatos ao OOM.
+Por isso, **ter Swap não significa que o sistema nunca terá OOM**.
 
-**`oom_score_adj`**
-→ permite ajustar a preferência de seleção.
+---
 
-**`/proc/PID/oom_score`**
-→ mostra a pontuação de um processo.
+### 8. OOM não significa "Swap cheia"
 
-**`dmesg` / `journalctl -k`**
-→ podem revelar mensagens relacionadas ao OOM Killer.
+OOM significa **falta de memória para atender às necessidades do sistema**.
 
-### Resumo
+A situação pode envolver:
 
-    Memória insuficiente
-           ↓
-    Pressão extrema de memória
-           ↓
-       OOM Killer
-           ↓
-    seleciona processo(s)
-           ↓
-       processo encerrado
-           ↓
-     memória liberada
+- RAM muito ocupada;
+- Swap insuficiente ou indisponível;
+- grande pressão de memória;
+- limites de memória;
+- impossibilidade de atender novas alocações.
 
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+Portanto:
+
+    Swap cheia ≠ necessariamente OOM
+
+e:
+
+    OOM ≠ simplesmente "Swap cheia"
+
+---
+
+### 9. Verificar memória antes de investigar OOM
+
+Comandos úteis:
+
+    free -h
+
+    swapon --show
+
+    cat /proc/meminfo
+
+    ps aux --sort=-%mem
+
+O último comando ajuda a identificar processos que estão usando muita memória.
+
+---
+
+## Resumo LPIC-1
+
+- **OOM** = **Out Of Memory — Sem Memória**.
+- **OOM Killer** é um mecanismo do kernel Linux.
+- É acionado em situações graves de falta de memória.
+- Pode encerrar processos para liberar memória.
+- `/proc/PID/oom_score` → mostra a pontuação OOM do processo.
+- `/proc/PID/oom_score_adj` → permite influenciar essa pontuação.
+- `dmesg` → mostra mensagens do kernel.
+- `journalctl -k` → mostra mensagens do kernel no journal.
+- Swap pode ajudar, mas **não elimina a possibilidade de OOM**.
+- OOM não significa simplesmente que a Swap ficou cheia.
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

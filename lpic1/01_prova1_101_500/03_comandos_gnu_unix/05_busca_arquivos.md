@@ -1,147 +1,245 @@
-Busca de Arquivos
+# Comandos GNU/UNIX
 
-No Linux, existem comandos para encontrar arquivos e localizar informações dentro deles.
+## 05 — Busca de Arquivos
+
+No Linux, podemos procurar arquivos e diretórios pelo **nome**, **localização**, **tipo**, **tamanho**, **data** e outros critérios.
 
 ---
 
-"find" — Find (Encontrar)
+### `find` — Find — encontrar
 
-Procura arquivos e diretórios.
+É o principal comando para busca de arquivos e diretórios.
+
+Sintaxe:
+
+    find [localização] [critério]
+
+Buscar pelo nome:
+
+    find /home -name "arquivo.txt"
+
+Buscar no diretório atual:
+
+    find . -name "arquivo.txt"
+
+`-name` — name — nome, diferencia maiúsculas de minúsculas.
+
+Para ignorar diferença entre maiúsculas e minúsculas:
+
+    find . -iname "arquivo.txt"
+
+`-iname` — insensitive name — nome sem diferenciar maiúsculas/minúsculas.
+
+---
+
+### Buscar por tipo
+
+`-type` — type — tipo.
+
+Principais tipos:
+
+| Tipo | Significado |
+|---|---|
+| `f` | file — arquivo comum |
+| `d` | directory — diretório |
+| `l` | link — link simbólico |
+
+Exemplos:
+
+    find /home -type f
+
+    find /home -type d
+
+    find /home -type l
+
+---
+
+### Buscar pelo tamanho
+
+`-size` — size — tamanho.
 
 Exemplo:
 
-find /home -name "arquivo.txt"
+    find /home -type f -size +100M
 
-Procura por "arquivo.txt" dentro de "/home".
+Procura arquivos maiores que 100 MB.
 
-"-name" — Name (Nome)
+Outros exemplos:
 
-Procura pelo nome do arquivo.
+    find . -size +1G
+    find . -size -10M
 
-find /home -name "*.txt"
-
-→ Procura arquivos que terminam com ".txt".
-
----
-
-"locate" — Locate (Localizar)
-
-Também procura arquivos, mas utiliza um banco de dados com os caminhos dos arquivos.
-
-locate arquivo.txt
-
-É normalmente mais rápido que "find", mas o banco de dados pode não estar atualizado.
-
-"updatedb" — Update Database (Atualizar Banco de Dados)
-
-Atualiza o banco usado pelo "locate".
-
-sudo updatedb
+`+` — maior que  
+`-` — menor que
 
 ---
 
-"which" — Which (Qual)
+### Buscar por usuário
 
-Mostra onde está o programa que será executado pelo shell.
+`-user` — user — usuário/dono.
 
-which ls
+    find /home -user laerte
+
+Busca arquivos pertencentes ao usuário informado.
+
+---
+
+### Buscar por grupo
+
+`-group` — group — grupo.
+
+    find /home -group alunos
+
+---
+
+### Buscar por data
+
+`-mtime` — modification time — tempo desde a última modificação.
 
 Exemplo:
 
-/usr/bin/ls
+    find . -mtime -1
+
+Arquivos modificados nas últimas 24 horas.
+
+    find . -mtime +7
+
+Arquivos modificados há mais de 7 dias.
 
 ---
 
-"whereis" — Where Is (Onde Está)
+### `locate` — Locate — localizar
 
-Procura a localização do programa, documentação e código-fonte quando disponível.
+Procura arquivos usando uma **base de dados** previamente criada.
 
-whereis ls
+    locate arquivo.txt
 
----
+É normalmente mais rápido que `find`, mas a base pode não estar atualizada.
 
-"grep" — Global Regular Expression Print
+Atualizar a base:
 
-Procura texto dentro de arquivos.
-
-grep "Linux" arquivo.txt
-
-→ Mostra as linhas que contêm "Linux".
-
-"-i" — Ignore Case (Ignorar Maiúsculas/Minúsculas)
-
-grep -i "linux" arquivo.txt
-
-Encontra:
-
-Linux
-linux
-LINUX
-
-"-r" — Recursive (Recursivo)
-
-Procura dentro de diretórios e seus subdiretórios.
-
-grep -r "Linux" documentos/
-
-"-n" — Number (Número)
-
-Mostra o número da linha encontrada.
-
-grep -n "Linux" arquivo.txt
+    sudo updatedb
 
 ---
 
-"find" x "grep"
+### `which` — Which — qual/localização do comando
 
-Não confunda:
+Mostra onde está o executável de um comando encontrado no `PATH`.
 
-find
- ↓
-Procura arquivos
+    which bash
 
-grep
- ↓
-Procura texto dentro de arquivos
+    which ls
 
 Exemplo:
 
-find /home -name "*.txt"
+    which python3
 
-→ Encontra arquivos ".txt".
+Pode retornar algo como:
 
-grep "Linux" arquivo.txt
-
-→ Encontra "Linux" dentro do arquivo.
+    /usr/bin/python3
 
 ---
 
-LPIC-1 — O que saber
+### `whereis` — Where Is — onde está
 
-- "find" procura arquivos e diretórios.
-- "locate" procura usando um banco de dados.
-- "updatedb" atualiza o banco do "locate".
-- "which" mostra onde um comando está.
-- "whereis" procura programa e arquivos relacionados.
-- "grep" procura texto.
-- "-name" = Name (Nome).
-- "-i" = Ignore Case (Ignorar maiúsculas/minúsculas).
-- "-r" = Recursive (Recursivo).
-- "-n" = Number (Número da linha).
+Procura informações relacionadas a um comando, como:
+
+- executável;
+- páginas de manual;
+- código-fonte, quando disponível.
+
+Exemplo:
+
+    whereis bash
 
 ---
 
-Resumo
+### `find` com ação
 
-find    → procurar arquivos
-locate  → procurar arquivos pelo banco
-which   → localização do comando
-whereis → programa + arquivos relacionados
-grep    → procurar texto
+O `find` também pode executar uma ação sobre os resultados.
 
-Principais opções
+`-exec` — execute — executar.
 
--name → Name (Nome)
--i    → Ignore Case (Ignorar maiúsculas/minúsculas)
--r    → Recursive (Recursivo)
--n    → Number (Número da linha)
+Exemplo:
+
+    find . -name "*.tmp" -exec rm {} \;
+
+Significado:
+
+    find        → procurar
+    -name       → pelo nome
+    "*.tmp"     → arquivos .tmp
+    -exec       → executar comando
+    rm          → remover
+    {}          → arquivo encontrado
+    \;          → fim do comando
+
+**Cuidado:** comandos com `rm` podem apagar arquivos permanentemente.
+
+---
+
+## `find` × `locate`
+
+| Comando | Característica |
+|---|---|
+| `find` | pesquisa diretamente no sistema de arquivos |
+| `locate` | pesquisa em uma base de dados |
+| `which` | encontra executáveis no `PATH` |
+| `whereis` | procura executável, manuais e outros arquivos relacionados |
+
+---
+
+## Exemplos práticos
+
+Buscar todos os arquivos `.conf`:
+
+    find /etc -type f -name "*.conf"
+
+Buscar diretórios chamados `backup`:
+
+    find /home -type d -name "backup"
+
+Buscar arquivos maiores que 500 MB:
+
+    find /home -type f -size +500M
+
+Buscar arquivos modificados nas últimas 24 horas:
+
+    find /home -type f -mtime -1
+
+Localizar o executável do Bash:
+
+    which bash
+
+Localizar informações sobre o Bash:
+
+    whereis bash
+
+---
+
+## Resumo LPIC-1
+
+| Comando/opção | Função |
+|---|---|
+| `find` | procurar arquivos e diretórios |
+| `-name` | buscar pelo nome |
+| `-iname` | buscar pelo nome ignorando maiúsculas/minúsculas |
+| `-type` | buscar pelo tipo |
+| `-size` | buscar pelo tamanho |
+| `-user` | buscar pelo proprietário |
+| `-group` | buscar pelo grupo |
+| `-mtime` | buscar pela data de modificação |
+| `-exec` | executar comando sobre resultados |
+| `locate` | procurar usando uma base de dados |
+| `updatedb` | atualizar a base do `locate` |
+| `which` | localizar executável no `PATH` |
+| `whereis` | localizar arquivos relacionados a um comando |
+
+**Memorize principalmente:**
+
+    find   → busca completa e flexível
+    locate → busca rápida pela base de dados
+    which  → onde está o comando
+    whereis → onde estão os arquivos relacionados ao comando
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

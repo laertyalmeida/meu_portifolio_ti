@@ -1,140 +1,141 @@
-# 09 — Boot e Inicialização
+# Boot e Inicialização
+
 ## 09 — Troubleshooting de Boot
 
-### O que é Troubleshooting?
+### 1. O que é Troubleshooting?
 
-**Troubleshooting — Solução de problemas**
+**Troubleshooting — Solução de Problemas**
 
-É o processo de identificar e corrigir problemas.
+É o processo de identificar a causa de uma falha e corrigi-la.
 
-Quando o Linux não inicia corretamente, devemos descobrir **em qual etapa do boot ocorreu a falha**.
+Quando o Linux não inicia corretamente, devemos investigar o boot **por etapas**.
 
----
-
-# 1. Sequência do Boot
-
-A sequência básica é:
-
-    Firmware
-       ↓
-    Bootloader
-       ↓
-    Kernel
-       ↓
-    initramfs
-       ↓
+    BIOS / UEFI
+          ↓
+      Bootloader
+          ↓
+       Kernel
+          ↓
+      initramfs
+          ↓
     systemd / init
-       ↓
-    Services
-       ↓
-    Login
-
-Cada etapa pode apresentar problemas diferentes.
+          ↓
+      Serviços
+          ↓
+       Login
 
 ---
 
-# 2. Problema no Firmware
+### 2. Primeiro: identificar onde parou
 
-**Firmware — Firmware**
-
-Pode ser:
-
-- BIOS;
-- UEFI.
-
-Problemas comuns:
-
-- disco não detectado;
-- ordem de boot incorreta;
-- configuração de UEFI/Legacy;
-- dispositivo de boot incorreto.
-
-### Verificar dispositivos
-
-    lsblk
-
-**lsblk — list block devices (listar dispositivos de bloco)**
+| Etapa | Possível problema |
+|---|---|
+| BIOS / UEFI | Hardware, ordem de boot, disco não detectado |
+| Bootloader | GRUB, configuração ou entrada de boot |
+| Kernel | Kernel, parâmetros ou drivers |
+| initramfs | Driver, disco raiz, LVM, RAID |
+| systemd | Serviço ou dependência |
+| Login | Interface gráfica, display manager ou usuário |
 
 ---
 
-# 3. Problema no Bootloader
+### 3. Verificar mensagens do Kernel
 
-**Bootloader — Carregador de inicialização**
+Depois de conseguir iniciar o sistema:
 
-Em muitos sistemas Linux, o bootloader é o **GRUB**.
+    dmesg
 
-Problemas comuns:
+Filtrar erros:
 
-- GRUB não aparece;
-- configuração incorreta;
-- entrada de kernel incorreta;
-- partição `/boot` com problemas.
+    dmesg | grep -i error
 
-Quando o GRUB funciona, normalmente ainda é possível selecionar outro kernel ou uma opção de recuperação, dependendo da configuração.
+`-i` — **Ignore Case — Ignorar Maiúsculas/Minúsculas**
 
----
+Também:
 
-# 4. Problema no Kernel
-
-Se o kernel não consegue iniciar corretamente, podem aparecer:
-
-- kernel panic;
-- mensagens de erro;
-- travamento durante a inicialização;
-- problemas com drivers.
-
-Ver a versão do kernel quando o sistema consegue iniciar:
-
-    uname -r
-
-**-r — release (versão/release)**
+    dmesg | grep -i fail
 
 ---
 
-# 5. initramfs
+### 4. Consultar o Journal
 
-**initramfs — Initial RAM Filesystem (Sistema de arquivos inicial em RAM)**
+Ver mensagens do boot atual:
 
-É carregado antes do sistema de arquivos raiz.
+    journalctl -b
 
-Ele contém ferramentas e módulos necessários para preparar o sistema para montar a raiz.
+Somente erros:
 
-Problemas podem ocorrer quando:
+    journalctl -b -p err
 
-- o driver necessário não está disponível;
-- a configuração está incorreta;
-- o sistema de arquivos raiz não pode ser encontrado.
+`-p` — **Priority — Prioridade**
 
-Mensagens como:
+Ver mensagens do kernel:
 
-    unable to mount root filesystem
+    journalctl -b -k
 
-podem indicar problemas nessa etapa.
+Ver o boot anterior:
+
+    journalctl -b -1
+
+Listar boots registrados:
+
+    journalctl --list-boots
 
 ---
 
-# 6. Problema no Root Filesystem
+### 5. Verificar serviços com falha
 
-**Root Filesystem — Sistema de arquivos raiz**
+    systemctl --failed
 
-O kernel precisa encontrar e montar o `/`.
+Ou:
 
-Problemas comuns:
+    systemctl list-units --failed
 
-- UUID incorreto;
-- dispositivo inexistente;
-- sistema de arquivos corrompido;
-- entrada incorreta no `/etc/fstab`.
+Se um serviço específico falhou:
 
-Ver os dispositivos e UUIDs:
+    systemctl status nome-do-servico
+
+Depois:
+
+    journalctl -u nome-do-servico
+
+Fluxo:
+
+    systemctl status
+          ↓
+    identificar serviço
+          ↓
+    journalctl -u serviço
+          ↓
+    analisar erro
+
+---
+
+### 6. Problemas com o sistema de arquivos raiz
+
+Se o sistema não consegue encontrar ou montar `/`, verifique:
+
+    /etc/fstab
+
+Também:
 
     lsblk -f
 
     blkid
 
+Esses comandos ajudam a confirmar:
+
+- dispositivo;
+- partição;
+- UUID;
+- sistema de arquivos;
+- ponto de montagem.
+
+Um UUID incorreto no `/etc/fstab` pode impedir a montagem esperada.
+
 ---
 
-# 7. Problemas no /etc/fstab
+### 7. Problemas com /etc/fstab
 
 O arquivo:
 
@@ -142,304 +143,189 @@ O arquivo:
 
 define sistemas de arquivos que devem ser montados.
 
-Uma configuração incorreta pode impedir ou atrasar o boot.
-
-Exemplo:
-
-    UUID=xxxx-xxxx /data ext4 defaults 0 2
-
-Verificar o arquivo:
-
-    cat /etc/fstab
-
-Depois que o sistema estiver funcionando, testar as entradas:
+Depois de iniciar o sistema, podemos testar:
 
     sudo mount -a
 
-**-a — all (todos)**
+Se houver erro, o comando normalmente informa qual entrada não conseguiu montar.
 
-Se houver erro, o terminal normalmente mostrará qual entrada está causando o problema.
+Antes de alterar o arquivo:
 
----
-
-# 8. Problemas no systemd
-
-Se o kernel iniciou, mas algum serviço falhou, podemos investigar com:
-
-    systemctl --failed
-
-**--failed — falhas**
-
-Ver o estado de um serviço:
-
-    systemctl status nome-do-servico
+    sudo cp /etc/fstab /etc/fstab.backup
 
 ---
 
-# 9. Consultar os Logs
+### 8. Problemas com GRUB
 
-O `journalctl` é uma das ferramentas mais importantes para troubleshooting.
+**GRUB — GRand Unified Bootloader — Carregador de Inicialização Unificado**
 
-Ver logs do boot atual:
+Se o computador não chega ao carregamento do Linux, o problema pode estar no bootloader.
 
-    journalctl -b
+Verifique:
 
-Ver somente erros:
+    /boot
 
-    journalctl -b -p err
+E, dependendo do sistema:
 
-Ver mensagens do kernel:
+    /boot/grub/
 
-    journalctl -b -k
+Em sistemas UEFI, também pode existir:
 
-**-k — kernel (núcleo)**
-
----
-
-# 10. Ver Boots Anteriores
-
-Listar boots registrados:
-
-    journalctl --list-boots
-
-Consultar o boot anterior:
-
-    journalctl -b -1
-
-Isso é especialmente útil quando:
-
-- o sistema iniciou agora;
-- o problema aconteceu no boot anterior;
-- queremos comparar os registros.
+    /boot/efi/
 
 ---
 
-# 11. Ver o Tempo de Boot
+### 9. Kernel não inicia
 
-O `systemd-analyze` ajuda a investigar o processo de inicialização.
+Se o GRUB aparece, mas o kernel não inicia corretamente, podem existir problemas relacionados a:
 
-    systemd-analyze
+- kernel;
+- parâmetros de boot;
+- initramfs;
+- drivers;
+- sistema de arquivos raiz;
+- hardware.
 
-Mostra informações sobre o tempo gasto no boot.
+Os parâmetros utilizados pelo kernel podem ser vistos depois que o sistema inicia:
 
-Para identificar serviços que demoraram mais:
-
-    systemd-analyze blame
-
-**blame — apontar responsáveis**
-
-Exemplo de interpretação:
-
-    8.2s serviço-A.service
-    3.7s serviço-B.service
-    1.4s serviço-C.service
-
-Isso ajuda a encontrar serviços lentos.
+    cat /proc/cmdline
 
 ---
 
-# 12. Kernel Messages
+### 10. initramfs
 
-O comando:
+**initramfs — Initial RAM Filesystem — Sistema de Arquivos Inicial em RAM**
+
+É usado durante os primeiros momentos do boot.
+
+Problemas no initramfs podem impedir o sistema de encontrar ou montar o sistema de arquivos raiz.
+
+A investigação pode envolver:
 
     dmesg
 
-mostra mensagens do kernel.
+    journalctl -b
 
-Para procurar erros:
+    lsblk
 
-    dmesg | grep -i error
-
-**grep -i**
-
-**-i — ignore case (ignorar maiúsculas/minúsculas)**
-
-Outro exemplo:
-
-    dmesg | grep -i fail
+    blkid
 
 ---
 
-# 13. Quando o sistema não inicia
+### 11. Rescue Mode
 
-Uma estratégia de diagnóstico:
-
-### 1 — Firmware
-
-Verificar:
-
-    BIOS / UEFI
-
-### 2 — Bootloader
-
-Verificar:
-
-    GRUB
-
-### 3 — Kernel
-
-Procurar:
-
-    kernel panic
-    driver errors
-
-### 4 — initramfs
-
-Verificar:
-
-    root filesystem
-    drivers
-    storage
-
-### 5 — Root filesystem
-
-Verificar:
-
-    UUID
-    filesystem
-    /etc/fstab
-
-### 6 — systemd
-
-Verificar:
-
-    systemctl --failed
-
-### 7 — Logs
-
-Consultar:
-
-    journalctl -b -p err
-
----
-
-# 14. Rescue Mode
-
-**Rescue Mode — Modo de recuperação**
+**Rescue Mode — Modo de Recuperação**
 
 O `systemd` possui:
 
     rescue.target
 
-É utilizado para manutenção e diagnóstico.
+Pode ser usado para entrar em um ambiente de recuperação com poucos serviços.
 
-Pode ser ativado:
+Consultar:
 
-    systemctl isolate rescue.target
-
-Em uma máquina que não inicia normalmente, também pode ser possível selecionar uma opção de recuperação no bootloader, dependendo da configuração do sistema.
+    systemctl get-default
 
 ---
 
-# 15. Emergency Mode
+### 12. Emergency Mode
 
-**Emergency Mode — Modo de emergência**
+**Emergency Mode — Modo de Emergência**
 
-O target:
+O `systemd` também possui:
 
     emergency.target
 
-fornece um ambiente ainda mais mínimo para recuperação.
+É um ambiente ainda mais mínimo, usado para situações graves de recuperação.
 
-É utilizado quando o sistema precisa de intervenção antes de conseguir iniciar normalmente.
-
----
-
-# 16. Checklist de Troubleshooting
-
-Quando o Linux apresenta problemas no boot:
-
-    1. O firmware detecta o disco?
-           ↓
-    2. O GRUB inicia?
-           ↓
-    3. O kernel carrega?
-           ↓
-    4. O initramfs encontra a raiz?
-           ↓
-    5. O / é montado?
-           ↓
-    6. O systemd inicia?
-           ↓
-    7. Existem serviços com falha?
-           ↓
-    8. O journal mostra o erro?
+Pode ser necessário quando o sistema não consegue atingir o estado normal de inicialização.
 
 ---
 
-# 🔑 Comandos essenciais
+### 13. Ordem prática para investigar
 
-| Comando | Função |
+Uma sequência simples:
+
+    01. Verificar onde o boot parou
+            ↓
+    02. Verificar mensagens do kernel
+            ↓
+        dmesg
+            ↓
+    03. Verificar o journal
+            ↓
+        journalctl -b
+            ↓
+    04. Procurar serviços com falha
+            ↓
+        systemctl --failed
+            ↓
+    05. Verificar sistema de arquivos
+            ↓
+        lsblk -f
+        blkid
+            ↓
+    06. Verificar /etc/fstab
+            ↓
+        mount -a
+            ↓
+    07. Investigar GRUB / kernel / initramfs
+
+---
+
+### 14. Comandos essenciais
+
+| Comando | Uso |
 |---|---|
-| `lsblk` | Listar dispositivos |
-| `lsblk -f` | Mostrar sistemas de arquivos |
-| `blkid` | Mostrar UUIDs e tipos |
-| `cat /etc/fstab` | Ver configurações de montagem |
-| `mount -a` | Tentar montar entradas do `fstab` |
-| `systemctl --failed` | Ver units com falha |
-| `systemctl status` | Ver estado de serviço |
-| `journalctl -b` | Logs do boot atual |
-| `journalctl -b -p err` | Erros do boot |
-| `journalctl -b -k` | Logs do kernel no boot |
-| `journalctl --list-boots` | Listar boots |
 | `dmesg` | Mensagens do kernel |
-| `systemd-analyze` | Analisar boot |
-| `systemd-analyze blame` | Identificar serviços demorados |
+| `journalctl -b` | Logs do boot atual |
+| `journalctl -b -1` | Logs do boot anterior |
+| `journalctl -k` | Logs do kernel |
+| `journalctl -p err` | Erros |
+| `systemctl --failed` | Unidades com falha |
+| `systemctl status` | Estado do sistema/serviço |
+| `lsblk -f` | Discos, partições e sistemas de arquivos |
+| `blkid` | UUID, LABEL e tipo de sistema de arquivos |
+| `mount -a` | Testar montagens do `/etc/fstab` |
+| `cat /proc/cmdline` | Parâmetros do kernel |
 
 ---
 
-## 🎯 LPIC-1 — O que memorizar
+## Resumo LPIC-1
 
-**GRUB** → carrega o kernel.
+- **Troubleshooting** → Solução de Problemas.
+- Investigue o boot **por etapas**.
+- `dmesg` → mensagens do kernel.
+- `journalctl -b` → mensagens do boot atual.
+- `journalctl -b -1` → mensagens do boot anterior.
+- `journalctl -k` → mensagens do kernel.
+- `systemctl --failed` → unidades que falharam.
+- `systemctl status serviço` → estado de um serviço.
+- `journalctl -u serviço` → logs de um serviço.
+- `lsblk -f` → verificar discos, partições e sistemas de arquivos.
+- `blkid` → verificar UUID, LABEL e tipo de sistema de arquivos.
+- `mount -a` → testar entradas do `/etc/fstab`.
+- `/boot` → arquivos relacionados ao boot.
+- `/boot/efi` → normalmente contém a ESP em sistemas UEFI.
+- `rescue.target` → recuperação.
+- `emergency.target` → recuperação mínima.
 
-**Kernel** → núcleo do sistema operacional.
+### Fluxo de diagnóstico
 
-**initramfs** → prepara o ambiente inicial para encontrar/montar a raiz.
-
-**systemd** → processo de inicialização e gerenciamento de serviços.
-
-**journalctl** → consulta logs.
-
-**dmesg** → consulta mensagens do kernel.
-
-**systemctl --failed** → procura unidades que falharam.
-
-**/etc/fstab** → configura sistemas de arquivos para montagem.
-
-**lsblk -f / blkid** → ajudam a verificar dispositivos, UUIDs e sistemas de arquivos.
-
----
-
-## 🧠 Regra prática
-
-Quando o sistema **não chega ao login**, pense:
-
-    Firmware
+    Boot falhou
         ↓
-    GRUB
+    Onde parou?
         ↓
-    Kernel
+    Kernel?
         ↓
-    initramfs
+    initramfs?
         ↓
-    /
+    systemd?
         ↓
-    systemd
+    Serviço?
         ↓
-    services
+    Sistema de arquivos?
         ↓
-    login
-
-E use:
-
-    journalctl
-    dmesg
-    systemctl
-    lsblk
-    blkid
-
-para descobrir **onde a inicialização parou**.
-
----
+    GRUB / configuração / hardware
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

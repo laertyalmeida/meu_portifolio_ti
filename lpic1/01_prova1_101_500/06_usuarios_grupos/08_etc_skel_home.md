@@ -1,84 +1,63 @@
 # Usuários e Grupos
 
-## 08 — /etc/skel e Home
+## 08 — /etc/skel e /home
 
-## `/etc/skel` — Skeleton Directory (Diretório Modelo)
+### /etc/skel — Skeleton Directory — Diretório Modelo
 
-O `/etc/skel` contém arquivos e diretórios **modelo** usados na criação de novos usuários.
-
-Quando um usuário é criado com um **Home Directory**, o conteúdo de `/etc/skel` pode ser copiado para o novo diretório pessoal.
-
-Exemplo:
-
-    /etc/skel
-    ├── .bash_logout
-    ├── .bashrc
-    └── .profile
-
-Ao criar:
-
-    sudo useradd -m laerte
-
-Pode resultar em:
-
-    /home/laerte/
-    ├── .bash_logout
-    ├── .bashrc
-    └── .profile
-
-O conteúdo exato depende da distribuição e da configuração do sistema.
-
----
-
-# 1. Ver o conteúdo do `/etc/skel`
+O `/etc/skel` contém arquivos e diretórios que podem ser usados como **modelo para novos usuários**.
 
     ls -la /etc/skel
 
-`-l` — long (listagem detalhada)
+Exemplo:
 
-`-a` — all (mostrar arquivos ocultos)
+    /etc/skel/.bashrc
+    /etc/skel/.profile
 
----
-
-# 2. Personalizar o `/etc/skel`
-
-Um administrador pode colocar arquivos no `/etc/skel` para que novos usuários recebam uma configuração inicial.
+Ao criar um usuário com um diretório pessoal, esses arquivos podem ser copiados para o novo **Home Directory — Diretório Pessoal**.
 
 Exemplo:
 
-    sudo cp arquivo.txt /etc/skel/
+    sudo useradd -m laerte
 
-Depois, novos usuários criados com Home poderão receber esse arquivo.
+O resultado normalmente será:
 
-⚠️ Alterar `/etc/skel` normalmente afeta **novos usuários**. Isso não atualiza automaticamente os Homes dos usuários existentes.
+    /home/laerte/
+
+com os arquivos padrão provenientes de:
+
+    /etc/skel/
+
+> A cópia depende das opções utilizadas no `useradd` e da configuração do sistema.
 
 ---
 
-# Home Directory — Diretório Pessoal
+## /home — Home Directory — Diretórios Pessoais
 
-O **Home Directory** é o diretório pessoal de cada usuário.
+O `/home` normalmente contém os diretórios pessoais dos usuários comuns.
 
-Normalmente fica em:
+Exemplo:
 
-    /home/usuario
+    /home/laerte
+    /home/joao
+    /home/maria
+
+Cada usuário normalmente possui seu próprio diretório.
 
 Exemplo:
 
     /home/laerte
 
-É onde ficam arquivos pessoais e configurações do usuário.
+Dentro dele podem existir:
+
+    /home/laerte/Documents
+    /home/laerte/Downloads
+    /home/laerte/.bashrc
 
 ---
 
-# 3. Variável `$HOME`
+## $HOME — Home Directory — Diretório Pessoal
 
-A variável:
-
-    $HOME
-
-indica o diretório pessoal do usuário atual.
-
-Ver:
+A variável `$HOME` indica o diretório pessoal do usuário atual.
 
     echo $HOME
 
@@ -86,17 +65,7 @@ Exemplo:
 
     /home/laerte
 
----
-
-# 4. Atalho `~`
-
-O caractere:
-
-    ~
-
-representa o **Home Directory** do usuário atual.
-
-Exemplo:
+O símbolo `~` também representa o diretório pessoal do usuário atual:
 
     cd ~
 
@@ -104,147 +73,75 @@ Exemplo:
 
     cd "$HOME"
 
-Para listar:
+---
 
-    ls -la ~
+## Criando o Home com useradd
+
+Criar usuário sem especificar `-m` pode depender da configuração do sistema para criar o diretório pessoal.
+
+Para solicitar explicitamente a criação:
+
+    sudo useradd -m laerte
+
+**`-m` — Create Home — Criar Diretório Pessoal**
+
+Podemos definir outro local:
+
+    sudo useradd -m -d /home/empresa/laerte laerte
+
+**`-d` — Home Directory — Diretório Pessoal**
 
 ---
 
-# 5. Home do usuário root
+## /etc/skel × /home
 
-O usuário `root` normalmente possui um Home diferente:
-
-    /root
-
-Enquanto usuários comuns normalmente utilizam:
-
-    /home/usuario
-
-Exemplo:
-
-    root    → /root
-    laerte  → /home/laerte
-
----
-
-# 6. Definir o Home ao criar usuário
-
-`-d` — home directory (diretório pessoal)
-
-    sudo useradd -d /home/laerte -m laerte
-
-`-m` — create home directory (criar diretório pessoal)
-
-O `-d` define o caminho e o `-m` solicita a criação do diretório.
-
----
-
-# 7. Alterar o Home de um usuário
-
-Use:
-
-    sudo usermod -d /home/novo -m laerte
-
-`-d` — home directory (diretório pessoal)
-
-`-m` — move home (mover diretório pessoal)
-
-O `-m` move o conteúdo existente para o novo diretório.
-
----
-
-# 8. Ver o Home configurado
-
-Podemos consultar:
-
-    getent passwd laerte
-
-Exemplo:
-
-    laerte:x:1000:1000:Laerte:/home/laerte:/bin/bash
-
-O campo:
-
-    /home/laerte
-
-é o Home Directory.
-
-Também podemos usar:
-
-    echo $HOME
-
-quando estamos na sessão do próprio usuário.
-
----
-
-# 9. `/etc/skel` × `/home`
-
-| Local | Função |
+| Diretório | Função |
 |---|---|
 | `/etc/skel` | Modelo para novos usuários |
-| `/home/usuario` | Diretório pessoal do usuário |
-| `/root` | Diretório pessoal do root |
-| `$HOME` | Variável que aponta para o Home |
-| `~` | Atalho para o Home |
+| `/home` | Diretórios pessoais dos usuários |
+| `/home/laerte` | Home do usuário `laerte` |
+| `$HOME` | Variável que aponta para o Home atual |
+| `~` | Atalho para o Home atual |
 
-### Fluxo simplificado
+Fluxo simplificado:
 
     /etc/skel
-         │
-         │ criação do usuário
-         ▼
-    /home/usuario
-         │
-         ├── arquivos pessoais
-         ├── configurações
-         └── arquivos ocultos
+         ↓
+    useradd -m
+         ↓
+    /home/laerte
+         ↓
+    arquivos pessoais do usuário
 
 ---
 
-# 10. Arquivos ocultos
+## Arquivos ocultos
 
-Arquivos que começam com `.` são normalmente considerados **hidden files — arquivos ocultos**.
+Arquivos iniciados por `.` são normalmente arquivos ocultos.
 
-Exemplos:
+Exemplo:
 
-    .bashrc
-    .profile
-    .bash_logout
+    /home/laerte/.bashrc
 
 Para visualizá-los:
 
-    ls -la
+    ls -la /home/laerte
 
-`-a` — all (todos)
+**`-a` — All — Todos**
 
 ---
 
-# 11. LPIC-1 — O que lembrar
+## Resumo LPIC-1
 
-- `/etc/skel` = Skeleton Directory (Diretório Modelo).
-- Serve como modelo para novos usuários.
-- `useradd -m` cria o Home Directory quando solicitado.
-- Home de usuários comuns normalmente fica em `/home/usuario`.
-- Home do `root` normalmente é `/root`.
-- `$HOME` aponta para o Home do usuário atual.
-- `~` representa o Home do usuário.
-- `usermod -d` altera o caminho do Home.
-- `usermod -d ... -m` altera e move o Home.
-- Arquivos como `.bashrc` são arquivos ocultos.
-- Alterações em `/etc/skel` normalmente afetam novos usuários, não os já existentes.
+- `/etc/skel` → **Skeleton Directory — Diretório Modelo**.
+- `/etc/skel` → contém arquivos usados como modelo para novos usuários.
+- `/home` → **Home Directory — Diretórios Pessoais**.
+- `/home/usuario` → diretório pessoal de um usuário.
+- `$HOME` → variável que indica o Home do usuário atual.
+- `~` → representa o Home do usuário atual.
+- `useradd -m` → solicita a criação do diretório pessoal.
+- `useradd -d` → define o diretório pessoal.
+- `.bashrc` → exemplo de arquivo de configuração que pode estar no Home.
+- Arquivos iniciados por `.` → normalmente são arquivos ocultos.
 
-### Resumo
-
-    ls -la /etc/skel
-
-    sudo useradd -m usuario
-
-    echo $HOME
-
-    cd ~
-
-    sudo usermod -d /home/novo -m usuario
-
-    getent passwd usuario
-
-> **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**
+**Conhecimento só tem valor quando é compartilhado** - Laerte Costa

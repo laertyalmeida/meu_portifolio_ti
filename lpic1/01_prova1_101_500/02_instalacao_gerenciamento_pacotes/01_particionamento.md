@@ -1,128 +1,232 @@
-Particionamento
+# Instalação e Gerenciamento de Pacotes
 
-Partition — Partição
+## 01 — Particionamento
 
-Uma Partition (Partição) é uma divisão de um disco.
+### Partition — Partição
 
-Um único disco pode ser dividido em várias partes:
+**Partition — Partição** é uma divisão lógica de um disco.  
+Cada partição pode receber um sistema de arquivos diferente.
 
-SSD 500 GB
-│
-├── Partição 1 → 100 GB
-├── Partição 2 → 300 GB
-└── Partição 3 → 100 GB
+Exemplo de um disco:
 
-Cada partição pode ter um sistema de arquivos diferente.
+    /dev/sda
+    ├── /dev/sda1
+    ├── /dev/sda2
+    └── /dev/sda3
+
+- `/dev` — devices — dispositivos
+- `/dev/sda` — primeiro disco SATA/SCSI
+- `/dev/sda1` — primeira partição
+- `/dev/sda2` — segunda partição
+
+Em discos NVMe:
+
+    /dev/nvme0n1
+    ├── /dev/nvme0n1p1
+    └── /dev/nvme0n1p2
+
+- `nvme0n1` — primeiro dispositivo NVMe
+- `p1` — partição 1
+- `p2` — partição 2
 
 ---
 
-Por que usar partições?
+## Partition Table — Tabela de Partições
 
-Podemos separar diferentes partes do sistema.
-
-Exemplo:
-
-/dev/sda1 → /
-/dev/sda2 → /home
-/dev/sda3 → swap
-
-Assim, os arquivos pessoais em "/home" podem ficar separados dos arquivos do sistema.
-
----
-
-Partition Table — Tabela de Partições
-
-O computador precisa saber como o disco está dividido.
-
-Essa informação fica em uma Partition Table (Tabela de Partições).
+A **Partition Table — Tabela de Partições** registra onde as partições estão localizadas no disco.
 
 Os dois formatos mais importantes são:
 
-- MBR
-- GPT
+| Formato | Nome | Característica |
+|---|---|---|
+| MBR | Master Boot Record — Registro Mestre de Inicialização | Mais antigo |
+| GPT | GUID Partition Table — Tabela de Partições GUID | Mais moderno |
+
+### MBR
+
+Limitações importantes:
+
+- normalmente até 4 partições primárias;
+- discos maiores que 2 TiB não são totalmente endereçados;
+- utiliza o início do disco para armazenar informações de inicialização e partições.
+
+### GPT
+
+Vantagens:
+
+- suporta discos muito maiores;
+- permite muitas partições;
+- possui cópia de informações importantes no final do disco;
+- trabalha muito bem com UEFI.
 
 ---
 
-MBR — Master Boot Record
+## Partition Types — Tipos de Partição
 
-É um formato mais antigo de tabela de partições.
-
-Características importantes:
-
-- Mais antigo
-- Limite de aproximadamente 2 TB por disco
-- Até 4 partições primárias
-
----
-
-GPT — GUID Partition Table
-
-É o formato mais moderno.
-
-Características:
-
-- Suporta discos muito maiores
-- Permite muitas partições
-- Trabalha muito bem com UEFI
-- Possui mecanismos melhores de proteção da tabela
-
----
-
-MBR x GPT
-
-MBR| GPT
-Mais antigo| Mais moderno
-Até ~2 TB| Suporta discos muito maiores
-4 partições primárias| Muitas partições
-Comum em BIOS| Comum em UEFI
-
----
-
-Comando
-
-"lsblk" — List Block Devices (Listar Dispositivos de Bloco)
-
-Mostra discos e suas partições.
-
-lsblk
+No Linux, uma partição pode ser usada para diferentes finalidades.
 
 Exemplo:
 
-NAME   SIZE TYPE
-sda    500G disk
-├─sda1 100G part
-├─sda2 300G part
-└─sda3 100G part
+    /dev/sda1    → /boot
+    /dev/sda2    → /
+    /dev/sda3    → /home
+    /dev/sda4    → swap
+
+- `/boot` — boot — inicialização
+- `/` — root — raiz do sistema
+- `/home` — home — diretórios pessoais dos usuários
+- `swap` — área de troca de memória
+
+A partição **não é o mesmo que sistema de arquivos**.
+
+Exemplo:
+
+    /dev/sda2
+         ↓
+    partição
+         ↓
+    ext4
+         ↓
+    sistema de arquivos
+         ↓
+    /
+
+
+## Filesystem — Sistema de Arquivos
+
+Depois de criar uma partição, podemos criar um sistema de arquivos nela.
+
+Exemplos:
+
+- `ext4` — Fourth Extended Filesystem — Quarto Sistema de Arquivos Estendido
+- `xfs` — X File System — Sistema de Arquivos X
+- `btrfs` — B-tree File System — Sistema de Arquivos baseado em B-tree
+- `vfat` — Virtual File Allocation Table — Tabela Virtual de Alocação de Arquivos
+- `swap` — área de troca
+
+Exemplo:
+
+    sudo mkfs.ext4 /dev/sda2
+
+- `mkfs` — Make Filesystem — criar sistema de arquivos
+- `ext4` — tipo do sistema de arquivos
+- `sudo` — Superuser Do — executar como superusuário
+
+**Atenção:** `mkfs` cria um sistema de arquivos e pode destruir os dados existentes na partição.
 
 ---
 
-LPIC-1 — O que saber
+## Comandos importantes
 
-- Partição é uma divisão do disco.
-- Um disco pode possuir várias partições.
-- MBR é mais antigo.
-- GPT é mais moderno.
-- MBR possui limite tradicional de aproximadamente 2 TB.
-- MBR permite até 4 partições primárias.
-- GPT permite muito mais partições.
-- UEFI normalmente trabalha com GPT.
-- "lsblk" mostra discos e partições.
+### lsblk — List Block Devices — Listar Dispositivos de Bloco
+
+    lsblk
+
+Mostra discos, partições e dispositivos de bloco.
+
+Para mostrar sistemas de arquivos:
+
+    lsblk -f
+
+- `-f` — filesystem — sistema de arquivos
 
 ---
 
-Resumo
+### fdisk — Fixed Disk — Gerenciador de Partições
 
-Disco
-  ↓
-Tabela de Partições
-  ↓
-Partições
-  ↓
-Sistema de Arquivos
-  ↓
-Arquivos
+    sudo fdisk /dev/sda
 
-Principais formatos:
+Usado principalmente para visualizar e modificar tabelas de partições.
 
-MBR → antigo
-GPT → moderno
+Listar as partições:
+
+    sudo fdisk -l
+
+- `-l` — list — listar
+
+---
+
+### gdisk — GPT fdisk — Gerenciador de Partições GPT
+
+    sudo gdisk /dev/sda
+
+É utilizado principalmente para trabalhar com tabelas **GPT**.
+
+---
+
+### parted — Partition Editor — Editor de Partições
+
+    sudo parted /dev/sda
+
+Também permite criar, remover e modificar partições.
+
+---
+
+## Verificação rápida
+
+Para identificar discos e partições:
+
+    lsblk -f
+
+Para visualizar a tabela de partições:
+
+    sudo fdisk -l
+
+Para verificar UUID e sistema de arquivos:
+
+    blkid
+
+- `blkid` — Block Device Identification — identificação de dispositivos de bloco
+
+---
+
+## Fluxo básico
+
+O processo normalmente segue esta lógica:
+
+    Disco
+      ↓
+    Tabela de Partições
+      ↓
+    Partição
+      ↓
+    Sistema de Arquivos
+      ↓
+    Mount Point — Ponto de Montagem
+      ↓
+    Uso pelo sistema
+
+Exemplo:
+
+    /dev/sda
+       ↓
+    GPT
+       ↓
+    /dev/sda2
+       ↓
+    ext4
+       ↓
+    /
+       ↓
+    Sistema Linux
+
+---
+
+## Resumo LPIC-1
+
+- **Partition — Partição** = divisão de um disco.
+- **Partition Table — Tabela de Partições** = estrutura que organiza as partições.
+- **MBR** = formato antigo de tabela de partições.
+- **GPT** = formato moderno e mais flexível.
+- `/dev/sda` = disco.
+- `/dev/sda1` = primeira partição.
+- `/dev/nvme0n1p1` = primeira partição de um dispositivo NVMe.
+- `lsblk` = visualizar discos e partições.
+- `fdisk` = gerenciar partições.
+- `gdisk` = gerenciar principalmente GPT.
+- `parted` = gerenciar partições.
+- `mkfs` = criar sistema de arquivos.
+- `blkid` = identificar UUID e sistema de arquivos.
+- **Partição ≠ sistema de arquivos**.
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

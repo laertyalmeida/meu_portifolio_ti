@@ -1,98 +1,149 @@
-# 06 — lsblk e blkid
+# Sistemas de Arquivos e FHS
 
-## lsblk — List Block Devices (Listar Dispositivos de Bloco)
+## 06 — lsblk e blkid
 
-Mostra discos, partições e pontos de montagem em formato de árvore.
+### 1. `lsblk`
+
+**lsblk** — *List Block Devices* — **Listar Dispositivos de Bloco**
+
+Mostra discos, partições e outros dispositivos de bloco em forma de árvore.
 
     lsblk
 
 Exemplo:
 
-    sda
-    ├─sda1
-    ├─sda2
-    └─sda3
+    NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+    sda           8:0    0   500G  0 disk
+    ├─sda1        8:1    0   100G  0 part /
+    └─sda2        8:2    0   400G  0 part /home
 
-### Opção importante
+### Opções importantes
+
+| Opção | English | Português |
+|---|---|---|
+| `-f` | filesystem | mostrar sistema de arquivos |
+| `-o` | output | escolher colunas |
+| `-l` | list | formato em lista |
+| `-p` | paths | mostrar caminho completo do dispositivo |
+| `-a` | all | mostrar também dispositivos vazios |
+
+Exemplos:
 
     lsblk -f
+    lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINTS
+    lsblk -p
 
-`-f` — filesystem (sistema de arquivos)
+`lsblk -f` é especialmente útil para identificar:
 
-Mostra:
-
-- **NAME** — name (nome)
-- **FSTYPE** — filesystem type (tipo de sistema de arquivos)
-- **LABEL** — label (rótulo)
-- **UUID** — universally unique identifier (identificador único universal)
-- **MOUNTPOINTS** — mount points (pontos de montagem)
+- Partição
+- Sistema de arquivos
+- UUID
+- Label
+- Ponto de montagem
 
 ---
 
-## blkid — Block Device Identification (Identificação de Dispositivos de Bloco)
+### 2. `blkid`
 
-Mostra informações usadas para identificar os sistemas de arquivos.
+**blkid** — *Block Device Identification* — **Identificação de Dispositivos de Bloco**
 
-    blkid
+Mostra informações de identificação das partições, principalmente:
+
+- `UUID`
+- `LABEL`
+- `TYPE` — tipo de sistema de arquivos
 
 Exemplo:
+
+    sudo blkid
+
+Saída:
 
     /dev/sda1: UUID="a1b2-c3d4" TYPE="ext4"
-    /dev/sda2: UUID="x9y8-z7w6" TYPE="xfs"
+    /dev/sda2: UUID="1234-5678" TYPE="swap"
 
-Consultar uma partição específica:
+### Opções importantes
 
-    blkid /dev/sda1
-
-### Informações principais
-
-- **UUID** — Universally Unique Identifier (Identificador Único Universal)
-- **LABEL** — label (rótulo)
-- **TYPE** — type (tipo do sistema de arquivos)
-
----
-
-## lsblk × blkid
-
-| Comando | Tradução | Função |
+| Opção | English | Português |
 |---|---|---|
-| `lsblk` | List Block Devices — Listar Dispositivos de Bloco | Mostra discos e partições |
-| `lsblk -f` | filesystem — sistema de arquivos | Mostra filesystem, UUID e LABEL |
-| `blkid` | Block Device Identification — Identificação de Dispositivos de Bloco | Mostra UUID, LABEL e TYPE |
-| `blkid /dev/sda1` | identificar `/dev/sda1` | Mostra os dados da partição |
+| `-s` | show specific tag | mostrar uma informação específica |
+| `-o` | output | definir formato da saída |
+| `-L` | lookup by label | localizar pelo Label |
+| `-U` | lookup by UUID | localizar pelo UUID |
 
-### Memorize
+Exemplos:
 
-    lsblk → estrutura dos discos e partições
-    blkid → identificação do sistema de arquivos
-
----
-
-## LPIC-1 — O que saber
-
-- `lsblk` — listar dispositivos de bloco.
-- `lsblk -f` — mostrar informações do sistema de arquivos.
-- `blkid` — identificar sistemas de arquivos.
-- **UUID** — identificador único.
-- **LABEL** — rótulo do filesystem.
-- **TYPE** — tipo do filesystem.
-- Saber diferenciar `lsblk` de `blkid`.
-- Entender o uso do UUID no `/etc/fstab`.
+    sudo blkid /dev/sda1
+    sudo blkid -s UUID /dev/sda1
+    sudo blkid -s TYPE /dev/sda1
 
 ---
 
-## Resumo
+### 3. Diferença entre `lsblk` e `blkid`
+
+| Comando | Principal finalidade |
+|---|---|
+| `lsblk` | visualizar discos e partições |
+| `lsblk -f` | visualizar discos, partições e sistemas de arquivos |
+| `blkid` | identificar UUID, Label e tipo de sistema de arquivos |
+
+Uma forma simples de lembrar:
+
+    lsblk  → "O que existe e como está organizado?"
+    blkid  → "Qual é a identificação dessa partição?"
+
+---
+
+### 4. `UUID` e `LABEL`
+
+**UUID** — *Universally Unique Identifier* — **Identificador Universalmente Único**
+
+Identifica uma partição por um valor único.
+
+**LABEL** — *Label* — **Rótulo/Nome**
+
+É um nome definido para facilitar a identificação do sistema de arquivos.
+
+Exemplo:
+
+    /dev/sda1
+    UUID="7c8a..."
+    LABEL="SISTEMA"
+    TYPE="ext4"
+
+O `UUID` é muito utilizado no `/etc/fstab`, porque o nome `/dev/sda1` pode mudar dependendo da detecção dos discos.
+
+---
+
+### 5. Comandos úteis juntos
+
+Para uma visão rápida:
 
     lsblk
-      ↓
-    Discos → Partições → Pontos de montagem
+
+Para ver sistemas de arquivos:
 
     lsblk -f
-      ↓
-    Filesystem → UUID → LABEL → Montagem
 
-    blkid
-      ↓
-    UUID → LABEL → TYPE
+Para consultar identificação:
+
+    sudo blkid
+
+Para consultar uma partição específica:
+
+    sudo blkid /dev/sda1
+
+---
+
+## Resumo LPIC-1
+
+- `lsblk` → lista discos e partições.
+- `lsblk -f` → mostra sistemas de arquivos, UUID e pontos de montagem.
+- `blkid` → mostra identificação das partições.
+- `UUID` → identificador único.
+- `LABEL` → nome/rótulo do sistema de arquivos.
+- `TYPE` → tipo do sistema de arquivos, como `ext4`, `xfs` ou `swap`.
+- `lsblk` ajuda a entender a **estrutura** dos dispositivos.
+- `blkid` ajuda a identificar as **características** das partições.
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

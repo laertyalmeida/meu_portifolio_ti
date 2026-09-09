@@ -2,83 +2,75 @@
 
 ## 07 — su e sudo
 
-## su — Substitute User (Substituir Usuário)
+### su — Substitute User — Substituir Usuário
 
-O comando `su` permite executar um shell ou comando como **outro usuário**.
-
-O uso mais comum é mudar para `root`.
+O `su` permite assumir a identidade de outro usuário, normalmente `root`.
 
     su
 
-Será solicitada a senha do usuário de destino.
-
----
-
-## 1. Mudar para outro usuário
-
-    su usuario
-
-Exemplo:
-
-    su laerte
-
-Inicia um shell como `laerte`.
-
----
-
-## 2. Usar um Login Shell
-
-`-` — login (ambiente de login)
-
-    su - usuario
-
-Exemplo:
+Tenta iniciar um shell como `root`.
 
     su - laerte
 
-O ambiente é inicializado como se o usuário tivesse feito login normalmente.
+Inicia um shell como `laerte`, carregando o ambiente de login desse usuário.
 
-Também pode ser escrito:
+### `-` — Login — Ambiente de Login
 
-    su -l usuario
+O `-` faz o `su` carregar um ambiente semelhante ao de um login normal.
 
-`-l` — login (login)
+Exemplo:
+
+    su - root
+
+ou:
+
+    su - laerte
 
 ---
 
-## 3. Executar apenas um comando
-
-`-c` — command (comando)
+### Executar apenas um comando com `su`
 
     su -c "comando"
+
+**`-c` — Command — Comando**
 
 Exemplo:
 
     su -c "id"
 
-Executa `id` como o usuário de destino e retorna ao usuário original.
+Executa `id` como o usuário alvo e retorna ao usuário anterior.
 
 Para outro usuário:
 
-    su -c "whoami" laerte
+    su -c "id" laerte
 
 ---
 
-# sudo — Superuser Do (Executar como Superusuário)
+## sudo — Superuser Do — Executar como Superusuário
 
-O `sudo` permite executar um comando com os privilégios de outro usuário, normalmente `root`, sem precisar iniciar um shell completo como esse usuário.
+O `sudo` permite executar um comando com privilégios de outro usuário, normalmente `root`.
 
 Exemplo:
 
     sudo apt update
 
-A senha normalmente solicitada é a do **usuário que está executando o `sudo`**, e não necessariamente a senha do `root`.
+Ou:
+
+    sudo systemctl restart ssh
+
+Por padrão, o usuário normalmente autentica usando **sua própria senha**, conforme a configuração do `sudo`.
 
 ---
 
-## 4. Executar como outro usuário
+## Executar como outro usuário
 
-`-u` — user (usuário)
+    sudo -u laerte id
+
+**`-u` — User — Usuário**
+
+Executa o comando como `laerte`.
+
+Exemplo:
 
     sudo -u laerte whoami
 
@@ -86,172 +78,92 @@ Resultado:
 
     laerte
 
-Sem `-u`, o usuário padrão normalmente é:
-
-    root
-
-Portanto:
-
-    sudo whoami
-
-Normalmente retorna:
-
-    root
-
 ---
 
-## 5. Abrir um shell administrativo
+## Abrir um shell administrativo
+
+Uma forma comum:
 
     sudo -i
 
-`-i` — login shell (shell de login)
+**`-i` — Login Shell — Shell de Login**
 
-Abre um ambiente de login como `root`.
+Abre um shell de login como `root`.
 
-Outra forma comum:
+Outra possibilidade:
 
     sudo -s
 
-`-s` — shell (shell)
+**`-s` — Shell — Shell**
 
-Inicia um shell usando o ambiente atual, com os privilégios do usuário especificado.
-
----
-
-# 6. su × sudo
-
-| Comando | Função |
-|---|---|
-| `su` | muda para outro usuário |
-| `su -` | muda para outro usuário com ambiente de login |
-| `sudo comando` | executa um comando com privilégios elevados |
-| `sudo -u usuario comando` | executa como outro usuário |
-| `sudo -i` | abre shell de login como root |
-| `sudo -s` | abre shell com privilégios elevados |
-
-### Diferença importante
-
-Com:
-
-    su -
-
-você normalmente precisa da **senha do usuário de destino**.
-
-Com:
-
-    sudo comando
-
-a autenticação normalmente utiliza a **senha do usuário que executa o sudo**, desde que ele tenha autorização.
+Inicia um shell usando o ambiente atual.
 
 ---
 
-# 7. Configuração do sudo
+## sudo e /etc/sudoers
 
-O arquivo principal de configuração é:
+As permissões do `sudo` são controladas principalmente por:
 
     /etc/sudoers
 
-⚠️ Não é recomendado editar esse arquivo diretamente com um editor comum.
+Também podem existir arquivos adicionais em:
 
-Use:
+    /etc/sudoers.d/
+
+Para editar a configuração principal, use:
 
     sudo visudo
 
-`visudo` — Visual/Edit Sudoers (Editar configuração do sudo)
+**visudo — Edit Sudoers Safely — Editar Sudoers com Segurança**
 
-O `visudo` verifica a sintaxe antes de salvar, reduzindo o risco de deixar a configuração do `sudo` inválida.
-
----
-
-## 8. Grupo administrativo
-
-Em muitas distribuições, usuários administrativos pertencem a um grupo específico.
-
-Exemplos comuns:
-
-    sudo
-    wheel
-
-Exemplo:
-
-    sudo usermod -aG sudo laerte
-
-Depois, uma nova sessão normalmente é necessária para que a associação ao grupo seja reconhecida.
+O `visudo` verifica a sintaxe antes de aplicar a configuração, ajudando a evitar erros que poderiam quebrar o acesso administrativo.
 
 ---
 
-# 9. Verificar permissões do sudo
+## Diferença entre su e sudo
 
-    sudo -l
+| Comando | Função |
+|---|---|
+| `su` | Trocar para outro usuário |
+| `su -` | Trocar para outro usuário com ambiente de login |
+| `su -c` | Executar um comando como outro usuário |
+| `sudo` | Executar um comando com privilégios elevados |
+| `sudo -u` | Executar como um usuário específico |
+| `sudo -i` | Abrir shell de login como outro usuário, normalmente `root` |
+| `sudo -s` | Abrir um shell |
 
-`-l` — list (listar)
+### Exemplo prático
 
-Mostra os comandos que o usuário atual está autorizado a executar através do `sudo`.
-
----
-
-# 10. Exemplos práticos
-
-### Executar comando como root
-
-    sudo systemctl restart ssh
-
-### Executar como outro usuário
-
-    sudo -u laerte whoami
-
-### Tornar-se root
+Com `su`:
 
     su -
+    whoami
+    apt update
+    exit
 
-### Shell administrativo com sudo
+Com `sudo`:
 
-    sudo -i
+    sudo apt update
 
-### Ver permissões
+No primeiro caso, você **entra em outro usuário**.
 
-    sudo -l
-
-### Editar sudoers com segurança
-
-    sudo visudo
+No segundo, você **eleva os privilégios somente para o comando**.
 
 ---
 
-# 11. LPIC-1 — O que lembrar
+## Resumo LPIC-1
 
-### `su`
+- `su` → **Substitute User — Substituir Usuário**.
+- `su -` → troca de usuário com ambiente de login.
+- `su -c` → executa um comando como outro usuário.
+- `sudo` → **Superuser Do — Executar com privilégios elevados**.
+- `sudo -u` → executar como outro usuário.
+- `sudo -i` → shell de login com privilégios do usuário alvo.
+- `sudo -s` → iniciar um shell.
+- `/etc/sudoers` → configuração principal do `sudo`.
+- `/etc/sudoers.d/` → configurações adicionais.
+- `visudo` → editar e validar a configuração do `sudo`.
+- `su` normalmente exige a senha do **usuário alvo**.
+- `sudo` normalmente exige a senha do **usuário que está executando o comando**.
 
-- **su** = Substitute User (Substituir Usuário).
-- `su usuario` → muda para outro usuário.
-- `su - usuario` → login shell do usuário.
-- `su -c "comando"` → executa um comando.
-- `su -` → normalmente muda para `root` com ambiente de login.
-
-### `sudo`
-
-- **sudo** = Superuser Do (Executar como Superusuário).
-- `sudo comando` → executa comando com privilégios elevados.
-- `sudo -u usuario` → executa como outro usuário.
-- `sudo -i` → shell de login como root.
-- `sudo -s` → shell com privilégios elevados.
-- `sudo -l` → lista permissões do sudo.
-- `/etc/sudoers` → configuração principal.
-- `visudo` → edita e verifica a configuração do sudo.
-- Grupos comuns para administração: `sudo` e `wheel`.
-
-### Resumo
-
-    su -
-    su - usuario
-    su -c "comando"
-
-    sudo comando
-    sudo -u usuario comando
-    sudo -i
-    sudo -s
-    sudo -l
-
-    sudo visudo
-
-> **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**
+**Conhecimento só tem valor quando é compartilhado** - Laerte Costa

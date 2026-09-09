@@ -1,212 +1,200 @@
-# 08 — Memória
+# Memória
+
 ## 01 — RAM e Memória Virtual
 
-### RAM — Random Access Memory (Memória de Acesso Aleatório)
+### RAM — Random Access Memory — Memória de Acesso Aleatório
 
-A **RAM** é a memória física usada pelo Linux para armazenar temporariamente dados e programas que estão sendo utilizados.
-
-A RAM é **volátil**: seu conteúdo é perdido quando o computador é desligado.
+A **RAM** é a memória física usada pelo sistema para manter dados e programas que estão sendo utilizados.
 
 Exemplo:
 
-    Aplicação
-       ↓
-    RAM
-       ↓
-    CPU
+    Programa no disco
+          ↓
+        RAM
+          ↓
+        CPU
 
-Quanto mais RAM disponível, mais dados e programas podem permanecer na memória sem precisar acessar o armazenamento.
+A RAM é muito mais rápida que o armazenamento em disco, mas possui capacidade limitada.
 
 ---
 
-### Memória Virtual — Virtual Memory (Memória Virtual)
+## Memory — Memória
 
-A **memória virtual** permite que o sistema utilize uma combinação de:
+Quando um programa é executado, o Linux precisa fornecer memória para ele.
+
+Essa memória pode conter:
+
+- código do programa;
+- dados;
+- bibliotecas;
+- informações temporárias;
+- estruturas usadas pelo processo.
+
+Cada processo possui seu próprio **Virtual Address Space — Espaço de Endereçamento Virtual**.
+
+---
+
+# Virtual Memory — Memória Virtual
+
+A **Memória Virtual** permite que o Linux utilize uma combinação de:
 
     RAM + Swap
 
-Ela cria uma camada de memória que dá aos processos a impressão de possuir mais memória disponível do que apenas a RAM física.
+para gerenciar a memória disponível.
+
+A memória virtual cria para os processos a impressão de que existe um espaço de memória grande e contínuo, mesmo que fisicamente a memória esteja distribuída entre RAM e armazenamento.
 
 ---
 
-### Swap — Área de Troca
+## Swap — Área de Troca
 
-A **Swap** é uma área do armazenamento usada como extensão da memória quando necessário.
+**Swap — Área de Troca** é uma área do armazenamento usada pelo Linux para auxiliar no gerenciamento da memória.
 
 Pode ser:
 
-- **Swap Partition** — Partição Swap
-- **Swap File** — Arquivo Swap
+- uma partição;
+- um arquivo.
 
 Exemplo:
 
     RAM
-    ┌─────────────────┐
-    │ Processos ativos │
-    └─────────────────┘
-             ↕
-    ┌─────────────────┐
-    │      Swap       │
-    │ armazenamento   │
-    └─────────────────┘
+     │
+     ├── páginas usadas
+     │
+     └── páginas menos utilizadas
+                ↓
+             Swap
 
-⚠️ A Swap é muito mais lenta que a RAM.
+Quando necessário, o kernel pode mover páginas de memória entre RAM e Swap.
 
 ---
 
-### Quando a Swap é utilizada?
+## RAM × Swap
 
-Quando existe pressão de memória, o Linux pode mover páginas de memória menos utilizadas da RAM para a Swap.
-
-Esse processo libera espaço na RAM para dados mais necessários.
-
-Exemplo:
-
-    RAM cheia
-       ↓
-    páginas menos usadas
-       ↓
-    Swap
-       ↓
-    espaço liberado na RAM
-
-Isso **não significa** que a Swap substitui a RAM em desempenho.
-
----
-
-### RAM × Memória Virtual
-
-| RAM | Memória Virtual |
+| RAM | Swap |
 |---|---|
-| Memória física | Abstração de memória |
-| Está no hardware | Usa mecanismos do sistema |
-| Muito rápida | Pode envolver RAM e Swap |
-| Volátil | Permite gerenciar melhor a memória |
+| Memória física | Área no armazenamento |
+| Muito mais rápida | Muito mais lenta |
+| Capacidade física limitada | Pode ampliar o espaço disponível para memória |
+| Acesso direto pela memória do sistema | Depende do armazenamento |
+
+> **Swap não substitui RAM.** Ela é muito mais lenta e seu uso intenso pode reduzir bastante o desempenho.
 
 ---
 
-### Ver memória com free
+## Pages — Páginas
 
-O comando mais importante para a prova:
+O Linux divide a memória em blocos chamados:
+
+**Page — Página**
+
+O gerenciamento da memória trabalha com essas páginas.
+
+Uma página pode estar:
+
+    RAM
+
+ou, em determinadas situações:
+
+    Swap
+
+Esse mecanismo permite ao kernel controlar melhor o uso da memória.
+
+---
+
+## Virtual Address — Endereço Virtual
+
+Os processos trabalham com **endereços virtuais**, e não diretamente com endereços físicos da RAM.
+
+Simplificando:
+
+    Processo
+       ↓
+    Endereço Virtual
+       ↓
+    Kernel / MMU
+       ↓
+    Endereço Físico
+       ↓
+    RAM
+
+**MMU — Memory Management Unit — Unidade de Gerenciamento de Memória**
+
+A MMU ajuda a traduzir endereços virtuais para endereços físicos.
+
+---
+
+## Por que usar memória virtual?
+
+A memória virtual permite:
+
+- isolamento entre processos;
+- melhor gerenciamento da RAM;
+- uso de Swap;
+- execução de programas que precisam de mais memória virtual;
+- proteção entre processos.
+
+Um processo normalmente não pode simplesmente acessar a memória de outro processo.
+
+---
+
+## Verificar a memória
+
+O comando:
 
     free
 
-Para mostrar valores mais fáceis de ler:
-
-    free -h
-
-- `-h` — human-readable (legível por humanos)
+mostra informações sobre RAM e Swap.
 
 Exemplo:
 
     free -h
 
-Saída simplificada:
+**`-h` — Human Readable — Formato Legível por Humanos**
 
-                  total   used   free   shared  buff/cache  available
-    Mem:            8Gi    3Gi    1Gi      ...       4Gi        5Gi
-    Swap:           2Gi    0Gi    2Gi
-
----
-
-### Campos importantes
-
-**total**
-→ quantidade total disponível.
-
-**used**
-→ memória atualmente utilizada.
-
-**free**
-→ memória completamente livre.
-
-**buff/cache**
-→ memória usada para buffers e cache.
-
-**available**
-→ estimativa de memória disponível para novos processos sem recorrer à Swap de forma significativa.
-
-**Swap**
-→ informações sobre a área de troca.
-
----
-
-### /proc/meminfo
-
-O Linux também disponibiliza informações detalhadas sobre memória em:
+Também podemos consultar:
 
     /proc/meminfo
 
-Consultar:
+Exemplo:
 
     cat /proc/meminfo
 
-Exemplo de informações:
+---
 
-    MemTotal
-    MemFree
-    MemAvailable
-    Buffers
-    Cached
-    SwapTotal
-    SwapFree
+## Exemplo simplificado
 
-O `/proc` é um **Virtual Filesystem — Sistema de Arquivos Virtual** que fornece informações sobre o kernel e os processos.
+Imagine:
+
+    RAM: 8 GB
+    Swap: 2 GB
+
+O sistema possui:
+
+    8 GB → memória física
+    2 GB → área de Swap
+
+A Swap não significa que o computador possui 10 GB de RAM.
+
+Ela é um recurso adicional para o gerenciamento da memória.
 
 ---
 
-### vmstat — Virtual Memory Statistics (Estatísticas da Memória Virtual)
+## Resumo LPIC-1
 
-O `vmstat` mostra informações sobre memória, processos, CPU e I/O.
+- **RAM** → *Random Access Memory* — Memória de Acesso Aleatório.
+- RAM é a memória física principal do sistema.
+- **Virtual Memory** → Memória Virtual.
+- Memória virtual utiliza mecanismos que permitem ao sistema gerenciar RAM e Swap.
+- **Swap** → Área de Troca.
+- Swap pode ser uma partição ou um arquivo.
+- Swap é muito mais lenta que RAM.
+- **Page** → Página de memória.
+- **Virtual Address** → Endereço Virtual.
+- **MMU** → *Memory Management Unit* — Unidade de Gerenciamento de Memória.
+- `free` → consultar uso de memória.
+- `free -h` → mostrar memória em formato legível.
+- `/proc/meminfo` → informações detalhadas sobre a memória.
+- **Swap não é RAM** e não substitui a memória física.
 
-    vmstat
-
-Para atualizar continuamente:
-
-    vmstat 2
-
-O `2` significa atualizar a cada **2 segundos**.
-
----
-
-### ⚠️ Atenção para a prova LPIC-1
-
-Memorize:
-
-**RAM**
-→ memória física e rápida.
-
-**Virtual Memory**
-→ mecanismo que permite ao sistema gerenciar memória usando RAM e, quando necessário, Swap.
-
-**Swap**
-→ área em armazenamento usada para páginas de memória.
-
-**`free -h`**
-→ mostra RAM e Swap de forma legível.
-
-**`/proc/meminfo`**
-→ informações detalhadas sobre memória.
-
-**`vmstat`**
-→ estatísticas de memória virtual, processos, CPU e I/O.
-
-### Resumo
-
-    RAM
-     ↓
-    memória física
-
-    Memória Virtual
-     ↓
-    gerenciamento da memória pelos processos
-
-    Swap
-     ↓
-    área de armazenamento usada quando necessário
-
-    free -h
-     ↓
-    visualizar RAM e Swap
-
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+**Conhecimento só tem valor quando é compartilhado** - Laerte Costa

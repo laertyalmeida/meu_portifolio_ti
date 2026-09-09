@@ -1,302 +1,300 @@
-# 09 — Boot e Inicialização
+# Boot e Inicialização
+
 ## 05 — systemctl
 
-### O que é o systemctl?
+### 1. O que é systemctl?
 
-`systemctl` é o principal comando para controlar o **systemd**, o sistema responsável por inicializar o Linux e gerenciar serviços.
+**systemctl — systemd Control — Controle do systemd**
+
+É o principal comando usado para **consultar e controlar o systemd**.
 
 Com ele podemos:
 
 - iniciar serviços;
 - parar serviços;
 - reiniciar serviços;
-- consultar status;
+- verificar status;
 - habilitar serviços no boot;
 - desabilitar serviços;
-- trabalhar com targets;
-- consultar unidades com falha.
+- consultar unidades;
+- controlar targets.
 
 ---
 
-## Comandos principais
+### 2. Verificar o status de um serviço
 
-### start — iniciar
+    systemctl status ssh
 
-Inicia um serviço imediatamente.
+**status — Status — Estado**
+
+Mostra informações como:
+
+- se o serviço está ativo;
+- PID;
+- quando foi iniciado;
+- últimas mensagens;
+- processo principal.
+
+Exemplo:
+
+    Active: active (running)
+
+---
+
+### 3. Iniciar um serviço
 
     sudo systemctl start ssh
 
-**start** — iniciar
+**start — Iniciar**
+
+Inicia o serviço **agora**, mas isso não significa necessariamente que ele será iniciado automaticamente no próximo boot.
 
 ---
 
-### stop — parar
-
-Para um serviço imediatamente.
+### 4. Parar um serviço
 
     sudo systemctl stop ssh
 
-**stop** — parar
+**stop — Parar**
+
+Interrompe o serviço.
 
 ---
 
-### restart — reiniciar
-
-Para e inicia novamente o serviço.
+### 5. Reiniciar um serviço
 
     sudo systemctl restart ssh
 
-**restart** — reiniciar
+**restart — Reiniciar**
+
+Para e inicia novamente o serviço.
+
+Útil depois de alterações que precisam de uma reinicialização do serviço.
 
 ---
 
-### reload — recarregar
-
-Recarrega a configuração do serviço sem necessariamente interrompê-lo.
+### 6. Recarregar a configuração
 
     sudo systemctl reload ssh
 
-**reload** — recarregar
+**reload — Recarregar**
+
+Solicita ao serviço que recarregue sua configuração sem necessariamente encerrá-lo.
 
 > Nem todo serviço suporta `reload`.
 
 ---
 
-### status — estado
-
-Mostra o estado atual do serviço.
-
-    systemctl status ssh
-
-Pode mostrar:
-
-- se está ativo;
-- se está parado;
-- se falhou;
-- PID;
-- mensagens recentes do serviço.
-
----
-
-## enable e disable
-
-### enable — habilitar
-
-Configura o serviço para iniciar automaticamente durante o boot.
+### 7. Habilitar no boot
 
     sudo systemctl enable ssh
 
-**enable** — habilitar
+**enable — Habilitar**
 
-⚠️ `enable` normalmente **não inicia o serviço imediatamente**.
+Configura o serviço para ser iniciado automaticamente durante o boot, conforme sua unidade e dependências.
 
 ---
 
-### disable — desabilitar
-
-Remove a configuração que faz o serviço iniciar automaticamente no boot.
+### 8. Desabilitar no boot
 
     sudo systemctl disable ssh
 
-**disable** — desabilitar
+**disable — Desabilitar**
+
+Remove a configuração que permite o início automático do serviço no boot.
+
+Isso não significa necessariamente que o serviço será parado imediatamente.
 
 ---
 
-### enable --now
-
-Habilita **e inicia imediatamente**.
+### 9. Habilitar e iniciar imediatamente
 
     sudo systemctl enable --now ssh
 
-É uma combinação muito útil.
+`--now` — **Now — Agora**
+
+Faz as duas ações:
+
+    enable + start
+
+Para desabilitar e parar:
+
+    sudo systemctl disable --now ssh
 
 ---
 
-## is-enabled
+### 10. Verificar se está ativo
 
-Verifica se o serviço está habilitado para iniciar no boot.
+    systemctl is-active ssh
+
+**is-active — Está Ativo**
+
+Retorna, por exemplo:
+
+    active
+
+---
+
+### 11. Verificar se está habilitado
 
     systemctl is-enabled ssh
 
-Possíveis resultados:
+**is-enabled — Está Habilitado**
+
+Pode retornar:
+
+    enabled
+
+Isso responde a uma pergunta diferente:
+
+    is-active  → está rodando agora?
+    is-enabled → está configurado para iniciar automaticamente?
+
+---
+
+### 12. Reiniciar o systemd
+
+Para recarregar os arquivos de unidades depois de uma alteração:
+
+    sudo systemctl daemon-reload
+
+**daemon-reload — Recarregar o Gerenciador**
+
+Faz o systemd reler os arquivos de unidades.
+
+> `daemon-reload` **não reinicia os serviços**.
+
+---
+
+### 13. Listar unidades
+
+    systemctl list-units
+
+Lista as unidades atualmente carregadas.
+
+Somente serviços:
+
+    systemctl list-units --type=service
+
+**`--type` — Tipo**
+
+---
+
+### 14. Listar arquivos de unidades
+
+    systemctl list-unit-files
+
+Mostra arquivos de unidades instalados e seu estado, como:
 
     enabled
     disabled
     static
     masked
 
----
-
-## is-active
-
-Verifica se o serviço está ativo.
-
-    systemctl is-active ssh
-
-Resultado comum:
-
-    active
-
----
-
-## Serviços com falha
-
-Para listar unidades que falharam:
-
-    systemctl --failed
-
-Útil para descobrir rapidamente problemas durante a inicialização.
-
----
-
-## Listar serviços
-
-### list-units
-
-Mostra unidades carregadas atualmente.
-
-    systemctl list-units --type=service
-
-**--type=service** — limitar ao tipo serviço
-
----
-
-### list-unit-files
-
-Mostra os arquivos de unidades instalados e seu estado de habilitação.
+Somente serviços:
 
     systemctl list-unit-files --type=service
 
 ---
 
-## Targets
+### 15. Mascarar um serviço
 
-O `systemd` utiliza **targets** para representar estados ou grupos de unidades.
+**mask — Mascarar**
 
-Exemplos:
+Impede que uma unidade seja iniciada normalmente.
 
-- `multi-user.target` — modo multiusuário, geralmente sem interface gráfica
-- `graphical.target` — modo gráfico
-- `rescue.target` — modo de recuperação
-- `emergency.target` — modo de emergência
+    sudo systemctl mask ssh
 
-Ver o target padrão:
+Para remover a máscara:
+
+    sudo systemctl unmask ssh
+
+**unmask — Desmascarar**
+
+> `mask` é mais forte que `disable`: um serviço desabilitado ainda pode ser iniciado manualmente; uma unidade mascarada fica impedida de iniciar normalmente.
+
+---
+
+### 16. Consultar o target padrão
 
     systemctl get-default
 
-Alterar o target padrão:
+Exemplo:
+
+    graphical.target
+
+Alterar:
 
     sudo systemctl set-default multi-user.target
 
-Ou:
-
-    sudo systemctl set-default graphical.target
+**set-default — Definir Padrão**
 
 ---
 
-## Alterar o estado imediatamente
+### 17. systemctl no diagnóstico
 
-É possível mudar para um target sem reiniciar:
+Comandos importantes:
 
-    sudo systemctl isolate multi-user.target
+    systemctl status
 
-**isolate** — isolar/ativar somente o target e suas dependências
+    systemctl --failed
 
-⚠️ Pode encerrar serviços e sessões que não pertençam ao target.
+    systemctl list-units --failed
 
----
+`--failed` — **Failed — Falhou**
 
-## Reiniciar e desligar
-
-Reiniciar o computador:
-
-    sudo systemctl reboot
-
-Desligar:
-
-    sudo systemctl poweroff
-
-Suspender:
-
-    systemctl suspend
+Para descobrir serviços que falharam durante a inicialização.
 
 ---
 
-## Relação com o processo de boot
-
-A sequência simplificada é:
-
-    Firmware
-       ↓
-    Bootloader
-       ↓
-    Kernel
-       ↓
-    systemd (PID 1)
-       ↓
-    Targets
-       ↓
-    Services
-       ↓
-    Login
-
-O `systemctl` conversa com o `systemd` para controlar essa estrutura.
-
----
-
-## Comandos essenciais para a LPIC-1
+### 18. Comandos essenciais
 
 | Comando | Função |
 |---|---|
+| `systemctl status serviço` | Ver estado |
 | `systemctl start serviço` | Iniciar |
 | `systemctl stop serviço` | Parar |
 | `systemctl restart serviço` | Reiniciar |
 | `systemctl reload serviço` | Recarregar configuração |
-| `systemctl status serviço` | Ver estado |
 | `systemctl enable serviço` | Habilitar no boot |
 | `systemctl disable serviço` | Desabilitar no boot |
-| `systemctl enable --now serviço` | Habilitar e iniciar |
 | `systemctl is-active serviço` | Verificar se está ativo |
-| `systemctl is-enabled serviço` | Verificar se inicia no boot |
+| `systemctl is-enabled serviço` | Verificar se está habilitado |
+| `systemctl daemon-reload` | Recarregar arquivos de unidades |
 | `systemctl --failed` | Ver unidades com falha |
 | `systemctl get-default` | Ver target padrão |
 | `systemctl set-default TARGET` | Definir target padrão |
-| `systemctl list-units` | Listar unidades |
-| `systemctl reboot` | Reiniciar |
-| `systemctl poweroff` | Desligar |
 
 ---
 
-## 🎯 LPIC-1 — O que memorizar
+## Resumo LPIC-1
 
-**start** → inicia agora
+- `systemctl` → principal comando de controle do **systemd**.
+- `status` → consultar estado.
+- `start` → iniciar.
+- `stop` → parar.
+- `restart` → reiniciar.
+- `reload` → recarregar configuração do serviço.
+- `enable` → iniciar automaticamente no boot.
+- `disable` → não iniciar automaticamente no boot.
+- `enable --now` → habilitar e iniciar imediatamente.
+- `is-active` → verificar se está ativo.
+- `is-enabled` → verificar se está habilitado.
+- `daemon-reload` → fazer o systemd reler arquivos de unidades.
+- `mask` → impedir o início normal de uma unidade.
+- `unmask` → remover o bloqueio.
+- `--failed` → mostrar unidades que falharam.
+- `get-default` → mostrar o target padrão.
 
-**stop** → para agora
+### Diferença fundamental
 
-**restart** → reinicia agora
+    start
+    → inicia agora
 
-**reload** → recarrega configuração
+    enable
+    → configura para iniciar no boot
 
-**enable** → inicia automaticamente no boot
-
-**disable** → não inicia automaticamente no boot
-
-**enable --now** → habilita + inicia agora
-
-**status** → mostra o estado
-
-**get-default** → mostra o target padrão
-
-**set-default** → define o target padrão
-
-> ⭐ Pegadinha comum:
->
-> `systemctl start ssh` **não significa** que o SSH iniciará automaticamente no próximo boot.
->
-> Para isso, use:
->
-> `systemctl enable ssh`
-
----
+    enable --now
+    → inicia agora + configura para o boot
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

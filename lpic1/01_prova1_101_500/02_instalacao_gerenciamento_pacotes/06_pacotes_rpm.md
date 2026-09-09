@@ -1,145 +1,232 @@
-Pacotes RPM
+# Instalação e Gerenciamento de Pacotes
 
-RPM — RPM Package Manager (Gerenciador de Pacotes RPM)
+## 06 — Pacotes RPM
 
-RPM é o formato e também uma ferramenta usada por várias distribuições Linux.
+### RPM — Red Hat Package Manager — Gerenciador de Pacotes Red Hat
 
-O formato dos pacotes normalmente é:
+**RPM — Red Hat Package Manager — Gerenciador de Pacotes Red Hat** é o formato e o sistema de gerenciamento de pacotes utilizado por distribuições da família Red Hat.
 
-.rpm
+A extensão normalmente é:
+
+    .rpm
+
+Exemplo:
+
+    programa.rpm
 
 Distribuições que utilizam RPM incluem:
 
 - Fedora
-- RHEL
+- RHEL — Red Hat Enterprise Linux — Red Hat Enterprise Linux
 - Rocky Linux
 - AlmaLinux
-- openSUSE
+- openSUSE utiliza RPM como formato de pacote, embora tenha ferramentas próprias de gerenciamento.
 
 ---
 
-"rpm"
+## rpm — Gerenciador de Pacotes
 
-O comando "rpm" trabalha diretamente com arquivos ".rpm".
+O comando `rpm` trabalha diretamente com pacotes `.rpm`.
 
-Instalar
+### Instalar
 
-sudo rpm -i pacote.rpm
+    sudo rpm -i programa.rpm
 
-"-i" — Install (Instalar)
+- `-i` — install — instalar
 
-Instala o pacote.
+### Atualizar
 
----
+    sudo rpm -U programa.rpm
 
-Atualizar
+- `-U` — upgrade — atualizar
 
-sudo rpm -U pacote.rpm
+### Remover
 
-"-U" — Upgrade (Atualizar)
+    sudo rpm -e programa
 
-Atualiza o pacote. Se ele ainda não estiver instalado, também pode instalá-lo.
+- `-e` — erase — apagar/remover
 
----
+### Consultar pacote instalado
 
-Remover
+    rpm -q programa
 
-sudo rpm -e nome-do-pacote
+- `-q` — query — consultar
 
-"-e" — Erase (Apagar)
+### Listar todos os pacotes instalados
 
-Remove o pacote.
+    rpm -qa
 
----
+- `-q` — query — consultar
+- `-a` — all — todos
 
-Verificar pacotes instalados
+### Mostrar informações do pacote
 
-rpm -qa
+    rpm -qi programa
 
-"-q" — Query (Consultar)
+- `-q` — query — consultar
+- `-i` — information — informações
 
-Consulta informações sobre pacotes.
+### Listar arquivos instalados
 
-"-a" — All (Todos)
+    rpm -ql programa
 
-Consulta todos os pacotes instalados.
+- `-q` — query — consultar
+- `-l` — list — listar
 
----
+### Descobrir qual pacote fornece um arquivo
 
-"dnf"
+    rpm -qf /caminho/arquivo
 
-O DNF — Dandified YUM é um gerenciador de pacotes usado principalmente em distribuições modernas baseadas em RPM.
-
-Ele consegue buscar pacotes nos repositórios e resolver dependências.
-
-Instalar
-
-sudo dnf install nome-do-pacote
-
-Remover
-
-sudo dnf remove nome-do-pacote
-
-Atualizar
-
-sudo dnf upgrade
-
-Procurar pacote
-
-dnf search palavra
+- `-q` — query — consultar
+- `-f` — file — arquivo
 
 ---
 
-RPM x DNF
+## Dependências
 
-.rpm
- ↓
-rpm → trabalha diretamente com pacotes
+### Dependency — Dependência
 
-Repositórios
- ↓
-dnf → busca pacotes + resolve dependências
+Assim como nos pacotes `.deb`, um pacote `.rpm` pode depender de outros pacotes.
 
----
+Exemplo:
 
-YUM
+    programa
+       ↓
+    biblioteca A
+       ↓
+    biblioteca B
 
-YUM — Yellowdog Updater, Modified é um antigo gerenciador de pacotes usado em sistemas baseados em RPM.
+O comando `rpm` trabalha diretamente com o pacote, mas **não é a ferramenta ideal para resolver automaticamente as dependências através dos repositórios**.
 
-Em sistemas modernos, o DNF substituiu o YUM em muitas distribuições.
-
-Você ainda pode encontrar "yum" em conteúdos e sistemas mais antigos.
+Para isso são utilizadas ferramentas de alto nível.
 
 ---
 
-LPIC-1 — O que saber
+## DNF — Dandified YUM
 
-- Pacotes RPM usam o formato ".rpm".
-- "rpm" trabalha diretamente com pacotes RPM.
-- "dnf" trabalha com repositórios e dependências.
-- "yum" é o gerenciador tradicional que antecedeu o DNF.
-- "rpm -i" instala.
-- "rpm -U" atualiza.
-- "rpm -e" remove.
-- "rpm -qa" lista os pacotes instalados.
+**DNF — Dandified YUM — YUM modernizado** é o gerenciador de pacotes de alto nível utilizado atualmente em várias distribuições da família Red Hat.
+
+### Atualizar informações dos repositórios
+
+    sudo dnf check-update
+
+- `check-update` — verificar atualizações
+
+### Instalar
+
+    sudo dnf install programa
+
+- `install` — instalar
+
+### Remover
+
+    sudo dnf remove programa
+
+- `remove` — remover
+
+### Atualizar pacotes
+
+    sudo dnf upgrade
+
+- `upgrade` — atualizar
+
+### Pesquisar
+
+    dnf search programa
+
+- `search` — pesquisar
+
+### Mostrar informações
+
+    dnf info programa
+
+- `info` — informações
 
 ---
 
-Resumo
+## YUM — Yellowdog Updater, Modified
 
-.deb → Debian / Ubuntu
-.rpm → Fedora / RHEL
+**YUM — Yellowdog Updater, Modified — Atualizador Yellowdog Modificado** é uma ferramenta tradicional de gerenciamento de pacotes RPM.
 
-dpkg → pacote .deb
-apt   → repositórios .deb
+Exemplos:
 
-rpm → pacote .rpm
-dnf → repositórios .rpm
+    sudo yum install programa
+    sudo yum remove programa
+    sudo yum update
 
-Principais flags do "rpm"
+Em sistemas modernos, o **DNF** é a ferramenta principal em muitas distribuições que anteriormente utilizavam YUM.
 
--i → Install (Instalar)
--U → Upgrade (Atualizar)
--e → Erase (Apagar)
--q → Query (Consultar)
--a → All (Todos)
+---
+
+## Repositórios
+
+### Repository — Repositório
+
+Um **Repository — Repositório** é uma fonte de pacotes utilizada pelos gerenciadores de alto nível.
+
+O DNF pode consultar os repositórios configurados para:
+
+- localizar pacotes;
+- resolver dependências;
+- instalar pacotes;
+- atualizar pacotes.
+
+---
+
+## RPM × DNF
+
+| Ferramenta | Função |
+|---|---|
+| `rpm` | Gerenciamento direto de pacotes `.rpm` |
+| `dnf` | Gerenciamento de alto nível |
+| `yum` | Ferramenta tradicional de alto nível |
+| `rpm -i` | Instalar `.rpm` |
+| `rpm -U` | Atualizar `.rpm` |
+| `rpm -e` | Remover pacote |
+| `rpm -qa` | Listar pacotes instalados |
+| `dnf install` | Instalar pelo repositório |
+| `dnf remove` | Remover |
+| `dnf upgrade` | Atualizar |
+
+### Comparação com Debian
+
+    Debian
+       ↓
+    .deb
+       ↓
+    dpkg
+       ↓
+    apt
+
+    Red Hat
+       ↓
+    .rpm
+       ↓
+    rpm
+       ↓
+    dnf
+
+---
+
+## Resumo LPIC-1
+
+- **RPM — Red Hat Package Manager** = sistema/formato de pacotes da família Red Hat.
+- `.rpm` = formato de pacote RPM.
+- `rpm -i` = instalar.
+- `rpm -U` = atualizar.
+- `rpm -e` = remover.
+- `rpm -q` = consultar.
+- `rpm -qa` = listar todos os pacotes instalados.
+- `rpm -qi` = mostrar informações.
+- `rpm -ql` = listar arquivos instalados.
+- `rpm -qf` = descobrir qual pacote fornece um arquivo.
+- **DNF — Dandified YUM** = gerenciador de alto nível.
+- `dnf install` = instalar.
+- `dnf remove` = remover.
+- `dnf upgrade` = atualizar.
+- `dnf search` = pesquisar.
+- **YUM** = ferramenta tradicional de gerenciamento de pacotes RPM.
+- **Dependency — Dependência** = outro pacote necessário para o funcionamento de um programa.
+- `rpm` trabalha diretamente com `.rpm`; `dnf` trabalha com repositórios e resolve dependências.
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

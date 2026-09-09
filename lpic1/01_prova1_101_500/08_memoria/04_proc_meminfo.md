@@ -1,198 +1,177 @@
-# 08 — Memória
+# Memória
+
 ## 04 — /proc/meminfo
 
-### /proc/meminfo — Memory Information (Informações de Memória)
+### 1. O que é /proc/meminfo
 
-O arquivo:
+`/proc/meminfo` — **Memory Information — Informações da Memória**
+
+É um arquivo virtual do **procfs** que apresenta informações detalhadas sobre o uso e o estado da memória do sistema.
 
     /proc/meminfo
 
-fornece informações detalhadas sobre a memória gerenciada pelo **kernel Linux**.
-
-Ele faz parte do:
-
-    /proc
-
-O `/proc` é um **Virtual Filesystem — Sistema de Arquivos Virtual** que fornece informações sobre o sistema e os processos.
+Ele não é um arquivo comum armazenado no disco. O **kernel** fornece essas informações dinamicamente.
 
 ---
 
-### Visualizar o conteúdo
-
-Use:
+### 2. Visualizar o conteúdo
 
     cat /proc/meminfo
 
-Exemplo simplificado:
+Para visualizar apenas informações relacionadas à Swap:
 
-    MemTotal:        8023456 kB
-    MemFree:          512000 kB
-    MemAvailable:    4200000 kB
-    Buffers:           120000 kB
-    Cached:           2800000 kB
-    SwapCached:             0 kB
+    grep -i swap /proc/meminfo
+
+`-i` — **Ignore Case — Ignorar Maiúsculas/Minúsculas**
+
+---
+
+### 3. Principais campos
+
+| Campo | Significado |
+|---|---|
+| `MemTotal` | Quantidade total de RAM |
+| `MemFree` | RAM completamente livre |
+| `MemAvailable` | RAM estimada disponível para novos programas |
+| `Buffers` | Memória usada por buffers |
+| `Cached` | Memória usada por cache de arquivos |
+| `SwapCached` | Memória que também possui cópia na Swap |
+| `SwapTotal` | Quantidade total de Swap |
+| `SwapFree` | Quantidade de Swap livre |
+| `Active` | Memória ativa, usada recentemente |
+| `Inactive` | Memória menos recentemente usada |
+| `SReclaimable` | Memória recuperável pelo kernel |
+| `Shmem` | Memória compartilhada |
+
+Os valores normalmente aparecem em **KiB (Kibibytes)**.
+
+Exemplo:
+
+    MemTotal:       16384000 kB
+    MemFree:         2048000 kB
+    MemAvailable:    9430000 kB
     SwapTotal:       2097148 kB
     SwapFree:        2097148 kB
 
-Os valores podem variar conforme o sistema.
+---
+
+### 4. MemTotal
+
+    MemTotal
+
+Representa a quantidade total de memória RAM que o kernel considera disponível para uso.
+
+Não deve ser confundido diretamente com a capacidade anunciada fisicamente pelo fabricante, pois parte da memória pode ser reservada para hardware ou outros usos.
 
 ---
 
-### Principais informações
+### 5. MemFree × MemAvailable
 
-| Campo | Inglês | Português |
-|---|---|---|
-| `MemTotal` | Total Memory | Memória total |
-| `MemFree` | Free Memory | Memória completamente livre |
-| `MemAvailable` | Available Memory | Memória estimada disponível |
-| `Buffers` | Buffers | Memória usada para buffers |
-| `Cached` | Cache | Memória usada para cache |
-| `SwapCached` | Swap Cache | Memória da Swap também mantida em cache |
-| `SwapTotal` | Total Swap | Swap total |
-| `SwapFree` | Free Swap | Swap livre |
+Essa diferença é importante.
 
----
+**`MemFree`**
 
-### MemTotal — Total Memory (Memória Total)
+→ memória que está completamente livre neste momento.
 
-    grep MemTotal /proc/meminfo
+**`MemAvailable`**
 
-Mostra a quantidade total de memória RAM reconhecida pelo sistema.
+→ estimativa de quanto de memória pode ser disponibilizado para novos programas sem recorrer significativamente à Swap.
 
 Exemplo:
 
-    MemTotal:        8023456 kB
+    MemFree:        2 GB
+    MemAvailable:   9 GB
+
+Isso **não significa** que apenas 2 GB de RAM estão disponíveis.
+
+O Linux utiliza RAM livre como **cache**, podendo liberar parte dela quando necessário.
 
 ---
 
-### MemFree — Free Memory (Memória Livre)
+### 6. Informações sobre Swap
 
-    grep MemFree /proc/meminfo
+Procure:
 
-Representa a memória que está completamente livre.
-
-⚠️ **Não confunda `MemFree` com `MemAvailable`.**
-
----
-
-### MemAvailable — Available Memory (Memória Disponível)
-
-    grep MemAvailable /proc/meminfo
-
-Indica uma estimativa de memória que pode ser disponibilizada para novos processos sem recorrer significativamente à Swap.
-
-Por isso, geralmente é mais útil para avaliar a memória disponível do que observar apenas `MemFree`.
-
----
-
-### Informações sobre Swap
-
-Consultar:
-
-    grep Swap /proc/meminfo
+    grep -i swap /proc/meminfo
 
 Exemplo:
 
-    SwapCached:       0 kB
-    SwapTotal:  2097148 kB
-    SwapFree:   2097148 kB
+    SwapCached:          0 kB
+    SwapTotal:     2097148 kB
+    SwapFree:      2097148 kB
 
-Temos:
+Interpretação:
 
-**SwapTotal**
-→ quantidade total de Swap.
-
-**SwapFree**
-→ quantidade de Swap ainda disponível.
-
-**SwapCached**
-→ páginas que foram enviadas para Swap, mas que também permanecem em memória RAM.
+    SwapTotal → tamanho total da Swap
+    SwapFree  → espaço de Swap ainda livre
+    SwapCached → páginas que possuem cópia na Swap e também podem estar na RAM
 
 ---
 
-### Buffers e Cached
+### 7. Ver apenas informações de memória
 
-O Linux utiliza parte da RAM para **buffers e cache**, melhorando o desempenho de operações de I/O.
+    grep -E 'MemTotal|MemFree|MemAvailable|Buffers|Cached' /proc/meminfo
 
-Consultar:
-
-    grep -E 'Buffers|Cached' /proc/meminfo
-
-- `-E` — extended regular expression (expressão regular estendida)
-
-⚠️ Memória usada como cache não significa necessariamente memória "perdida". O kernel pode liberar parte dela quando necessário.
+`-E` — **Extended Regular Expressions — Expressões Regulares Estendidas**
 
 ---
 
-### /proc/meminfo × free
-
-O comando:
-
-    free -h
-
-apresenta uma visão resumida e mais amigável.
-
-Já:
-
-    cat /proc/meminfo
-
-fornece uma quantidade muito maior de informações.
-
-Podemos pensar assim:
+### 8. Relação com outros comandos
 
     /proc/meminfo
           ↓
-    informações detalhadas
+       informações
           ↓
-        free
-          ↓
-    visão resumida
+    ┌───────────────┐
+    │     free      │
+    │    vmstat     │
+    └───────────────┘
+
+O `free` utiliza informações fornecidas pelo kernel para apresentar um resumo da memória.
+
+O `vmstat` apresenta informações de memória virtual junto com processos, I/O e CPU.
 
 ---
 
-### Filtrando informações
+### 9. /proc é um sistema de arquivos virtual
 
-Para consultar somente a memória total:
+O diretório:
 
-    grep MemTotal /proc/meminfo
+    /proc
 
-Para consultar memória disponível:
+é o **procfs — Process Filesystem — Sistema de Arquivos de Processos**.
 
-    grep MemAvailable /proc/meminfo
+Ele fornece informações sobre:
 
-Para consultar Swap:
+- processos;
+- memória;
+- CPU;
+- kernel;
+- dispositivos;
+- parâmetros do sistema.
 
-    grep Swap /proc/meminfo
+Exemplos:
 
-Para consultar várias informações:
-
-    grep -E 'MemTotal|MemFree|MemAvailable|SwapTotal|SwapFree' /proc/meminfo
+    /proc/cpuinfo
+    /proc/meminfo
+    /proc/loadavg
+    /proc/uptime
 
 ---
 
-### ⚠️ Atenção para a prova LPIC-1
+## Resumo LPIC-1
 
-Memorize:
+- `/proc/meminfo` → informações detalhadas sobre a memória.
+- É fornecido dinamicamente pelo **kernel**.
+- Faz parte do **procfs**.
+- `MemTotal` → RAM total reconhecida pelo kernel.
+- `MemFree` → RAM completamente livre.
+- `MemAvailable` → estimativa de RAM disponível para novos programas.
+- `SwapTotal` → Swap total.
+- `SwapFree` → Swap livre.
+- `Buffers` → memória usada por buffers.
+- `Cached` → memória usada como cache.
+- `cat /proc/meminfo` → visualizar todas as informações.
+- `grep /proc/meminfo` → filtrar informações específicas.
 
-**`/proc/meminfo`**
-→ fornece informações detalhadas sobre a memória do sistema.
-
-**`MemTotal`**
-→ memória total reconhecida.
-
-**`MemFree`**
-→ memória completamente livre.
-
-**`MemAvailable`**
-→ estimativa de memória disponível para novos usos.
-
-**`SwapTotal`**
-→ tamanho total da Swap.
-
-**`SwapFree`**
-→ Swap disponível.
-
-**`free -h`**
-→ apresenta uma visão resumida dessas informações.
-
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

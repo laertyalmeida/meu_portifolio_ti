@@ -1,180 +1,177 @@
-# 07 — Processos
+# Processos
+
 ## 06 — nice e renice
 
-### Nice — Process Priority Adjustment (Ajuste de Prioridade do Processo)
+### nice — Run with Priority — Executar com Prioridade
 
-O **nice** define o valor de prioridade de CPU de um processo.
+O `nice` inicia um processo com um determinado valor de **Nice — Gentileza/Prioridade**.
 
-O valor **nice** normalmente vai de:
+Esse valor influencia a prioridade de CPU do processo.
 
-    -20 → maior prioridade
-     0 → prioridade padrão
-    +19 → menor prioridade
+Uso básico:
 
-⚠️ **Quanto menor o valor nice, maior a prioridade.**
+    nice comando
+
+Exemplo:
+
+    nice sleep 100
 
 ---
 
-### nice — Start with a Priority (Iniciar com uma Prioridade)
+## Nice Value — Valor de Nice
 
-Sintaxe:
+O valor padrão normalmente é:
 
-    nice -n VALOR comando
+    0
 
-Exemplo:
+No Linux, os valores normalmente vão de:
+
+    -20 → maior prioridade
+     19 → menor prioridade
+
+Quanto **menor** o valor de nice, maior a prioridade relativa do processo para receber CPU.
+
+| Valor | Prioridade relativa |
+|---:|---|
+| `-20` | Maior |
+| `0` | Padrão |
+| `19` | Menor |
+
+> Nice não significa "porcentagem de CPU". É um valor usado pelo escalonador para definir a prioridade relativa entre processos.
+
+---
+
+## Iniciar com menor prioridade
+
+Para iniciar um processo com nice `10`:
 
     nice -n 10 comando
 
-- `-n` — nice (definir valor de ajuste)
+**`-n` — Adjustment — Ajuste**
 
-O comando será iniciado com:
+Exemplo:
 
-    nice = 10
+    nice -n 10 ./backup.sh
 
-Ou seja, terá uma prioridade de CPU menor que um processo com `nice = 0`.
+O processo será iniciado com um valor de nice maior que o padrão, dando-lhe menor prioridade relativa de CPU.
 
 ---
 
-### Ver o valor nice
+## Iniciar com maior prioridade
 
-Com `ps`:
+Para usar um valor negativo:
+
+    sudo nice -n -10 comando
+
+Valores de nice mais baixos aumentam a prioridade relativa.
+
+Usuários comuns normalmente não podem aumentar a prioridade dessa maneira; privilégios administrativos podem ser necessários.
+
+---
+
+# renice — Re-Nice — Alterar Prioridade
+
+O `renice` altera o valor de nice de um processo **que já está executando**.
+
+Exemplo:
+
+    renice 10 -p 1520
+
+**`-p` — PID — ID do Processo**
+
+Nesse caso, o processo `1520` passa a ter nice `10`.
+
+---
+
+## Alterar pelo PID
+
+    sudo renice -n 5 -p 1520
+
+Altera o nice do processo `1520` para `5`.
+
+---
+
+## Consultar o nice
+
+Podemos usar:
 
     ps -o pid,ni,cmd
 
-- `-o` — output (definir campos)
-- `ni` — nice (valor de ajuste)
-- `cmd` — command (comando)
+O campo:
+
+    NI
+
+significa:
+
+**NI — Nice Value — Valor de Nice**
 
 Exemplo:
 
-    PID  NI CMD
-    1250  0 bash
-    1387 10 processo
+    PID   NI  CMD
+    1520   5  backup.sh
 
 ---
 
-### renice — Change Priority (Alterar a Prioridade)
-
-O `renice` altera o valor nice de um processo que já está executando.
-
-Sintaxe:
-
-    renice VALOR -p PID
-
-Exemplo:
-
-    renice 10 -p 1250
-
-- `-p` — PID (selecionar pelo ID do processo)
-
-O processo `1250` passa a ter:
-
-    NI = 10
-
----
-
-### Aumentando a prioridade
-
-Para aumentar a prioridade, é necessário **diminuir o valor nice**.
-
-Exemplo:
-
-    renice -5 -p 1250
-
-    NI: 0 → -5
-
-⚠️ Usuários comuns normalmente não podem escolher valores nice negativos. Isso geralmente exige privilégios elevados.
-
-Exemplo:
-
-    sudo renice -5 -p 1250
-
----
-
-### Diminuindo a prioridade
-
-Para dar menos prioridade ao processo:
-
-    renice 10 -p 1250
-
-    NI: 0 → 10
-
-Isso pode ser útil para processos que consomem muita CPU e não precisam ter prioridade sobre outras tarefas.
-
----
-
-### nice × renice
+## nice × renice
 
 | Comando | Função |
 |---|---|
-| `nice` | inicia um processo com determinado valor nice |
-| `renice` | altera o valor nice de um processo existente |
+| `nice` | Inicia um novo processo com determinado nice |
+| `renice` | Altera o nice de um processo existente |
+| `NI` | Valor de nice |
+| `-20` | Maior prioridade relativa |
+| `0` | Valor padrão |
+| `19` | Menor prioridade relativa |
 
-Memorize:
+### Pense assim:
 
-    nice   → iniciar
-    renice → alterar
+    nice
+      ↓
+    iniciar processo
+      ↓
+    definir prioridade
+
+    renice
+      ↓
+    processo já existe
+      ↓
+    alterar prioridade
 
 ---
 
-### ⚠️ Nice não é exatamente "prioridade"
+## Exemplo prático
 
-O **nice** é um **ajuste de prioridade** usado pelo escalonador de processos.
+Iniciar um processo com prioridade menor:
 
-O valor `NI` influencia a prioridade, mas não deve ser confundido diretamente com o campo `PR` exibido pelo `top`.
+    nice -n 10 ./backup.sh
 
-No `top`:
-
-    PR → Priority (Prioridade)
-    NI → Nice (Ajuste de prioridade)
-
----
-
-### Exemplo completo
-
-Iniciar um processo com baixa prioridade:
-
-    nice -n 15 comando
-
-Ver:
+Descobrir o PID:
 
     ps -o pid,ni,cmd
 
-Alterar depois:
+Alterar o processo:
 
-    renice 5 -p PID
+    renice 5 -p 1520
 
-Resultado:
+Verificar novamente:
 
-    NI: 15 → 5
-
-A prioridade relativa do processo aumenta, pois o valor nice diminuiu.
+    ps -p 1520 -o pid,ni,cmd
 
 ---
 
-### ⚠️ Atenção para a prova LPIC-1
+## Resumo LPIC-1
 
-Memorize:
+- `nice` → **Run with Priority — Executar com Prioridade**.
+- `renice` → **Re-Nice — Alterar o valor de Nice**.
+- `nice` → usado ao iniciar um processo.
+- `renice` → usado em um processo já existente.
+- `NI` → valor de nice.
+- Nice padrão → `0`.
+- Faixa usual → `-20` até `19`.
+- `-20` → maior prioridade relativa.
+- `19` → menor prioridade relativa.
+- `nice -n 10 comando` → inicia com nice `10`.
+- `renice 10 -p PID` → altera o nice do processo.
+- Valores negativos geralmente exigem privilégios administrativos.
 
-    nice -n 10 comando
-    renice 10 -p PID
-
-**Nice menor**
-→ maior prioridade relativa.
-
-**Nice maior**
-→ menor prioridade relativa.
-
-**`nice`**
-→ define o ajuste ao iniciar o processo.
-
-**`renice`**
-→ altera o ajuste de um processo existente.
-
-Faixa tradicional:
-
-    -20 ← maior prioridade
-      0 ← padrão
-    +19 ← menor prioridade
-
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+**Conhecimento só tem valor quando é compartilhado** - Laerte Costa

@@ -1,215 +1,352 @@
-# 05 — fdisk, gdisk e parted
+# Sistemas de Arquivos e FHS
 
-## fdisk — Partition Table Manipulator (Manipulador de Tabela de Partições)
+## 05 — fdisk, gdisk e parted
 
-O `fdisk` é usado para **criar, excluir e alterar partições**.
+**Partitioning Tools — Ferramentas de Particionamento**
 
-Também pode ser usado para visualizar informações de particionamento.
+`fdisk`, `gdisk` e `parted` são ferramentas usadas para visualizar e gerenciar **Partition Tables — Tabelas de Partições**.
 
-### Abrir um disco
-
-    fdisk /dev/sda
-
-### Listar partições
-
-    fdisk -l
-
-`-l` — list (listar)
+> ⚠️ Operações de particionamento podem causar perda de dados. Sempre confirme o disco correto antes de alterar qualquer coisa.
 
 ---
 
-## Comandos interativos do fdisk
+## 1. `fdisk` — Disk Partitioning — Particionamento de Disco
 
-Ao executar:
+O `fdisk` é uma ferramenta tradicional para criar, excluir e modificar partições.
 
-    fdisk /dev/sda
+Pode trabalhar com:
 
-Podemos usar:
-
-| Tecla | Inglês | Português | Função |
-|---|---|---|---|
-| `p` | print | imprimir/listar | Mostra a tabela de partições |
-| `n` | new | nova | Cria uma nova partição |
-| `d` | delete | excluir | Exclui uma partição |
-| `t` | type | tipo | Altera o tipo da partição |
-| `w` | write | gravar | Grava as alterações |
-| `q` | quit | sair | Sai sem gravar |
-
-### Atenção
-
-As alterações só são gravadas no disco quando usamos:
-
-    w
-
-`w` — write (gravar)
-
----
-
-## gdisk — GPT fdisk (fdisk para GPT)
-
-O `gdisk` é uma ferramenta de particionamento voltada principalmente para **GPT — GUID Partition Table (Tabela de Partições GUID)**.
-
-### Abrir um disco
-
-    gdisk /dev/sda
-
-Dentro do `gdisk`, encontramos comandos semelhantes aos do `fdisk`.
-
-| Tecla | Inglês | Português | Função |
-|---|---|---|---|
-| `p` | print | imprimir/listar | Mostra a tabela |
-| `n` | new | nova | Cria partição |
-| `d` | delete | excluir | Exclui partição |
-| `t` | type | tipo | Altera o tipo |
-| `w` | write | gravar | Grava alterações |
-| `q` | quit | sair | Sai |
-
-### Memorize
-
-    fdisk  → particionamento geral
-    gdisk  → GPT
-
----
-
-## parted — Partition Editor (Editor de Partições)
-
-O `parted` é outra ferramenta para **criar, excluir e modificar partições**.
-
-Pode trabalhar com diferentes esquemas de particionamento, incluindo:
-
-    MBR
-    GPT
-
-### Abrir um disco
-
-    parted /dev/sda
+- MBR;
+- GPT.
 
 ### Listar discos e partições
 
-    parted -l
+    sudo fdisk -l
 
-`-l` — list (listar)
+`-l` — list — listar.
 
-### Dentro do parted
+Exemplo:
 
-    print
-
-`print` — imprimir/listar
-
-Mostra a tabela de partições do disco.
+    Disk /dev/sda: 500 GiB
+    Disklabel type: gpt
 
 ---
 
-## Criar uma tabela GPT com parted
+## 2. Abrir um disco com `fdisk`
 
-    parted /dev/sda
-    mklabel gpt
+    sudo fdisk /dev/sda
 
-`mklabel` — make label (criar rótulo/tabela)
+O `fdisk` entra em um modo interativo.
 
-`gpt` — GUID Partition Table (Tabela de Partições GUID)
+Para mostrar os comandos disponíveis:
 
-### Atenção
-
-Criar uma nova tabela de partições pode **destruir as informações de particionamento existentes**.
+    m
 
 ---
 
-## fdisk × gdisk × parted
+## 3. Comandos principais do `fdisk`
 
-| Comando | Principal uso | MBR | GPT |
-|---|---|---:|---:|
-| `fdisk` | Gerenciar partições | ✓ | ✓ |
-| `gdisk` | Gerenciar GPT | — | ✓ |
-| `parted` | Gerenciar partições | ✓ | ✓ |
+Dentro do `fdisk`:
 
----
+| Comando | English | Português |
+|---|---|---|
+| `m` | menu | mostrar ajuda |
+| `p` | print | mostrar tabela |
+| `n` | new | criar partição |
+| `d` | delete | excluir partição |
+| `t` | type | alterar tipo |
+| `l` | list | listar tipos de partição |
+| `w` | write | gravar alterações |
+| `q` | quit | sair sem gravar |
 
-## Fluxo básico
-
-    Disco
-      ↓
-    /dev/sda
-      ↓
-    fdisk / gdisk / parted
-      ↓
-    Tabela de partições
-      ↓
-    Partições
-      ↓
-    Filesystem
-      ↓
-    Montagem
-
----
-
-## Exemplo prático
-
-### Ver discos
-
-    lsblk
-
-### Ver tabela de partições
-
-    fdisk -l
-
-### Abrir o disco
-
-    fdisk /dev/sda
-
-### Criar uma partição
-
-    n
-
-### Verificar
+### Visualizar a tabela
 
     p
 
-### Gravar
+### Criar partição
+
+    n
+
+### Excluir partição
+
+    d
+
+### Gravar alterações
 
     w
 
----
-
-## LPIC-1 — O que saber
-
-- `fdisk` — ferramenta de particionamento.
-- `gdisk` — ferramenta voltada para GPT.
-- `parted` — editor de partições com suporte a MBR e GPT.
-- `fdisk -l` — listar informações de particionamento.
-- `parted -l` — listar discos e partições.
-- Conhecer `p`, `n`, `d`, `t`, `w` e `q` no modo interativo.
-- `w` grava as alterações.
-- `q` sai sem gravar.
-- Saber diferenciar **partição** de **filesystem**.
-- Entender que criar uma nova tabela de partições pode causar perda de dados.
-
----
-
-## Resumo
-
-    fdisk
-      ↓
-    Particionamento
-
-    gdisk
-      ↓
-    GPT
-
-    parted
-      ↓
-    MBR + GPT
-
-    fdisk -l
-      ↓
-    listar partições
-
-    w
-      ↓
-    gravar alterações
+### Sair sem gravar
 
     q
+
+---
+
+## 4. Fluxo básico com `fdisk`
+
+    sudo fdisk /dev/sda
+
+Depois:
+
+    p
+    n
+    p
+    1
+    Enter
+    Enter
+    w
+
+A sequência exata depende do disco e do particionamento existente.
+
+**Nunca execute comandos de alteração sem confirmar primeiro o dispositivo.**
+
+---
+
+# gdisk
+
+## 5. `gdisk` — GPT fdisk — Particionamento GPT
+
+O `gdisk` é uma ferramenta especializada em tabelas **GPT — GUID Partition Table — Tabela de Partições GUID**.
+
+Abrir um disco:
+
+    sudo gdisk /dev/sda
+
+Mostrar ajuda:
+
+    ?
+
+---
+
+## 6. Comandos principais do `gdisk`
+
+Dentro do `gdisk`:
+
+| Comando | English | Português |
+|---|---|---|
+| `p` | print | mostrar tabela |
+| `n` | new | criar partição |
+| `d` | delete | excluir partição |
+| `t` | type | alterar tipo |
+| `l` | list | listar tipos |
+| `v` | verify | verificar |
+| `w` | write | gravar alterações |
+| `q` | quit | sair sem gravar |
+
+O funcionamento é parecido com o `fdisk`, mas o `gdisk` é voltado para GPT.
+
+---
+
+## 7. `fdisk` × `gdisk`
+
+| Ferramenta | Principal uso |
+|---|---|
+| `fdisk` | MBR e GPT em versões modernas |
+| `gdisk` | GPT |
+| `parted` | MBR e GPT |
+
+Para LPIC-1, lembre:
+
+    fdisk → particionamento geral
+    gdisk → GPT
+    parted → diferentes tabelas de partição
+
+---
+
+# parted
+
+## 8. `parted` — Partition Editor — Editor de Partições
+
+O `parted` é outra ferramenta para criar e administrar partições.
+
+Pode trabalhar com:
+
+- MBR;
+- GPT;
+- outros formatos de tabela de partição.
+
+Listar discos:
+
+    sudo parted -l
+
+`-l` — list — listar.
+
+---
+
+## 9. Abrir um disco com `parted`
+
+    sudo parted /dev/sda
+
+Mostrar a tabela:
+
+    print
+
+Exemplo:
+
+    (parted) print
+
+---
+
+## 10. Criar uma tabela GPT
+
+Dentro do `parted`:
+
+    mklabel gpt
+
+**Atenção:** criar uma nova tabela de partições pode destruir a estrutura de partições existente.
+
+---
+
+## 11. Criar uma tabela MBR
+
+No `parted`:
+
+    mklabel msdos
+
+No `parted`, `msdos` representa o esquema tradicional **MBR**.
+
+---
+
+## 12. Criar uma partição
+
+Exemplo:
+
+    mkpart primary ext4 1MiB 10GiB
+
+Significado:
+
+- `mkpart` → make partition — criar partição;
+- `primary` → primária;
+- `ext4` → tipo indicado;
+- `1MiB` → início;
+- `10GiB` → fim.
+
+> `parted` define a partição; a criação real do sistema de arquivos normalmente é feita depois com `mkfs`.
+
+Exemplo:
+
+    sudo mkfs.ext4 /dev/sda1
+
+---
+
+## 13. Verificar alinhamento
+
+O `parted` possui recursos para verificar o alinhamento das partições.
+
+Dentro do `parted`:
+
+    align-check optimal 1
+
+**Alignment — Alinhamento**
+
+Ajuda a garantir que a partição esteja alinhada adequadamente ao dispositivo de armazenamento.
+
+---
+
+## 14. Comandos principais do `parted`
+
+| Comando | English | Português |
+|---|---|---|
+| `print` | print | mostrar tabela |
+| `mklabel` | make label | criar tabela de partições |
+| `mkpart` | make partition | criar partição |
+| `rm` | remove | remover partição |
+| `resizepart` | resize partition | alterar final da partição |
+| `name` | name | definir nome |
+| `align-check` | alignment check | verificar alinhamento |
+| `quit` | quit | sair |
+
+---
+
+## 15. Visualizar informações
+
+### `fdisk`
+
+    sudo fdisk -l
+
+### `gdisk`
+
+    sudo gdisk -l /dev/sda
+
+### `parted`
+
+    sudo parted -l
+
+Todos podem ajudar a identificar a estrutura do disco.
+
+---
+
+## 16. Depois de criar uma partição
+
+Criar a partição **não significa que ela já possui um sistema de arquivos**.
+
+Exemplo:
+
+    sudo fdisk /dev/sda
+
+Depois de criar `/dev/sda1`:
+
+    sudo mkfs.ext4 /dev/sda1
+
+Criar ponto de montagem:
+
+    sudo mkdir /mnt/dados
+
+Montar:
+
+    sudo mount /dev/sda1 /mnt/dados
+
+Fluxo:
+
+    Disco
       ↓
-    sair sem gravar
+    Tabela de Partições
+      ↓
+    Partição
+      ↓
+    Sistema de Arquivos
+      ↓
+    Mount Point
+      ↓
+    Arquivos
+
+---
+
+## 17. Comparação rápida
+
+| Recurso | `fdisk` | `gdisk` | `parted` |
+|---|---:|---:|---:|
+| Visualizar partições | ✓ | ✓ | ✓ |
+| Criar partições | ✓ | ✓ | ✓ |
+| Excluir partições | ✓ | ✓ | ✓ |
+| MBR | ✓ | — | ✓ |
+| GPT | ✓ | ✓ | ✓ |
+| Interface interativa | ✓ | ✓ | ✓ |
+| Ferramenta especializada em GPT | — | ✓ | — |
+| Verificar alinhamento | — | — | ✓ |
+
+---
+
+## Resumo LPIC-1
+
+- `fdisk` → ferramenta de particionamento.
+- `fdisk -l` → lista discos e partições.
+- `fdisk /dev/sda` → abre o disco para gerenciamento.
+- `p` → mostra a tabela no `fdisk`.
+- `n` → cria partição.
+- `d` → exclui partição.
+- `t` → altera tipo.
+- `w` → grava alterações.
+- `q` → sai sem gravar.
+- `gdisk` → ferramenta especializada em GPT.
+- `gdisk /dev/sda` → abre um disco GPT.
+- `parted` → ferramenta de particionamento que suporta diferentes tabelas.
+- `parted -l` → lista informações dos discos.
+- `mklabel gpt` → cria uma tabela GPT.
+- `mklabel msdos` → cria uma tabela MBR.
+- `mkpart` → cria uma partição.
+- `rm` → remove uma partição no `parted`.
+- Criar uma partição **não cria automaticamente um sistema de arquivos**.
+- `mkfs.ext4 /dev/sda1` → cria um sistema de arquivos ext4.
+- `mount` → disponibiliza o sistema de arquivos em um diretório.
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

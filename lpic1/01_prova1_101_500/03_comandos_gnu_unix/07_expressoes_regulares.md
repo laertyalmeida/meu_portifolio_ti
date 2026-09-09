@@ -1,299 +1,281 @@
-Expressões Regulares — Regular Expressions
+# Comandos GNU/UNIX
 
-As Expressões Regulares, também chamadas de Regex, são usadas para procurar padrões dentro de textos.
+## 07 — Expressões Regulares
 
-Elas são muito importantes no Linux e aparecem em ferramentas como:
+**Regular Expressions (Regex) — Expressões Regulares** são padrões usados para **encontrar, filtrar e manipular textos**.
 
-- "grep"
-- "sed"
-- "awk"
-
-A ideia principal é:
-
-texto
- ↓
-padrão
- ↓
-encontrar o que corresponde
+No LPIC-1, são especialmente importantes com `grep`, `grep -E`, `sed` e `awk`.
 
 ---
 
-"Regex" — Regular Expression
+### Caracteres básicos
 
-Regular Expression → Expressão Regular
-
-Uma expressão regular descreve um padrão de texto.
-
-Por exemplo:
-
-grep 'Linux' arquivo.txt
-
-→ procura o texto Linux.
+| Regex | Significado | Exemplo |
+|---|---|---|
+| `.` | qualquer caractere | `a.c` → `abc`, `a1c` |
+| `^` | início da linha | `^root` |
+| `$` | fim da linha | `bash$` |
+| `*` | zero ou mais ocorrências | `ab*` |
+| `[ ]` | conjunto de caracteres | `[abc]` |
+| `[^ ]` | qualquer caractere exceto os indicados | `[^0-9]` |
 
 ---
 
-"." — Qualquer Caractere
+### `.` — qualquer caractere
 
-O ponto "." representa qualquer caractere, normalmente exceto uma quebra de linha.
+O ponto representa **um caractere qualquer**.
 
-Exemplo:
-
-grep 'c.sa' arquivo.txt
+    grep "c.t" arquivo.txt
 
 Pode encontrar:
 
-casa
-cosa
-cisa
-
-Porque:
-
-c . s a
-  ↑
-qualquer caractere
+    cat
+    cot
+    c1t
 
 ---
 
-"^" — Início da Linha
+### `^` — início da linha
 
-O símbolo "^" significa:
+    grep "^root" /etc/passwd
 
-Início da linha
-
-Exemplo:
-
-grep '^Linux' arquivo.txt
-
-→ encontra linhas que começam com "Linux".
+Procura linhas que começam com `root`.
 
 Exemplo:
 
-Linux é livre
-Linux é poderoso
-Eu estudo Linux
-
-Resultado:
-
-Linux é livre
-Linux é poderoso
+    root:x:0:0:root:/root:/bin/bash
 
 ---
 
-"$" — Final da Linha
+### `$` — fim da linha
 
-O símbolo "$" significa:
+    grep "bash$" /etc/passwd
 
-Final da linha
-
-Exemplo:
-
-grep 'Linux$' arquivo.txt
-
-→ encontra linhas que terminam com "Linux".
-
-Exemplo:
-
-Eu estudo Linux
-Linux é livre
-Hoje estudo Linux
-
-Resultado:
-
-Eu estudo Linux
-Hoje estudo Linux
+Procura linhas que terminam com `bash`.
 
 ---
 
-"[]" — Conjunto de Caracteres
+### `*` — zero ou mais ocorrências
 
-Os colchetes "[]" representam um conjunto de caracteres possíveis.
-
-Exemplo:
-
-grep '[abc]' arquivo.txt
-
-→ procura linhas que contenham:
-
-a
-b
-ou
-c
-
-Outro exemplo:
-
-grep '[0-9]' arquivo.txt
-
-→ procura um dígito de 0 a 9.
-
----
-
-"[^]" — Negação
-
-Dentro de "[]", o símbolo "^" pode significar negação.
-
-Exemplo:
-
-grep '[^0-9]' arquivo.txt
-
-→ procura um caractere que não seja um número.
-
-⚠️ Atenção:
-
-^Linux
-
-→ início da linha.
-
-[^0-9]
-
-→ qualquer caractere que não seja de 0 a 9.
-
-O significado depende da posição do "^".
-
----
-
-"*" — Zero ou Mais
-
-O "*" significa:
-
-zero ou mais ocorrências do elemento anterior.
-
-Exemplo:
-
-grep 'ab*' arquivo.txt
+    grep "ab*c" arquivo.txt
 
 Pode encontrar:
 
-a
-ab
-abb
-abbb
+    ac
+    abc
+    abbc
+    abbbc
 
-Porque o "b" pode aparecer:
-
-0 vezes
-1 vez
-2 vezes
-3 vezes
-...
+O `*` modifica o caractere ou expressão imediatamente anterior.
 
 ---
 
-"?" — Zero ou Uma Ocorrência
+### `[ ]` — conjunto de caracteres
 
-O "?" significa:
+Permite escolher um caractere entre várias possibilidades.
 
-zero ou uma ocorrência.
+    grep "[abc]" arquivo.txt
 
-⚠️ Em ferramentas como "grep", seu uso depende do tipo de expressão regular utilizado. Para a LPIC-1, é importante reconhecer que existem diferenças entre BRE e ERE.
+Encontra linhas que possuem `a`, `b` ou `c`.
+
+Também podemos usar intervalos:
+
+    grep "[0-9]" arquivo.txt
+
+Procura qualquer número de `0` a `9`.
+
+Outros exemplos:
+
+    [a-z]    → letras minúsculas
+    [A-Z]    → letras maiúsculas
+    [0-9]    → números
 
 ---
 
-"+" — Uma ou Mais
+### `[^ ]` — negação
 
-O "+" significa:
+Dentro de `[ ]`, o `^` no início significa **exceto**.
 
-uma ou mais ocorrências.
+    grep "[^0-9]" arquivo.txt
 
-Exemplo com ERE:
+Procura caracteres que **não sejam números**.
 
-grep -E 'ab+' arquivo.txt
+---
+
+## Expressões regulares estendidas
+
+Com `grep -E`, podemos utilizar operadores adicionais.
+
+### `+` — uma ou mais ocorrências
+
+    grep -E "ab+c" arquivo.txt
+
+Encontra:
+
+    abc
+    abbc
+    abbbc
+
+Mas não encontra:
+
+    ac
+
+---
+
+### `?` — zero ou uma ocorrência
+
+    grep -E "colou?r" arquivo.txt
 
 Pode encontrar:
 
-ab
-abb
-abbb
-
-Mas não encontra apenas:
-
-a
-
-Porque é necessário ter pelo menos um "b".
+    color
+    colour
 
 ---
 
-"|" — OU
+### `|` — OR — ou
 
-O símbolo "|" significa:
+Permite procurar uma alternativa ou outra.
 
-OU
+    grep -E "Linux|Unix" arquivo.txt
+
+Encontra linhas contendo:
+
+    Linux
+
+ou:
+
+    Unix
+
+---
+
+### `( )` — agrupamento
+
+Agrupa partes de uma expressão.
+
+    grep -E "(Linux|Unix) OS" arquivo.txt
+
+Procura:
+
+    Linux OS
+    Unix OS
+
+---
+
+### `{ }` — quantidade específica
+
+Define quantas vezes uma expressão deve aparecer.
+
+    grep -E "[0-9]{3}" arquivo.txt
+
+Procura exatamente **3 números consecutivos**.
 
 Exemplo:
 
-grep -E 'Linux|Unix' arquivo.txt
+    123
 
-→ procura:
+Também podemos definir intervalo:
 
-Linux
-OU
-Unix
+    grep -E "[0-9]{2,4}" arquivo.txt
 
----
-
-Principais Metacaracteres
-
-.      → qualquer caractere
-^      → início da linha
-$      → final da linha
-[]     → conjunto de caracteres
-[^]    → negação dentro de conjunto
-*      → zero ou mais
-+      → uma ou mais
-?      → zero ou uma
-|      → OU
+Procura de **2 a 4 números consecutivos**.
 
 ---
 
-🧠 Para a LPIC-1
+## Classes de caracteres
 
-Memorize principalmente:
+O `grep -E` também pode trabalhar com classes POSIX.
 
-^ → começo
-$ → fim
-. → qualquer caractere
-[] → conjunto
-* → zero ou mais
-+ → uma ou mais
-| → OU
+| Classe | Significado |
+|---|---|
+| `[[:digit:]]` | dígitos |
+| `[[:alpha:]]` | letras |
+| `[[:alnum:]]` | letras e números |
+| `[[:lower:]]` | letras minúsculas |
+| `[[:upper:]]` | letras maiúsculas |
+| `[[:space:]]` | espaços |
+| `[[:blank:]]` | espaço e tabulação |
 
-Exemplos rápidos:
+Exemplo:
 
-grep '^Linux' arquivo.txt
+    grep -E "[[:digit:]]" arquivo.txt
 
-→ começa com Linux
-
-grep 'Linux$' arquivo.txt
-
-→ termina com Linux
-
-grep '[0-9]' arquivo.txt
-
-→ contém um número
-
-grep -E 'Linux|Unix' arquivo.txt
-
-→ contém Linux OU Unix
+Procura linhas contendo números.
 
 ---
 
-Regra para memorizar
+## Exemplos práticos
 
-Regex
- ↓
-descreve um padrão
- ↓
-a ferramenta procura esse padrão
- ↓
-encontra o texto correspondente
+Linhas que começam com `root`:
 
-📌 Resumo
+    grep "^root" /etc/passwd
 
-Expressões regulares não procuram apenas palavras.
+Linhas que terminam com `bash`:
 
-Elas permitem procurar padrões dentro de textos.
+    grep "bash$" /etc/passwd
 
-Por isso são muito usadas com:
+Linhas contendo números:
 
-grep
-sed
-awk
+    grep -E "[0-9]" arquivo.txt
+
+Linhas contendo exatamente três números consecutivos:
+
+    grep -E "[0-9]{3}" arquivo.txt
+
+Procurar `Linux` ou `Unix`:
+
+    grep -E "Linux|Unix" arquivo.txt
+
+Procurar uma palavra começando com `lin`:
+
+    grep -E "^lin" arquivo.txt
+
+---
+
+## `grep` × `grep -E`
+
+| Comando | Uso |
+|---|---|
+| `grep` | Expressões regulares básicas (BRE) |
+| `grep -E` | Expressões regulares estendidas (ERE) |
+
+**Importante:**
+
+    grep -E
+
+é a forma moderna de utilizar **Extended Regular Expressions (ERE) — Expressões Regulares Estendidas**.
+
+---
+
+## Resumo LPIC-1
+
+| Símbolo | Significado |
+|---|---|
+| `.` | qualquer caractere |
+| `^` | início da linha |
+| `$` | fim da linha |
+| `*` | zero ou mais |
+| `+` | uma ou mais |
+| `?` | zero ou uma |
+| `[abc]` | a, b ou c |
+| `[^abc]` | qualquer caractere, exceto a, b ou c |
+| `[0-9]` | qualquer número de 0 a 9 |
+| `{n}` | exatamente n ocorrências |
+| `{n,m}` | de n até m ocorrências |
+| `|` | ou |
+| `( )` | agrupamento |
+
+**Memorize principalmente:**
+
+    ^      → início
+    $      → fim
+    .      → qualquer caractere
+    *      → zero ou mais
+    +      → uma ou mais
+    ?      → zero ou uma
+    [ ]    → conjunto
+    { }    → quantidade
+    |      → ou
+    ( )    → agrupamento
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

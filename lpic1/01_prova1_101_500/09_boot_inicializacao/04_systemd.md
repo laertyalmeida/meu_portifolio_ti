@@ -1,345 +1,275 @@
-# 09 — Boot e Inicialização
+# Boot e Inicialização
+
 ## 04 — systemd
 
-### systemd — System and Service Manager (Gerenciador do Sistema e Serviços)
+### 1. O que é systemd?
 
-O **systemd** é o sistema de inicialização e gerenciamento de serviços usado por muitas distribuições Linux modernas.
+**systemd — System and Service Manager — Gerenciador do Sistema e Serviços**
 
-Ele normalmente executa como:
+É o sistema de inicialização usado por muitas distribuições Linux modernas.
+
+Normalmente, ele é executado como:
 
     PID 1
 
-Sua função não é apenas iniciar o sistema. O `systemd` também gerencia serviços, unidades, dependências, logs e outros recursos.
+O `systemd` assume o controle depois que o kernel termina sua preparação inicial.
 
 ---
 
-### O que o systemd faz?
+### 2. Onde o systemd entra no Boot?
 
-Principais funções:
-
-- iniciar serviços durante o boot;
-- parar e reiniciar serviços;
-- controlar dependências entre serviços;
-- iniciar unidades em paralelo quando possível;
-- gerenciar targets;
-- acompanhar processos;
-- trabalhar com logs através do `journald`;
-- responder a eventos do sistema.
-
-Fluxo:
-
-    Kernel
-       ↓
+    BIOS / UEFI
+          ↓
+      Bootloader
+          ↓
+       Kernel
+          ↓
+      initramfs
+          ↓
     systemd (PID 1)
-       ↓
-    Units
-       ↓
-    Services
-       ↓
-    Sistema pronto
+          ↓
+      Serviços
+          ↓
+        Login
 
 ---
 
-# Unit — Unidade
+### 3. Principais funções
 
-O `systemd` organiza recursos do sistema em **Units — Unidades**.
+O `systemd` pode:
 
-Existem vários tipos:
-
-| Extensão | Tipo | Função |
-|---|---|---|
-| `.service` | Service | Serviço |
-| `.socket` | Socket | Socket de comunicação |
-| `.target` | Target | Grupo lógico de unidades |
-| `.mount` | Mount | Ponto de montagem |
-| `.timer` | Timer | Agendamento |
-| `.path` | Path | Monitoramento de caminhos |
-| `.device` | Device | Dispositivo |
-
-Para listar unidades:
-
-    systemctl list-units
+- iniciar serviços;
+- parar e reiniciar serviços;
+- controlar a ordem de inicialização;
+- gerenciar dependências;
+- montar sistemas de arquivos;
+- controlar targets;
+- registrar mensagens no journal;
+- gerenciar alguns recursos do sistema.
 
 ---
 
-### Service — Serviço
+### 4. systemctl
 
-Uma unidade `.service` representa normalmente um serviço do sistema.
+**systemctl — systemd Control — Controle do systemd**
 
-Exemplo:
+É o principal comando para controlar e consultar o `systemd`.
 
-    ssh.service
+Verificar o estado geral:
 
-Consultar:
+    systemctl status
 
-    systemctl status ssh.service
+Verificar se o systemd está funcionando:
 
-Em algumas distribuições o nome pode ser diferente, como:
-
-    sshd.service
+    systemctl is-system-running
 
 ---
 
-### systemctl — Control systemd (Controlar o systemd)
+### 5. Gerenciar serviços
 
-O comando principal para administrar o `systemd` é:
+**Service — Serviço**
 
-    systemctl
+Ver o estado de um serviço:
 
----
+    systemctl status ssh
 
-### Iniciar um serviço
+Iniciar:
 
-    sudo systemctl start nome.service
+    sudo systemctl start ssh
 
-- `start` — iniciar
+**start — Iniciar**
 
-O serviço é iniciado imediatamente, mas isso não significa necessariamente que será iniciado automaticamente no próximo boot.
+Parar:
 
----
+    sudo systemctl stop ssh
 
-### Parar um serviço
+**stop — Parar**
 
-    sudo systemctl stop nome.service
+Reiniciar:
 
-- `stop` — parar
+    sudo systemctl restart ssh
 
----
+**restart — Reiniciar**
 
-### Reiniciar um serviço
+Recarregar a configuração do serviço:
 
-    sudo systemctl restart nome.service
+    sudo systemctl reload ssh
 
-- `restart` — reiniciar
-
----
-
-### Recarregar a configuração
-
-Alguns serviços permitem:
-
-    sudo systemctl reload nome.service
-
-- `reload` — recarregar
-
-O processo continua executando, mas sua configuração é recarregada quando o serviço suporta essa operação.
+**reload — Recarregar**
 
 ---
 
-### Status — Status do Serviço
+### 6. Habilitar no boot
 
-    systemctl status nome.service
+**enable — Habilitar**
 
-Mostra informações como:
+Faz o serviço ser configurado para iniciar automaticamente conforme as dependências/configuração da unidade.
 
-- se está ativo;
-- PID;
-- estado;
-- últimas mensagens;
-- processo principal.
+    sudo systemctl enable ssh
 
-Estados comuns:
+Desabilitar:
 
-    active
-    inactive
-    failed
-    activating
-    deactivating
+    sudo systemctl disable ssh
 
----
+**disable — Desabilitar**
 
-# Enable — Habilitar no Boot
+É possível fazer as duas coisas ao mesmo tempo:
 
-Para fazer um serviço iniciar automaticamente durante o boot:
+    sudo systemctl enable --now ssh
 
-    sudo systemctl enable nome.service
-
-- `enable` — habilitar
-
-⚠️ **Enable não significa iniciar agora.**
-
-Ele configura o serviço para ser iniciado automaticamente conforme as dependências do sistema.
+`--now` — Agora — habilita e inicia imediatamente.
 
 ---
 
-### Disable — Desabilitar no Boot
+### 7. Ver serviços
 
-    sudo systemctl disable nome.service
-
-- `disable` — desabilitar
-
-Impede que a unidade seja habilitada para inicialização automática.
-
----
-
-### Enable + Start
-
-Para habilitar e iniciar imediatamente:
-
-    sudo systemctl enable --now nome.service
-
-- `--now` — agora (iniciar/parar imediatamente junto com a alteração)
-
----
-
-# Target — Alvo
-
-Um **target** agrupa unidades relacionadas e representa um determinado estado do sistema.
-
-Exemplos:
-
-    multi-user.target
-    graphical.target
-
----
-
-### Ver o Target padrão
-
-    systemctl get-default
-
-Exemplo:
-
-    graphical.target
-
----
-
-### Alterar o Target padrão
-
-    sudo systemctl set-default multi-user.target
-
-- `set-default` — definir padrão
-
-Isso altera o estado de inicialização padrão.
-
----
-
-### Ver unidades com falha
-
-    systemctl --failed
-
-Mostra unidades que estão em estado de falha.
-
----
-
-### Listar serviços
+Listar unidades de serviço carregadas:
 
     systemctl list-units --type=service
 
-- `--type` — tipo
-
-Para listar também serviços que não estão ativos:
+Listar serviços instalados e seu estado de habilitação:
 
     systemctl list-unit-files --type=service
 
 ---
 
-# systemd-analyze — Analyze systemd (Analisar o systemd)
+### 8. Unit
 
-O `systemd-analyze` permite analisar o processo de inicialização.
+**Unit — Unidade**
 
-    systemd-analyze
+O `systemd` trabalha com diferentes tipos de unidades.
 
-Mostra informações sobre o tempo de boot.
+| Tipo | Função |
+|---|---|
+| `.service` | Serviço |
+| `.socket` | Socket |
+| `.target` | Grupo/estado de unidades |
+| `.mount` | Ponto de montagem |
+| `.timer` | Temporizador |
+| `.path` | Monitoramento de caminho |
+| `.device` | Dispositivo |
 
-Para identificar serviços que demoraram mais:
+Exemplos:
 
-    systemd-analyze blame
+    ssh.service
+    graphical.target
+    cron.timer
 
 ---
 
-# journalctl — Query Journal (Consultar o Journal)
+### 9. Target
 
-O `systemd` normalmente utiliza o **systemd-journald** para registrar logs.
+**Target — Alvo/Estado do Sistema**
 
-Consultar logs:
+Um `target` reúne unidades que devem estar ativas para alcançar determinado estado do sistema.
+
+Ver o target padrão:
+
+    systemctl get-default
+
+Alterar o target padrão:
+
+    sudo systemctl set-default graphical.target
+
+Targets comuns:
+
+    multi-user.target
+    graphical.target
+    rescue.target
+    emergency.target
+
+---
+
+### 10. Journal
+
+O `systemd` utiliza o **journald** para registrar mensagens.
+
+Consultar o journal:
 
     journalctl
 
-Logs do kernel:
+Mensagens do kernel:
 
     journalctl -k
 
-- `-k` — kernel (kernel)
-
-Logs do boot atual:
+Mensagens do boot atual:
 
     journalctl -b
 
-- `-b` — boot (inicialização)
+Mensagens de um serviço:
+
+    journalctl -u ssh
+
+`-u` — Unit — Unidade
+
+Acompanhar mensagens em tempo real:
+
+    journalctl -f
+
+`-f` — Follow — Acompanhar
 
 ---
 
-### systemd × SysVinit
+### 11. systemd × SysVinit
 
 | SysVinit | systemd |
 |---|---|
 | Runlevels | Targets |
-| Scripts | Units |
+| Scripts de inicialização | Units |
+| `/etc/inittab` | Units/configurações do systemd |
 | `service` | `systemctl` |
-| Inicialização tradicional | Inicialização moderna |
-| Menos integração | Maior integração com serviços e recursos |
+| Logs separados/variáveis | `journalctl` / journald |
+
+O `systemd` também possui mecanismos de compatibilidade com componentes do modelo SysVinit em muitos sistemas.
 
 ---
 
-### ⚠️ Atenção para a prova LPIC-1
+### 12. Diretórios importantes
 
-Memorize:
+Arquivos e unidades podem aparecer em:
 
-**`systemd`**
-→ sistema de inicialização e gerenciamento de serviços.
+    /etc/systemd/system/
 
-**PID 1**
-→ normalmente `systemd` em sistemas modernos.
+    /usr/lib/systemd/system/
 
-**`systemctl`**
-→ administra unidades e serviços.
+Em algumas distribuições, unidades fornecidas por pacotes podem estar em:
 
-**`start`**
-→ iniciar agora.
+    /lib/systemd/system/
 
-**`stop`**
-→ parar agora.
+A localização exata pode variar conforme a distribuição e o layout do sistema.
 
-**`restart`**
-→ reiniciar.
+---
 
-**`enable`**
-→ habilitar para inicialização automática.
+## Resumo LPIC-1
 
-**`disable`**
-→ desabilitar inicialização automática.
+- **systemd** → sistema moderno de inicialização e gerenciamento de serviços.
+- Normalmente executa como **PID 1**.
+- `systemctl` → controla o systemd.
+- `start` → inicia.
+- `stop` → para.
+- `restart` → reinicia.
+- `reload` → recarrega configuração.
+- `enable` → habilita para inicialização automática.
+- `disable` → desabilita.
+- `--now` → aplica a ação imediatamente.
+- **Unit** → unidade gerenciada pelo systemd.
+- `.service` → serviço.
+- `.target` → estado/grupo de unidades.
+- `journalctl` → consulta logs do journal.
+- `journalctl -b` → mensagens do boot.
+- `journalctl -u serviço` → mensagens de uma unidade.
+- `systemctl get-default` → mostra o target padrão.
 
-**`status`**
-→ consultar estado.
+**Fluxo:**
 
-**`target`**
-→ agrupa unidades e representa um estado do sistema.
+    Kernel
+      ↓
+    systemd (PID 1)
+      ↓
+    Units
+      ↓
+    Services / Targets
+      ↓
+    Sistema pronto
 
-**`journalctl`**
-→ consultar logs do journal.
-
-**`systemd-analyze`**
-→ analisar o processo de boot.
-
-### Resumo
-
-    systemd
-       │
-       ├── systemctl
-       │     ├── start
-       │     ├── stop
-       │     ├── restart
-       │     ├── enable
-       │     └── status
-       │
-       ├── Units
-       │     ├── services
-       │     ├── targets
-       │     ├── timers
-       │     └── mounts
-       │
-       └── journald
-             ↓
-           Logs
-
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

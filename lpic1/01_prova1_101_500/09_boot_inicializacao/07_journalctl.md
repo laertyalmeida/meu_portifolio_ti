@@ -1,68 +1,192 @@
-# 09 — Boot e Inicialização
+# Boot e Inicialização
+
 ## 07 — journalctl
 
-### O que é o journalctl?
+### 1. O que é journalctl?
 
-`journalctl` é o comando usado para consultar os **logs (registros)** armazenados pelo **systemd-journald**.
+**journalctl — Journal Control — Controle do Journal**
 
-Ele é muito importante para descobrir:
+É o comando usado para **consultar os registros (logs) gerenciados pelo `systemd-journald`**.
 
-- erros durante o boot;
-- falhas de serviços;
-- mensagens do kernel;
-- problemas de hardware;
-- eventos de usuários e processos;
-- histórico de inicialização.
+Esses registros podem conter informações sobre:
+
+- inicialização do sistema;
+- serviços;
+- kernel;
+- erros;
+- processos;
+- hardware;
+- desligamentos e reinicializações.
 
 ---
 
-## 1. Ver todos os logs
+### 2. Visualizar os logs
 
     journalctl
 
 Mostra os registros disponíveis no **systemd journal**.
 
----
+Para visualizar de forma mais simples:
 
-## 2. Ver os logs mais recentes
+    journalctl --no-pager
 
-    journalctl -e
-
-**-e — end (fim)**
-
-Vai diretamente para o final dos registros.
+`--no-pager` — Sem Paginação
 
 ---
 
-## 3. Acompanhar logs em tempo real
-
-    journalctl -f
-
-**-f — follow (acompanhar)**
-
-Funciona de maneira semelhante ao:
-
-    tail -f
-
-Útil para acompanhar um serviço enquanto ele está funcionando.
-
-Para sair:
-
-    Ctrl + C
-
----
-
-## 4. Ver logs do boot atual
+### 3. Logs do boot atual
 
     journalctl -b
 
-**-b — boot (inicialização)**
+`-b` — **Boot — Inicialização**
 
-Mostra os registros desde a inicialização atual do sistema.
+Mostra os registros relacionados ao boot atual.
+
+Ver o boot anterior:
+
+    journalctl -b -1
+
+`-1` → boot anterior.
+
+Outros exemplos:
+
+    journalctl -b 0
+    journalctl -b -1
+    journalctl -b -2
 
 ---
 
-## 5. Ver logs de boots anteriores
+### 4. Logs do Kernel
+
+    journalctl -k
+
+`-k` — **Kernel — Núcleo**
+
+Mostra mensagens do kernel.
+
+É semelhante ao uso de:
+
+    dmesg
+
+para consultar mensagens relacionadas ao kernel.
+
+---
+
+### 5. Logs de um serviço
+
+    journalctl -u ssh
+
+`-u` — **Unit — Unidade**
+
+Mostra os registros da unidade `ssh`.
+
+Também:
+
+    journalctl -u ssh.service
+
+---
+
+### 6. Acompanhar logs em tempo real
+
+    journalctl -f
+
+`-f` — **Follow — Acompanhar**
+
+Fica acompanhando novas mensagens conforme elas aparecem.
+
+Muito útil para observar o comportamento de um serviço enquanto ele está sendo executado.
+
+---
+
+### 7. Últimas mensagens
+
+    journalctl -n
+
+`-n` — **Lines — Linhas**
+
+Mostra as últimas linhas do journal.
+
+Exemplo:
+
+    journalctl -n 50
+
+→ mostra as últimas 50 mensagens.
+
+---
+
+### 8. Logs desde o início do boot
+
+    journalctl -b
+
+Somente mensagens de erro do boot:
+
+    journalctl -b -p err
+
+`-p` — **Priority — Prioridade**
+
+`err` — **Error — Erro**
+
+---
+
+### 9. Prioridades
+
+O journal utiliza níveis de prioridade.
+
+| Nível | Nome | Português |
+|---|---|---|
+| `0` | `emerg` | Emergência |
+| `1` | `alert` | Alerta |
+| `2` | `crit` | Crítico |
+| `3` | `err` | Erro |
+| `4` | `warning` | Aviso |
+| `5` | `notice` | Notificação |
+| `6` | `info` | Informação |
+| `7` | `debug` | Depuração |
+
+Exemplo:
+
+    journalctl -p warning
+
+Mostra mensagens de `warning` e prioridades mais graves.
+
+---
+
+### 10. Filtrar por período
+
+Desde determinado momento:
+
+    journalctl --since "1 hour ago"
+
+`--since` — Desde
+
+Até determinado momento:
+
+    journalctl --until "30 minutes ago"
+
+`--until` — Até
+
+Exemplo:
+
+    journalctl --since today
+
+→ mensagens desde o início do dia.
+
+---
+
+### 11. Logs de um serviço + tempo real
+
+    journalctl -u ssh -f
+
+Combina:
+
+    -u → serviço específico
+    -f  → acompanhar em tempo real
+
+Muito útil para diagnosticar um serviço enquanto ele está funcionando.
+
+---
+
+### 12. Ver mensagens de uma inicialização anterior
 
 Listar os boots registrados:
 
@@ -70,329 +194,104 @@ Listar os boots registrados:
 
 Exemplo:
 
-    -2
-    -1
-     0
-
-O número `0` representa o boot atual.
-
-Para consultar o boot anterior:
-
-    journalctl -b -1
-
-**-1** → boot anterior
-
-Outro exemplo:
-
-    journalctl -b -2
-
-→ dois boots atrás.
-
----
-
-## 6. Ver mensagens do Kernel
-
-    journalctl -k
-
-**-k — kernel (núcleo)**
-
-Mostra mensagens relacionadas ao kernel.
-
-É semelhante ao uso de:
-
-    dmesg
-
----
-
-## 7. Ver logs de um serviço
-
-Exemplo:
-
-    journalctl -u ssh
-
-**-u — unit (unidade)**
-
-Mostra os registros relacionados à unit `ssh`.
-
-Também pode ser usado:
-
-    journalctl -u ssh.service
-
----
-
-## 8. Acompanhar um serviço em tempo real
-
-    journalctl -u ssh -f
-
-Combina:
-
-**-u** → unidade
-
-**-f** → acompanhar
-
-Muito útil para investigar um serviço enquanto ele recebe novas mensagens.
-
----
-
-## 9. Ver somente erros
-
-    journalctl -p err
-
-**-p — priority (prioridade)**
-
-**err — error (erro)**
-
-Mostra mensagens com prioridade de erro ou mais grave.
-
-Níveis comuns:
-
-| Código | Nome | Português |
-|---|---|---|
-| 0 | emerg | Emergência |
-| 1 | alert | Alerta |
-| 2 | crit | Crítico |
-| 3 | err | Erro |
-| 4 | warning | Aviso |
-| 5 | notice | Aviso importante |
-| 6 | info | Informação |
-| 7 | debug | Depuração |
-
----
-
-## 10. Logs por período
-
-### Desde uma determinada data
-
-    journalctl --since "2026-09-08 08:00:00"
-
-**--since** → desde
-
-### Até uma determinada data
-
-    journalctl --until "2026-09-08 10:00:00"
-
-**--until** → até
-
-Também podemos usar expressões:
-
-    journalctl --since "1 hour ago"
-
-→ últimos 60 minutos.
-
-    journalctl --since today
-
-→ registros desde o início do dia.
-
----
-
-## 11. Ver logs de uma unidade específica
-
-    journalctl -u NetworkManager
-
-Exemplo para procurar problemas de rede:
-
-    journalctl -u NetworkManager -p err
-
----
-
-## 12. Ver logs de um processo
-
-Podemos filtrar pelo PID:
-
-    journalctl _PID=1234
-
-**_PID** → identificador do processo.
-
----
-
-## 13. Ver logs de um usuário
-
-Também podemos filtrar pelo UID:
-
-    journalctl _UID=1000
-
-**_UID** → identificador do usuário.
-
----
-
-## 14. Formato mais simples
-
-    journalctl -o short
-
-**-o — output (saída/formato)**
-
-`short` apresenta o formato tradicional.
-
-Outros formatos importantes:
-
-    journalctl -o json
-
-→ saída em JSON.
-
-    journalctl -o verbose
-
-→ informações detalhadas.
-
----
-
-## 15. Limitar quantidade de linhas
-
-    journalctl -n 20
-
-**-n — lines (linhas)**
-
-Mostra as últimas 20 linhas.
-
-Exemplo:
-
-    journalctl -n 50
-
-→ últimas 50 mensagens.
-
----
-
-## 16. Ver logs do boot + erros
-
-Uma combinação muito útil:
-
-    journalctl -b -p err
-
-Interpretação:
-
-**-b** → boot atual
-
-**-p err** → erros e prioridades mais graves
-
----
-
-## 17. Logs do kernel durante o boot
-
-    journalctl -b -k
-
-Mostra as mensagens do kernel relacionadas ao boot atual.
-
----
-
-## 18. journalctl x dmesg
-
-### journalctl
-
-Consulta o journal do `systemd`.
-
-    journalctl
+    journalctl --list-boots
 
 Pode mostrar:
 
-- serviços;
-- kernel;
+    0   atual
+    -1  anterior
+    -2  dois boots atrás
+
+Consultar um boot específico:
+
+    journalctl -b -1
+
+---
+
+### 13. Logs do kernel + boot
+
+    journalctl -b -k
+
+Mostra as mensagens do kernel referentes ao boot selecionado.
+
+---
+
+### 14. Usuário e serviço
+
+O journal pode registrar informações de diferentes fontes.
+
+É possível filtrar por:
+
+- unidade;
+- prioridade;
 - boot;
-- processos;
-- usuários;
-- outros eventos registrados.
+- período;
+- PID;
+- usuário;
+- processo.
 
-### dmesg
+Exemplo por PID:
 
-Consulta principalmente as mensagens do **kernel**.
-
-    dmesg
-
-Resumo:
-
-    journalctl → journal do systemd
-    dmesg      → mensagens do kernel
+    journalctl _PID=1234
 
 ---
 
-# 🔑 Comandos essenciais para LPIC-1
+### 15. Diagnóstico de problemas
 
-| Comando | Função |
+Um fluxo simples:
+
+    1. Identificar o problema
+            ↓
+    2. Ver o serviço
+            ↓
+    systemctl status serviço
+            ↓
+    3. Consultar o journal
+            ↓
+    journalctl -u serviço
+            ↓
+    4. Procurar erros
+            ↓
+    journalctl -p err
+
+---
+
+### 16. journalctl × dmesg
+
+| Comando | Principal uso |
 |---|---|
-| `journalctl` | Ver logs |
-| `journalctl -e` | Ir para o final |
-| `journalctl -f` | Acompanhar em tempo real |
-| `journalctl -b` | Logs do boot atual |
-| `journalctl --list-boots` | Listar boots |
-| `journalctl -b -1` | Logs do boot anterior |
-| `journalctl -k` | Logs do kernel |
-| `journalctl -u ssh` | Logs de um serviço |
-| `journalctl -p err` | Erros e mais graves |
-| `journalctl -n 20` | Últimas 20 linhas |
-| `journalctl -b -p err` | Erros do boot atual |
-| `journalctl --since "1 hour ago"` | Última hora |
-| `journalctl --until "..."` | Até determinado momento |
+| `journalctl` | Logs gerenciados pelo systemd journal |
+| `journalctl -k` | Mensagens do kernel no journal |
+| `dmesg` | Mensagens do buffer do kernel |
+
+Em sistemas modernos, `journalctl -k` é especialmente útil para consultar mensagens do kernel que foram registradas no journal.
 
 ---
 
-## 🎯 Pegadinhas LPIC-1
+## Resumo LPIC-1
 
-### `-b`
+- `journalctl` → consulta os logs do **systemd journal**.
+- `journalctl -b` → logs do boot atual.
+- `journalctl -b -1` → logs do boot anterior.
+- `journalctl --list-boots` → lista boots registrados.
+- `journalctl -k` → mensagens do kernel.
+- `journalctl -u serviço` → logs de uma unidade/serviço.
+- `journalctl -f` → acompanha logs em tempo real.
+- `journalctl -n 50` → últimas 50 mensagens.
+- `journalctl -p err` → mensagens de erro e prioridades mais graves.
+- `journalctl --since` → filtra a partir de determinado momento.
+- `journalctl --until` → filtra até determinado momento.
+- `journalctl -b -k` → mensagens do kernel do boot selecionado.
 
-Não significa "background".
-
-    journalctl -b
-
-**-b → boot (inicialização)**
-
----
-
-### `-u`
-
-Não significa "user".
-
-    journalctl -u ssh
-
-**-u → unit (unidade)**
-
----
-
-### `-f`
-
-Não significa "file".
-
-    journalctl -f
-
-**-f → follow (acompanhar)**
-
----
-
-### `-k`
-
-**-k → kernel**
-
-    journalctl -k
-
----
-
-## 🧠 Para decorar
+### Comandos essenciais
 
     journalctl
-        ↓
-    CONSULTAR LOGS
-
-    -b
-        ↓
-    BOOT
-
-    -k
-        ↓
-    KERNEL
-
-    -u
-        ↓
-    UNIT
-
-    -f
-        ↓
-    FOLLOW
-
-    -p
-        ↓
-    PRIORITY
-
-    -n
-        ↓
-    NUMBER OF LINES
-
----
+    journalctl -b
+    journalctl -k
+    journalctl -u ssh
+    journalctl -f
+    journalctl -n 50
+    journalctl -p err
+    journalctl --list-boots
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

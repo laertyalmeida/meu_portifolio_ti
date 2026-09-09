@@ -1,286 +1,238 @@
-# 09 — Boot e Inicialização
+# Boot e Inicialização
+
 ## 02 — Kernel Linux
 
-### Kernel — Núcleo do Linux
+### 1. O que é o Kernel?
 
-O **Kernel** é o núcleo do sistema operacional. Ele faz a comunicação entre o **hardware** e os programas que executamos.
+**Kernel — Núcleo**
+
+O **Kernel Linux** é o núcleo do sistema operacional. Ele faz a ligação entre o **hardware** e os programas que estão sendo executados.
 
     Aplicações
         ↓
-    Bibliotecas / Sistema
+    Shell / Serviços
         ↓
     Kernel Linux
         ↓
     Hardware
 
-O kernel controla recursos fundamentais como:
-
-- CPU;
-- memória;
-- processos;
-- dispositivos;
-- sistemas de arquivos;
-- rede.
+O usuário normalmente não acessa o hardware diretamente. Os programas fazem solicitações ao kernel.
 
 ---
 
-### O que acontece durante o boot?
+### 2. Principais funções
 
-Depois que o **Bootloader — Carregador de Inicialização** carrega o kernel na memória, o kernel começa sua inicialização.
+O kernel é responsável por gerenciar:
 
-Fluxo:
+| Recurso | Função |
+|---|---|
+| CPU | Distribuir tempo de processamento |
+| RAM | Controlar memória e memória virtual |
+| Processos | Criar e gerenciar processos |
+| Dispositivos | Comunicar-se com o hardware |
+| Arquivos | Trabalhar com sistemas de arquivos |
+| Rede | Gerenciar comunicação de rede |
+| Drivers | Controlar dispositivos de hardware |
 
-    Firmware
-       ↓
-    Bootloader
-       ↓
+---
+
+### 3. Kernel durante o Boot
+
+Depois que o **Bootloader** carrega o kernel na memória, o kernel começa sua inicialização.
+
+    BIOS / UEFI
+         ↓
+      GRUB
+         ↓
     Kernel Linux
-       ↓
-    Drivers e subsistemas
-       ↓
-    PID 1
-       ↓
-    Serviços
+         ↓
+      initramfs
+         ↓
+    PID 1 / systemd
+         ↓
+      Serviços
 
-O kernel prepara o sistema e, posteriormente, inicia o primeiro processo do espaço de usuário.
-
-Em sistemas modernos:
-
-    PID 1 → systemd
+Durante essa etapa, o kernel inicializa recursos necessários para continuar o boot.
 
 ---
 
-### Kernel Image — Imagem do Kernel
+### 4. Kernel e Drivers
 
-O kernel utilizado no boot é uma **imagem** armazenada no disco.
+**Driver — Controlador de Dispositivo**
 
-Em sistemas Linux, normalmente encontramos arquivos relacionados ao kernel em:
+É o software que permite ao kernel trabalhar com determinado hardware.
 
-    /boot
+Exemplos:
 
-Exemplo:
+    placa de rede
+    placa de vídeo
+    disco
+    USB
+    áudio
 
-    /boot/vmlinuz-6.x.x
-
-`vmlinuz` é um nome tradicional usado para imagens do kernel Linux.
-
----
-
-### initramfs — Initial RAM Filesystem (Sistema de Arquivos Inicial em RAM)
-
-Durante o boot, o kernel pode utilizar um:
-
-    initramfs
-
-O **initramfs** é um sistema de arquivos temporário carregado na RAM durante a inicialização.
-
-Ele contém ferramentas e módulos necessários para preparar o sistema antes que o sistema de arquivos raiz real seja montado.
-
-Fluxo simplificado:
-
-    Bootloader
-       ↓
-    Kernel + initramfs
-       ↓
-    Drivers necessários
-       ↓
-    Sistema de arquivos raiz
-       ↓
-    PID 1
+Muitos drivers Linux são implementados como **módulos do kernel**.
 
 ---
 
-### Kernel Modules — Módulos do Kernel
+### 5. Módulos do Kernel
 
-Algumas funcionalidades podem ser carregadas como **módulos** em vez de ficarem incorporadas diretamente ao kernel.
+**Kernel Module — Módulo do Kernel**
 
-Os módulos geralmente ficam em:
+É um componente que pode ser carregado ou removido do kernel conforme necessário.
 
-    /lib/modules/
-
-Para listar módulos carregados:
+Ver módulos carregados:
 
     lsmod
 
-- `lsmod` — list modules (listar módulos)
+**lsmod — List Modules — Listar Módulos**
 
----
-
-### modprobe — Load/Remove Kernel Module (Carregar/Remover Módulo)
-
-Para carregar um módulo:
+Carregar um módulo:
 
     sudo modprobe nome_do_modulo
 
-Para remover:
+**modprobe — Manage Kernel Modules — Gerenciar Módulos do Kernel**
+
+Remover um módulo:
 
     sudo modprobe -r nome_do_modulo
 
-- `-r` — remove (remover)
-
-O `modprobe` também resolve dependências entre módulos.
+`-r` — Remove — Remover
 
 ---
 
-### Ver informações do Kernel
+### 6. Descobrir a versão do Kernel
+
+Comando:
 
     uname -r
 
-- `-r` — release (versão/release)
+**uname — Unix Name — Informações do Sistema Unix**
+
+`-r` — Kernel Release — Versão/Release do Kernel
 
 Exemplo:
 
-    6.14.0-...
+    6.14.0-29-generic
 
-Informações completas:
+Também:
 
     uname -a
 
-- `-a` — all (todas as informações)
+`-a` — All — Todas as informações
 
 ---
 
-### /proc/version
+### 7. Arquivos do Kernel
 
-Também podemos consultar:
+Os kernels instalados normalmente podem ser encontrados em:
 
-    cat /proc/version
+    /boot
 
-Esse arquivo apresenta informações sobre a versão do kernel e o compilador utilizado para construí-lo.
+Exemplos:
+
+    /boot/vmlinuz-6.x.x
+    /boot/initrd.img-6.x.x
+
+**vmlinuz** → imagem comprimida do kernel.
+
+**initrd/initramfs** → sistema de arquivos inicial usado durante o boot.
 
 ---
 
-### /proc/cmdline
+### 8. Parâmetros do Kernel
 
-O kernel recebe parâmetros durante o boot.
+O bootloader pode passar parâmetros para o kernel.
 
-Eles podem ser consultados com:
+Eles podem ser consultados em:
 
     cat /proc/cmdline
 
+**`/proc/cmdline` — Kernel Command Line — Linha de Comando do Kernel**
+
 Exemplo:
 
-    BOOT_IMAGE=/boot/vmlinuz-6.x.x root=/dev/sda2 ro quiet
+    BOOT_IMAGE=/boot/vmlinuz-6.x.x root=UUID=xxxx ro quiet
 
-Esses parâmetros podem alterar o comportamento do kernel durante a inicialização.
+Alguns parâmetros comuns:
+
+| Parâmetro | Significado |
+|---|---|
+| `root=` | Define o dispositivo/sistema de arquivos raiz |
+| `ro` | Read Only — Somente leitura |
+| `rw` | Read Write — Leitura e escrita |
+| `quiet` | Reduz mensagens exibidas durante o boot |
 
 ---
 
-### Mensagens do Kernel
+### 9. Mensagens do Kernel
 
-Durante e depois do boot, o kernel registra mensagens importantes.
+O kernel registra mensagens durante sua execução.
 
-Podemos consultar:
+Visualizar:
 
     dmesg
 
-**dmesg — Display Message (Exibir Mensagens)**
-
-Mostra mensagens do buffer de mensagens do kernel.
-
-Para pesquisar algo específico:
-
-    dmesg | grep -i error
-
-- `|` — pipe (encaminhar saída)
-- `-i` — ignore case (ignorar maiúsculas/minúsculas)
+**dmesg — Display Message — Exibir Mensagens do Kernel**
 
 Em sistemas com `systemd`:
 
     journalctl -k
 
-- `-k` — kernel (mostrar mensagens do kernel)
+`-k` — Kernel — Mostrar mensagens do kernel
+
+Esses comandos são úteis para investigar:
+
+- problemas de hardware;
+- drivers;
+- discos;
+- dispositivos USB;
+- rede;
+- problemas durante o boot.
 
 ---
 
-### Kernel Space × User Space
+### 10. Informações do Kernel pelo /proc
 
-O Linux separa a execução em dois ambientes principais:
+Algumas informações podem ser encontradas em:
 
-**Kernel Space — Espaço do Kernel**
-→ onde o kernel executa com privilégios elevados.
+    /proc/version
 
-**User Space — Espaço do Usuário**
-→ onde normalmente executam aplicações e serviços.
+    /proc/cmdline
 
-    User Space
-    ┌──────────────────────┐
-    │ Aplicações           │
-    │ Serviços             │
-    └──────────┬───────────┘
-               │
-        System Calls
-               ↓
-    ┌──────────────────────┐
-    │ Kernel Space         │
-    │ Kernel Linux         │
-    └──────────┬───────────┘
-               ↓
-            Hardware
+    /proc/modules
+
+    /proc/sys/
+
+O `/proc` é um sistema de arquivos virtual fornecido pelo kernel.
 
 ---
 
-### System Call — Chamada de Sistema
+## Resumo LPIC-1
 
-Programas em **User Space** não acessam diretamente os recursos privilegiados do hardware.
+- **Kernel — Núcleo** → coração do sistema Linux.
+- Faz a ligação entre **programas e hardware**.
+- Gerencia CPU, memória, processos, dispositivos, arquivos e rede.
+- O Bootloader carrega o kernel durante o boot.
+- `uname -r` → mostra a versão do kernel.
+- `lsmod` → mostra módulos carregados.
+- `modprobe` → carrega ou remove módulos.
+- `/boot` → contém imagens usadas no processo de inicialização.
+- `/proc/cmdline` → mostra parâmetros passados ao kernel.
+- `dmesg` → mostra mensagens do kernel.
+- `journalctl -k` → mostra mensagens do kernel no journal.
 
-Eles utilizam **System Calls — Chamadas de Sistema** para solicitar serviços ao kernel.
+**Fluxo:**
 
-Exemplos de operações que envolvem chamadas de sistema:
-
-- abrir arquivos;
-- criar processos;
-- acessar dispositivos;
-- usar recursos de rede;
-- alocar memória.
-
----
-
-### ⚠️ Atenção para a prova LPIC-1
-
-Memorize:
-
-**Kernel**
-→ núcleo do sistema Linux.
-
-**`/boot`**
-→ normalmente contém arquivos usados no processo de inicialização, incluindo imagens do kernel.
-
-**initramfs**
-→ sistema de arquivos inicial carregado na RAM para auxiliar o boot.
-
-**`/lib/modules/`**
-→ módulos do kernel.
-
-**`lsmod`**
-→ lista módulos carregados.
-
-**`modprobe`**
-→ carrega ou remove módulos.
-
-**`uname -r`**
-→ mostra a versão/release do kernel.
-
-**`dmesg`**
-→ mostra mensagens do kernel.
-
-**`journalctl -k`**
-→ mostra mensagens do kernel no journal do `systemd`.
-
-### Resumo
-
-    Bootloader
-       ↓
-    Kernel
-       ↓
+    BIOS/UEFI
+        ↓
+      GRUB
+        ↓
+    Kernel Linux
+        ↓
     initramfs
-       ↓
-    Drivers / subsistemas
-       ↓
-    Sistema de arquivos raiz
-       ↓
-    PID 1
-       ↓
+        ↓
+    PID 1 / systemd
+        ↓
     Serviços
 
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

@@ -1,217 +1,314 @@
-Jobs and Background — Jobs e Segundo Plano
+# Comandos GNU/UNIX
 
-Job — Tarefa
+## 16 — Jobs e Background
 
-Um Job (Tarefa) é um comando que está sendo executado pelo shell.
+**Job — Tarefa**
 
-Um programa pode rodar:
+Um *job* é um comando ou processo que o Shell está controlando.
 
-Foreground → Primeiro Plano
-Background → Segundo Plano
+**Background — Segundo Plano**
 
----
+Executar um comando em *background* permite continuar usando o terminal enquanto ele continua executando.
 
-Foreground — Primeiro Plano
+**Foreground — Primeiro Plano**
 
-Quando executamos:
-
-sleep 60
-
-o terminal fica ocupado pelo comando durante 60 segundos.
-
-Você precisa esperar o comando terminar para usar aquele terminal normalmente.
+É quando o comando ocupa o terminal e recebe a entrada diretamente dele.
 
 ---
 
-"&" — Background (Segundo Plano)
+## 1. Foreground — Primeiro Plano
 
-Podemos executar um comando em segundo plano:
+Normalmente, quando executamos:
 
-sleep 60 &
+    sleep 30
 
-O terminal fica disponível imediatamente.
+O terminal fica ocupado durante 30 segundos.
 
-sleep 60
-     ↓
-     &
-     ↓
-Background
-
-"&"
-
-& → Background → Segundo Plano
+O comando está em **foreground**.
 
 ---
 
-"jobs" — Jobs (Tarefas)
+## 2. Background — Segundo Plano
 
-Mostra os jobs da sessão atual:
+Use `&` no final do comando:
 
-jobs
+    sleep 30 &
+
+O Shell libera o terminal imediatamente.
 
 Exemplo:
 
-[1]+ Running    sleep 60 &
+    [1] 12345
 
-"Running" — Executando
-
-O job está em execução.
+- `[1]` → número do **Job — Tarefa**.
+- `12345` → **PID — Process ID — Identificador do Processo**.
 
 ---
 
-"Ctrl + Z" — Stop Temporarily (Suspender)
+## 3. `jobs` — Jobs — Tarefas
 
-Se um programa está rodando em primeiro plano:
+Mostra os jobs controlados pelo Shell:
 
-sleep 100
-
-pressione:
-
-Ctrl + Z
-
-O processo será suspenso.
+    jobs
 
 Exemplo:
 
-[1]+ Stopped    sleep 100
+    [1]+  Running    sleep 100 &
+    [2]-  Running    sleep 200 &
 
-"Stopped" — Suspenso
+Estados comuns:
 
-O processo não terminou; ele está apenas parado.
+| Estado | English | Português |
+|---|---|---|
+| `Running` | Running | Executando |
+| `Stopped` | Stopped | Parado |
+| `Done` | Done | Concluído |
 
 ---
 
-"bg" — Background (Segundo Plano)
+## 4. `Ctrl+Z` — Suspender
 
-Depois de suspender um processo com "Ctrl + Z", podemos continuar sua execução em segundo plano:
+Durante um comando em foreground:
 
-bg
+    sleep 100
 
-Funcionamento:
+Pressione:
 
-Foreground
-     ↓
- Ctrl + Z
-     ↓
- Suspenso
-     ↓
+    Ctrl+Z
+
+O Shell suspende o job.
+
+Exemplo:
+
+    [1]+  Stopped    sleep 100
+
+**Ctrl+Z não encerra o processo.**
+
+Ele apenas o suspende.
+
+---
+
+## 5. `bg` — Background — Segundo Plano
+
+Depois de suspender um job:
+
     bg
-     ↓
-Background
+
+O job continua executando em segundo plano.
+
+Exemplo:
+
+    [1]+ sleep 100 &
 
 ---
 
-"fg" — Foreground (Primeiro Plano)
+## 6. `fg` — Foreground — Primeiro Plano
 
-Traz um job do segundo plano para o primeiro plano:
+Para trazer um job de volta ao primeiro plano:
 
-fg
+    fg
 
-Podemos especificar o número:
+Exemplo:
 
-fg %1
+    fg
 
-"fg"
-
-fg → Foreground → Primeiro Plano
+O último job controlado pelo Shell volta para o foreground.
 
 ---
 
-Exemplo completo
+## 7. Trabalhar com vários jobs
 
-Execute:
+Criar dois jobs:
 
-sleep 100
+    sleep 100 &
+    sleep 200 &
 
-Depois pressione:
+Ver:
 
-Ctrl + Z
+    jobs
 
-Agora:
+Exemplo:
 
-jobs
+    [1]-  Running    sleep 100 &
+    [2]+  Running    sleep 200 &
 
-O job estará suspenso.
+Trazer o job `1` para foreground:
 
-Coloque em segundo plano:
+    fg %1
 
-bg
+Trazer o job `2`:
 
-Confira:
-
-jobs
-
-Traga novamente para primeiro plano:
-
-fg
+    fg %2
 
 ---
 
-"kill" — Enviar Sinal
+## 8. `%` — Identificador do Job
 
-Também podemos encerrar um processo usando "kill".
+O `%` indica que estamos usando o número do **job**, e não o PID.
 
-kill %1
+Exemplo:
 
-Aqui:
+    fg %1
 
-%1 → Job número 1
+ou:
 
-Podemos também usar o PID:
+    bg %2
 
-kill 1234
-
-1234 → PID do processo
+O número depois de `%` corresponde ao número mostrado por `jobs`.
 
 ---
 
-🧠 Para a LPIC-1
+## 9. `kill` — Encerrar um Job ou Processo
 
-Memorize:
+Podemos usar o PID:
 
-&       → executar em segundo plano
-jobs    → mostrar jobs
-Ctrl+Z  → suspender
-bg      → continuar em segundo plano
-fg      → trazer para primeiro plano
-kill    → enviar sinal
+    kill 12345
 
-Sequência importante
+Ou o número do job:
 
-comando
-   ↓
-Ctrl + Z
-   ↓
-suspenso
-   ↓
-bg
-   ↓
-segundo plano
-   ↓
-fg
-   ↓
-primeiro plano
+    kill %1
+
+Por padrão, `kill` envia o sinal:
+
+    SIGTERM
+
+**SIGTERM — Terminate — Terminar**
+
+Solicita que o processo seja encerrado de forma normal.
 
 ---
 
-Regra simples
+## 10. `Ctrl+C` × `Ctrl+Z`
 
-Foreground
-→ terminal ocupado
+| Tecla | Ação |
+|---|---|
+| `Ctrl+C` | Interrompe/solicita encerramento do comando |
+| `Ctrl+Z` | Suspende o comando |
+| `bg` | Continua o job em background |
+| `fg` | Traz o job para foreground |
 
-Background
-→ terminal disponível
+---
 
-E lembre:
+## 11. `nohup` — No Hang Up — Não Desligar
 
-comando &
+`nohup` permite que um comando continue executando mesmo após o encerramento da sessão, em situações apropriadas.
 
-→ executa diretamente em segundo plano.
+Exemplo:
 
-jobs
+    nohup comando &
 
-→ mostra as tarefas do shell.
+Por padrão, a saída pode ser direcionada para:
 
-fg %1
+    nohup.out
 
-→ traz o job 1 para o primeiro plano.
+Exemplo:
+
+    nohup ./script.sh &
+
+---
+
+## 12. `disown` — Remover do Controle do Shell
+
+Remove um job da tabela de jobs do Shell:
+
+    disown %1
+
+Depois disso, o Bash deixa de controlar aquele job.
+
+Pode ser útil quando queremos que um processo não fique associado ao controle normal de jobs daquela sessão.
+
+---
+
+## 13. `wait` — Esperar
+
+`wait` faz o Shell esperar a conclusão de um job ou processo.
+
+Exemplo:
+
+    sleep 5 &
+    wait
+
+O Shell espera o `sleep` terminar.
+
+Com um job específico:
+
+    sleep 10 &
+    wait %1
+
+---
+
+## 14. Fluxo completo
+
+Executar:
+
+    sleep 100
+
+Suspender:
+
+    Ctrl+Z
+
+Continuar em background:
+
+    bg
+
+Ver:
+
+    jobs
+
+Trazer para foreground:
+
+    fg
+
+Encerrar:
+
+    Ctrl+C
+
+---
+
+## 15. Conceitos importantes
+
+**Job — Tarefa**
+
+É a forma como o Shell identifica um trabalho sob seu controle.
+
+**Process — Processo**
+
+É uma instância de um programa em execução.
+
+**PID — Process ID — Identificador do Processo**
+
+Número usado pelo sistema para identificar um processo.
+
+**Foreground — Primeiro Plano**
+
+O comando está associado diretamente ao terminal.
+
+**Background — Segundo Plano**
+
+O comando continua executando enquanto o terminal fica disponível.
+
+**Job Control — Controle de Jobs**
+
+Conjunto de recursos do Shell para suspender, continuar, colocar em background e trazer jobs para foreground.
+
+---
+
+## Resumo LPIC-1
+
+- `comando &` → executa o comando em **background**.
+- `jobs` → mostra jobs controlados pelo Shell.
+- `Ctrl+Z` → suspende um job.
+- `bg` → continua um job em background.
+- `fg` → traz um job para foreground.
+- `fg %1` → traz o job 1 para foreground.
+- `bg %1` → continua o job 1 em background.
+- `kill %1` → envia sinal para o job 1.
+- `Ctrl+C` → interrompe o comando em foreground.
+- `nohup comando &` → permite que o comando continue após a saída da sessão, conforme o ambiente.
+- `disown` → remove o job do controle do Shell.
+- `wait` → espera um job/processo terminar.
+- `[1]` → número do job.
+- **PID** → identificador do processo.
+- **Job ≠ PID**: o job é controlado pelo Shell; o PID identifica o processo no sistema.
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

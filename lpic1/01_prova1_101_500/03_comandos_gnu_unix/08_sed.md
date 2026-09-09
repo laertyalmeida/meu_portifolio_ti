@@ -1,203 +1,264 @@
-sed — Stream Editor
+# Comandos GNU/UNIX
 
-"sed" — Stream Editor (Editor de Fluxo)
+## 08 — sed
 
-O "sed" é usado para procurar, substituir, apagar e mostrar partes de texto.
+`sed` — **Stream Editor** — Editor de Fluxo.
 
-Ele normalmente recebe um texto, faz uma alteração e mostra o resultado.
+É usado para **ler, filtrar, substituir, remover e modificar texto** sem precisar abrir o arquivo em um editor interativo.
+
+O `sed` normalmente recebe uma entrada, aplica uma regra e produz uma saída.
 
 ---
 
-"s" — Substitute (Substituir)
+### Uso básico
 
-A operação mais importante para a LPIC-1 é a substituição.
-
-sed 's/Linux/Unix/' arquivo.txt
+    sed 's/Linux/GNU Linux/' arquivo.txt
 
 Significa:
 
-s
-↓
-Substitute → Substituir
+    s → substitute — substituir
+    Linux → texto que será procurado
+    GNU Linux → novo texto
 
-Linux
-↓
-Unix
+Por padrão, o `sed` **não altera o arquivo original**. Ele mostra o resultado no terminal.
 
 ---
 
-Exemplo
+## `s` — Substitute — substituir
 
-Arquivo:
+Sintaxe:
 
-Linux é livre
-Eu estudo Linux
-Linux é poderoso
-
-Com:
-
-sed 's/Linux/Unix/' arquivo.txt
-
-Resultado:
-
-Unix é livre
-Eu estudo Unix
-Unix é poderoso
-
-⚠️ Por padrão, o "sed" substitui apenas a primeira ocorrência de cada linha.
-
----
-
-"g" — Global (Todas as Ocorrências)
-
-Para substituir todas as ocorrências da linha:
-
-sed 's/Linux/Unix/g' arquivo.txt
-
-"g" — Global (Global/Todas)
+    sed 's/antigo/novo/' arquivo.txt
 
 Exemplo:
 
-Linux Linux Linux
+    sed 's/Linux/Unix/' arquivo.txt
 
-Resultado:
-
-Unix Unix Unix
+Substitui a **primeira ocorrência de cada linha**.
 
 ---
 
-"-i" — In-Place (No Próprio Arquivo)
+### `g` — Global — global/todas as ocorrências
 
-Normalmente, o "sed" mostra o resultado na tela e não altera o arquivo original.
+Para substituir todas as ocorrências da linha:
 
-Para alterar o arquivo:
+    sed 's/Linux/Unix/g' arquivo.txt
 
-sed -i 's/Linux/Unix/g' arquivo.txt
+Sem `g`:
 
-"-i" — In-Place (No Próprio Arquivo)
+    Linux Linux Linux
 
-→ modifica o próprio "arquivo.txt".
+Pode resultar em:
 
----
+    Unix Linux Linux
 
-"d" — Delete (Apagar)
+Com `g`:
 
-Podemos apagar linhas.
-
-sed '2d' arquivo.txt
-
-"d" — Delete (Apagar)
-
-→ apaga a linha 2 da saída.
-
-Por padrão, o arquivo original não é alterado.
+    Unix Unix Unix
 
 ---
 
-"$" — Last Line (Última Linha)
+### `-i` — In-place — alterar no próprio arquivo
 
-Podemos usar "$" para representar a última linha.
+Para modificar o arquivo original:
 
-sed '$d' arquivo.txt
+    sed -i 's/Linux/Unix/g' arquivo.txt
 
-→ não mostra a última linha.
+**Cuidado:** `-i` altera o arquivo diretamente.
 
----
+Uma forma mais segura é criar uma cópia de backup:
 
-"p" — Print (Mostrar)
+    sed -i.bak 's/Linux/Unix/g' arquivo.txt
 
-Podemos pedir para o "sed" mostrar uma linha.
+Nesse caso, o `sed` cria:
 
-sed -n '2p' arquivo.txt
-
-"-n" — No Automatic Print (Não Mostrar Automaticamente)
-
-Sem "-n", o "sed" normalmente mostra todas as linhas.
-
-Com:
-
-sed -n '2p' arquivo.txt
-
-mostramos somente a linha 2.
-
-"p" — Print (Mostrar)
-
-p → Print → Mostrar
+    arquivo.txt
+    arquivo.txt.bak
 
 ---
 
-Intervalo de linhas
+## `d` — Delete — excluir
 
-Podemos trabalhar com várias linhas.
+Remove linhas da saída.
 
-sed -n '2,5p' arquivo.txt
+Remover a primeira linha:
 
-→ mostra as linhas 2 até 5.
+    sed '1d' arquivo.txt
 
-2 → início
-5 → fim
-p → mostrar
+Remover a segunda linha:
 
----
+    sed '2d' arquivo.txt
 
-"sed" + Expressões Regulares
+Remover da linha 2 até a 4:
 
-O "sed" também pode usar padrões.
-
-sed -n '/Linux/p' arquivo.txt
-
-→ mostra somente as linhas que contêm "Linux".
+    sed '2,4d' arquivo.txt
 
 ---
 
-Principais comandos
+### Remover linhas vazias
 
-s → Substitute → Substituir
-d → Delete → Apagar
-p → Print → Mostrar
+    sed '/^$/d' arquivo.txt
 
-Principais flags
+Aqui:
 
--i → In-Place → Alterar o próprio arquivo
--n → No Automatic Print → Não mostrar automaticamente
-g  → Global → Todas as ocorrências
+    ^ → início da linha
+    $ → fim da linha
+
+`^$` representa uma linha vazia.
 
 ---
 
-🧠 Para a LPIC-1
+## `p` — Print — imprimir
 
-Memorize este formato:
+O `sed` já imprime as linhas normalmente.
 
-sed 's/ANTIGO/NOVO/' arquivo.txt
+Para imprimir uma linha específica:
 
-s      → substituir
-ANTIGO → texto encontrado
-NOVO   → texto novo
+    sed -n '5p' arquivo.txt
 
-Para substituir todas:
+`-n` — quiet/silent — não imprimir automaticamente.
 
-sed 's/ANTIGO/NOVO/g' arquivo.txt
+Assim, apenas a linha selecionada será exibida.
 
-Para alterar o arquivo:
+---
 
-sed -i 's/ANTIGO/NOVO/g' arquivo.txt
+### Imprimir um intervalo
 
-Para mostrar somente uma linha:
+    sed -n '5,10p' arquivo.txt
 
-sed -n '5p' arquivo.txt
+Mostra as linhas 5 até 10.
 
-Para apagar uma linha da saída:
+---
 
-sed '5d' arquivo.txt
+## `-n` — No automatic print — não imprimir automaticamente
 
-Regra para memorizar
+Exemplo:
 
-sed
-↓
-texto entra
-↓
-sed faz a operação
-↓
-resultado sai
+    sed -n '1,5p' arquivo.txt
 
-O "sed" é principalmente uma ferramenta para fazer alterações rápidas em textos.
+Mostra somente as linhas 1 a 5.
+
+Sem `-n`, o `sed` normalmente imprime também as linhas que não foram selecionadas.
+
+---
+
+## `a` — Append — adicionar depois
+
+Adiciona texto **depois** de uma linha.
+
+    sed '2a\Nova linha' arquivo.txt
+
+Adiciona `Nova linha` depois da linha 2.
+
+---
+
+## `i` — Insert — inserir antes
+
+Insere texto **antes** de uma linha.
+
+    sed '2i\Nova linha' arquivo.txt
+
+---
+
+## `c` — Change — substituir uma linha
+
+Substitui uma linha inteira.
+
+    sed '2c\Nova linha' arquivo.txt
+
+A linha 2 será substituída por `Nova linha`.
+
+---
+
+## `sed` com expressões regulares
+
+O `sed` trabalha muito bem com **Regular Expressions (Regex) — Expressões Regulares**.
+
+Exemplo:
+
+    sed 's/^root/ROOT/' arquivo.txt
+
+Procura `root` no início da linha e substitui por `ROOT`.
+
+Outro exemplo:
+
+    sed 's/bash$/BASH/' arquivo.txt
+
+Procura `bash` no final da linha.
+
+---
+
+## Delimitadores
+
+O `/` é normalmente usado na substituição:
+
+    sed 's/antigo/novo/g' arquivo.txt
+
+Mas podemos usar outro delimitador:
+
+    sed 's#antigo#novo#g' arquivo.txt
+
+Isso é útil quando o texto contém `/`, como caminhos:
+
+    sed 's#/home/laerte#/home/usuario#g' arquivo.txt
+
+---
+
+## Exemplos práticos
+
+Substituir uma palavra:
+
+    sed 's/erro/ERROR/' log.txt
+
+Substituir todas:
+
+    sed 's/erro/ERROR/g' log.txt
+
+Mostrar somente as linhas 10 a 20:
+
+    sed -n '10,20p' log.txt
+
+Remover linhas vazias:
+
+    sed '/^$/d' arquivo.txt
+
+Remover comentários iniciados por `#`:
+
+    sed '/^#/d' arquivo.txt
+
+Alterar o arquivo original:
+
+    sed -i 's/antigo/novo/g' arquivo.txt
+
+---
+
+## Resumo LPIC-1
+
+| Comando | Função |
+|---|---|
+| `sed 's/a/b/'` | substituir primeira ocorrência |
+| `sed 's/a/b/g'` | substituir todas as ocorrências |
+| `sed -i` | alterar o arquivo original |
+| `sed '1d'` | remover a linha 1 |
+| `sed '2,4d'` | remover linhas 2 a 4 |
+| `sed -n '5p'` | mostrar a linha 5 |
+| `sed -n '5,10p'` | mostrar linhas 5 a 10 |
+| `sed '2a\texto'` | adicionar depois da linha 2 |
+| `sed '2i\texto'` | inserir antes da linha 2 |
+| `sed '2c\texto'` | substituir a linha 2 |
+
+**Memorize principalmente:**
+
+    sed → Stream Editor → Editor de Fluxo
+
+    s → substitute → substituir
+    d → delete → excluir
+    p → print → imprimir
+    a → append → adicionar depois
+    i → insert → inserir antes
+    c → change → alterar
+    g → global → todas as ocorrências
+    -n → não imprimir automaticamente
+    -i → alterar o arquivo original
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

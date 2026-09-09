@@ -1,248 +1,193 @@
-# 09 — Boot e Inicialização
+# Boot e Inicialização
+
 ## 03 — init
 
-### init — Initialization Process (Processo de Inicialização)
+### 1. O que é init?
 
-O **init** é o processo responsável por iniciar e organizar o ambiente de **User Space — Espaço do Usuário** depois que o kernel Linux é carregado.
+**init — Initialization — Inicialização**
 
-Fluxo simplificado:
+`init` é o **primeiro processo do espaço de usuário** iniciado pelo kernel durante o boot.
 
-    Firmware
-       ↓
-    Bootloader
-       ↓
-    Kernel
-       ↓
-    init
-       ↓
-    Serviços
-       ↓
-    Login
+Ele recebe:
+
+    PID 1
+
+Sua principal função é iniciar e organizar os demais processos e serviços necessários para o sistema funcionar.
 
 ---
 
-### PID 1
+### 2. Onde o init entra no Boot?
 
-O processo `init` tradicionalmente ocupa:
+Fluxo simplificado:
 
-    PID = 1
+    BIOS / UEFI
+          ↓
+      Bootloader
+          ↓
+       Kernel
+          ↓
+      initramfs
+          ↓
+        init
+       PID 1
+          ↓
+       Serviços
+          ↓
+        Login
+
+O kernel inicia o processo `init` depois de preparar o ambiente básico.
+
+---
+
+### 3. PID 1
+
+O primeiro processo recebe o **PID — Process ID — ID do Processo** `1`.
 
 Podemos verificar:
 
     ps -p 1 -f
 
-Exemplo:
+Ou:
 
-    UID   PID  PPID  CMD
-    root    1     0  /sbin/init
+    cat /proc/1/comm
 
-O processo com **PID 1** possui uma função fundamental: iniciar e supervisionar o restante do espaço de usuário.
-
----
-
-### init tradicional
-
-Em sistemas Linux antigos, era comum utilizar o:
-
-    SysVinit
-
-O SysVinit utiliza **runlevels — níveis de execução** para definir o estado de operação do sistema.
-
-Exemplos tradicionais:
-
-| Runlevel | Função tradicional |
-|---:|---|
-| `0` | Halt — desligar |
-| `1` | Single User — modo de usuário único |
-| `2` | Multi-user — multiusuário |
-| `3` | Multi-user — multiusuário, normalmente sem interface gráfica |
-| `4` | Não padronizado |
-| `5` | Multi-user + GUI — multiusuário com interface gráfica |
-| `6` | Reboot — reiniciar |
-
-⚠️ A utilização exata dos runlevels `2`, `3`, `4` e `5` pode variar entre distribuições.
-
----
-
-### systemd — Init moderno
-
-Em muitas distribuições Linux atuais, o `init` tradicional foi substituído pelo:
+Em sistemas modernos, normalmente veremos:
 
     systemd
 
-Mesmo utilizando `systemd`, o conceito de **PID 1** continua existindo.
+---
 
-Verifique:
+### 4. init tradicional
+
+Historicamente, muitas distribuições Linux utilizavam o:
+
+**SysVinit — System V Initialization — Inicialização System V**
+
+Nesse modelo, o `/etc/inittab` era um dos arquivos importantes de configuração.
+
+Exemplo tradicional:
+
+    /etc/inittab
+
+O SysVinit utilizava **runlevels — níveis de execução** para definir o estado do sistema.
+
+---
+
+### 5. Runlevels
+
+**Runlevel — Nível de Execução**
+
+Os runlevels tradicionais eram representados por números:
+
+| Runlevel | Uso tradicional |
+|---|---|
+| `0` | Halt — Desligar |
+| `1` | Single User — Usuário Único / manutenção |
+| `2` | Multi-user — Multiusuário |
+| `3` | Multi-user + rede, sem interface gráfica |
+| `4` | Não definido por padrão |
+| `5` | Multi-user + interface gráfica |
+| `6` | Reboot — Reiniciar |
+
+A interpretação de alguns runlevels, especialmente `2`, podia variar entre distribuições.
+
+---
+
+### 6. init e systemd
+
+Nas distribuições Linux modernas, o `systemd` normalmente ocupa o lugar do antigo SysVinit como **PID 1**.
+
+    PID 1
+      ↓
+    systemd
+
+Isso não significa que o conceito de `init` desapareceu.
+
+O `init` continua sendo o nome tradicional para o **processo inicial do sistema**.
+
+Ver o processo:
 
     ps -p 1 -o pid,comm,args
 
 Exemplo:
 
-    PID COMMAND CMD
-      1 systemd /sbin/init
+    PID COMMAND  COMMAND
+      1 systemd  /sbin/init
 
-Aqui:
+Em muitos sistemas:
 
-    /sbin/init → pode ser um link para systemd
-
-Portanto, `init` pode aparecer no caminho do processo mesmo quando o sistema está utilizando `systemd`.
+    /sbin/init → systemd
 
 ---
 
-### systemd × SysVinit
+### 7. init × systemd
 
-| SysVinit | systemd |
+| Conceito | Função |
 |---|---|
-| Sistema tradicional | Sistema moderno |
-| Usa runlevels | Usa targets |
-| Scripts de inicialização | Units |
-| Inicialização mais sequencial | Pode iniciar unidades em paralelo |
-| Comando tradicional: `service` | Comando principal: `systemctl` |
+| `init` | Processo inicial, PID 1 |
+| SysVinit | Implementação tradicional do init |
+| systemd | Implementação moderna do processo inicial e gerenciador de serviços |
+| PID 1 | Identificação do primeiro processo do espaço de usuário |
 
 ---
 
-### Target — Alvo de Inicialização
+### 8. Por que o PID 1 é importante?
 
-No `systemd`, os **targets** substituem o conceito de runlevels.
+O processo `init`/`systemd` possui responsabilidades especiais.
 
-Exemplos:
+Entre elas:
 
-    multi-user.target
+- iniciar serviços;
+- controlar processos do sistema;
+- participar do gerenciamento de processos órfãos;
+- manter o sistema em um estado operacional.
 
-→ modo multiusuário sem exigir interface gráfica.
-
-    graphical.target
-
-→ modo multiusuário com interface gráfica.
-
-Ver o target padrão:
-
-    systemctl get-default
-
-Alterar o target padrão:
-
-    sudo systemctl set-default graphical.target
+Se o processo PID 1 terminar de forma inesperada, o comportamento pode ser crítico para o sistema.
 
 ---
 
-### systemctl — Control Systemd (Controlar o systemd)
+### 9. Comandos relacionados ao init
 
-O `systemctl` permite controlar serviços e outras unidades do `systemd`.
+Ver o PID 1:
 
-Ver o estado de um serviço:
+    ps -p 1 -f
 
-    systemctl status nome.service
+Ver o executável:
 
-Iniciar:
+    readlink -f /proc/1/exe
 
-    sudo systemctl start nome.service
+Ver a versão do systemd:
 
-Parar:
+    systemctl --version
 
-    sudo systemctl stop nome.service
+Ver serviços:
 
-Reiniciar:
-
-    sudo systemctl restart nome.service
-
-Ativar no boot:
-
-    sudo systemctl enable nome.service
-
-Desativar no boot:
-
-    sudo systemctl disable nome.service
+    systemctl list-units --type=service
 
 ---
 
-### init × systemd
+## Resumo LPIC-1
 
-Não pense que são necessariamente dois processos diferentes.
+- **init — Initialization — Inicialização** → processo inicial do espaço de usuário.
+- Normalmente possui **PID 1**.
+- É iniciado pelo **kernel**.
+- Tradicionalmente, o Linux utilizava **SysVinit**.
+- O SysVinit utilizava **runlevels**.
+- Sistemas modernos geralmente utilizam **systemd** como PID 1.
+- `/sbin/init` pode ser um link para o `systemd`.
+- `ps -p 1 -f` → verifica qual processo está ocupando o PID 1.
+- `systemd` → além de ser o init moderno, gerencia serviços e outras partes da inicialização.
 
-A ideia principal é:
-
-    init
-     ↓
-    função de inicialização
-
-Em sistemas antigos:
-
-    init → SysVinit
-
-Em sistemas modernos:
-
-    init → systemd como PID 1
-
----
-
-### Ver qual sistema de init está sendo usado
-
-Uma forma prática:
-
-    ps -p 1 -o comm=
-
-Exemplo:
-
-    systemd
-
-Outra possibilidade:
-
-    readlink -f /sbin/init
-
-Isso pode mostrar:
-
-    /usr/lib/systemd/systemd
-
-ou outro programa de inicialização, dependendo da distribuição.
-
----
-
-### ⚠️ Atenção para a prova LPIC-1
-
-Memorize:
-
-**init**
-→ processo responsável pela inicialização do espaço de usuário.
-
-**PID 1**
-→ identificação tradicional do processo de inicialização.
-
-**SysVinit**
-→ sistema tradicional de inicialização baseado em runlevels.
-
-**systemd**
-→ sistema moderno de inicialização e gerenciamento de serviços.
-
-**`systemctl`**
-→ ferramenta principal para administrar o `systemd`.
-
-**Runlevel**
-→ conceito tradicional do SysVinit.
-
-**Target**
-→ conceito utilizado pelo systemd.
-
-### Resumo
-
-    Linux antigo:
+**Fluxo:**
 
     Kernel
       ↓
-    init (SysVinit)
+    init (PID 1)
       ↓
-    Runlevels
+    systemd
       ↓
     Serviços
-
-
-    Linux moderno:
-
-    Kernel
       ↓
-    systemd (PID 1)
-      ↓
-    Targets
-      ↓
-    Services
+    Sistema pronto
 
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

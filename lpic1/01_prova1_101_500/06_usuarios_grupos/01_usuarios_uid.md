@@ -1,44 +1,85 @@
 # Usuários e Grupos
 
-## 01 — Usuários e UID
+## 01 — Usuário e UID
 
-## User — Usuário
+### 1. Usuário — User
 
-No Linux, cada usuário possui uma **identidade** usada pelo sistema para controlar acesso a arquivos, processos e recursos.
+**User** — **Usuário**
 
-Cada usuário possui:
+No Linux, um usuário é uma identidade utilizada para acessar o sistema e executar processos.
 
-- **Username** — Nome de usuário
-- **UID** — User ID (ID do Usuário)
-- **GID** — Group ID (ID do Grupo)
-- **Home Directory** — Diretório pessoal
-- **Shell** — Interpretador de comandos
+Cada usuário possui uma identificação numérica chamada **UID**.
 
 ---
 
-## 1. UID — User ID
+### 2. UID
 
-O **UID** é um número que identifica um usuário para o sistema.
+**UID** — *User ID* — **ID do Usuário**
+
+É o número que identifica um usuário no sistema.
 
 Exemplo:
 
-    laerte:x:1000:1000:Laerte:/home/laerte:/bin/bash
+    id laerte
 
-Nesse exemplo:
+Saída:
 
+    uid=1000(laerte) gid=1000(laerte) groups=1000(laerte)
+
+Neste exemplo:
+
+    UID → 1000
     Usuário → laerte
-    UID     → 1000
-    GID     → 1000
-    Home    → /home/laerte
-    Shell   → /bin/bash
 
-O Linux trabalha internamente com o **UID**, não apenas com o nome do usuário.
+O Linux utiliza principalmente o UID para identificar o usuário internamente.
 
 ---
 
-## 2. Ver o usuário atual
+### 3. Usuário comum × root
 
-`whoami` — Who Am I (Quem Sou Eu)
+O usuário administrador é:
+
+    root
+
+O `root` normalmente possui:
+
+    UID = 0
+
+Usuários comuns geralmente recebem UIDs a partir de uma faixa definida pela distribuição.
+
+Exemplo:
+
+    laerte → UID 1000
+    joao   → UID 1001
+    maria  → UID 1002
+
+A faixa exata pode variar conforme a distribuição e sua configuração.
+
+---
+
+### 4. Consultar informações do usuário
+
+**`id`** — **Identificação**
+
+    id
+
+Mostra informações do usuário atual.
+
+Para um usuário específico:
+
+    id joao
+
+Exemplo:
+
+    uid=1001(joao) gid=1001(joao) groups=1001(joao),100(users)
+
+---
+
+### 5. `whoami`
+
+**whoami** — **Quem sou eu**
+
+Mostra o nome do usuário atualmente efetivo:
 
     whoami
 
@@ -46,148 +87,103 @@ Exemplo:
 
     laerte
 
----
+Diferença:
 
-## 3. Ver UID e GID
-
-`id` — Identity (Identidade)
-
-    id
-
-Exemplo:
-
-    uid=1000(laerte) gid=1000(laerte) groups=1000(laerte),27(sudo)
-
-Para consultar um usuário específico:
-
-    id laerte
+    whoami → mostra o nome do usuário
+    id      → mostra UID, GID e grupos
 
 ---
 
-## 4. Arquivo `/etc/passwd`
+### 6. `/etc/passwd`
 
-O arquivo:
+**`/etc/passwd`** — **Arquivo de informações dos usuários**
 
-    /etc/passwd
+Contém informações básicas das contas locais.
 
-Armazena informações básicas dos usuários locais.
+Exemplo de entrada:
 
-Exemplo:
-
-    laerte:x:1000:1000:Laerte:/home/laerte:/bin/bash
+    laerte:x:1000:1000:Laerte Costa:/home/laerte:/bin/bash
 
 Os campos são separados por `:`.
 
-### Estrutura
+Estrutura:
 
-    usuário : senha : UID : GID : descrição : home : shell
+    usuário:senha:GID:UID:descrição:home:shell
+
+Na prática, o campo da senha normalmente contém `x`, indicando que o hash da senha está armazenado em `/etc/shadow`.
+
+---
+
+### 7. Informações importantes do `/etc/passwd`
 
 Exemplo:
 
-    laerte : x : 1000 : 1000 : Laerte : /home/laerte : /bin/bash
+    laerte:x:1000:1000:Laerte Costa:/home/laerte:/bin/bash
 
-### Importante
-
-O `x` normalmente indica que o **hash da senha** não está armazenado diretamente nesse arquivo.
-
-Em sistemas Linux modernos, as senhas ficam normalmente em:
-
-    /etc/shadow
-
----
-
-## 5. Usuários do sistema
-
-Além dos usuários comuns, existem **System Users — Usuários do Sistema**.
-
-Eles são usados por serviços e processos.
-
-Exemplos comuns:
-
-    root
-    daemon
-    www-data
-    nobody
-
-Os intervalos de UID podem variar conforme a distribuição e sua configuração.
+| Campo | Conteúdo | Significado |
+|---|---|---|
+| 1 | `laerte` | nome do usuário |
+| 2 | `x` | senha armazenada em `/etc/shadow` |
+| 3 | `1000` | UID |
+| 4 | `1000` | GID principal |
+| 5 | `Laerte Costa` | descrição/comentário |
+| 6 | `/home/laerte` | diretório pessoal |
+| 7 | `/bin/bash` | shell padrão |
 
 ---
 
-## 6. UID 0
+### 8. Usuário e arquivos
 
-O UID:
+O Linux associa arquivos a um UID e a um GID.
 
-    0
+Exemplo:
 
-pertence ao usuário:
+    ls -l arquivo.txt
 
-    root
+Saída:
 
-`root` — Superuser (Superusuário)
+    -rw-r--r-- 1 laerte desenvolvimento 1200 arquivo.txt
 
-O `root` possui privilégios administrativos muito elevados no sistema.
+Aqui:
 
----
+    laerte          → dono
+    desenvolvimento → grupo
 
-## 7. Consultar `/etc/passwd`
-
-Podemos usar:
-
-    cat /etc/passwd
-
-Ou pesquisar um usuário:
-
-    grep '^laerte:' /etc/passwd
+Internamente, o sistema utiliza os identificadores numéricos correspondentes.
 
 ---
 
-## 8. Comandos importantes
+### 9. Diretório pessoal
 
-### `whoami`
+**Home Directory** — **Diretório Pessoal**
 
-    whoami
+Normalmente fica em:
 
-Mostra o usuário atualmente efetivo.
+    /home/usuário
 
-### `id`
+Exemplo:
 
-    id
-    id usuario
+    /home/laerte
 
-Mostra UID, GID e grupos.
+A variável:
 
-### `getent`
+    $HOME
 
-`getent` — Get Entries (Obter Entradas)
-
-    getent passwd laerte
-
-Consulta a base de usuários configurada no sistema, que pode incluir fontes locais ou serviços de diretório.
+indica o diretório pessoal do usuário atual.
 
 ---
 
-## 9. LPIC-1 — O que lembrar
+## Resumo LPIC-1
 
-- **UID** = User ID (ID do Usuário).
-- Cada usuário possui um UID.
-- **UID 0** → `root`.
-- `whoami` → mostra o usuário efetivo atual.
+- **User** → usuário.
+- **UID** — *User ID* → ID numérico do usuário.
+- `root` → usuário administrativo, normalmente UID `0`.
 - `id` → mostra UID, GID e grupos.
-- `/etc/passwd` → informações básicas dos usuários.
-- `/etc/shadow` → informações protegidas relacionadas às senhas.
-- Os campos de `/etc/passwd` são separados por `:`.
-- `getent passwd` → consulta a base de usuários do sistema.
+- `whoami` → mostra o usuário efetivo atual.
+- `/etc/passwd` → contém informações básicas das contas.
+- `/etc/shadow` → armazena informações protegidas relacionadas às senhas.
+- `/home/usuário` → diretório pessoal de usuários comuns.
+- `$HOME` → caminho do diretório pessoal atual.
+- Arquivos possuem um **dono (UID)** e um **grupo (GID)**.
 
-### Resumo
-
-    whoami
-    id
-    id usuario
-    getent passwd usuario
-
-    /etc/passwd
-    /etc/shadow
-
-    UID 0 → root
-
-> **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

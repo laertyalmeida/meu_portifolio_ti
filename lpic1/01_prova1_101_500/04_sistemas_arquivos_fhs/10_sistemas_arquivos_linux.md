@@ -1,200 +1,265 @@
-# 10 — Sistemas de Arquivos Linux
+# Sistemas de Arquivos e FHS
 
-## Filesystem — Sistema de Arquivos
+## 10 — Sistemas de Arquivos Linux
 
-O **filesystem** é responsável por organizar e armazenar arquivos e diretórios em uma partição ou dispositivo.
+### 1. O que é um sistema de arquivos?
 
-    Disco
-      ↓
-    Partição
-      ↓
-    Filesystem
-      ↓
-    Arquivos e diretórios
+**Filesystem** — **Sistema de Arquivos**
 
----
+É a estrutura usada pelo Linux para organizar e armazenar arquivos e diretórios em uma partição ou dispositivo.
 
-## ext2 — Second Extended Filesystem (Segundo Sistema de Arquivos Estendido)
+Importante:
 
-Filesystem antigo da família `ext`.
-
-- Não possui **journaling** (registro de alterações).
-- Hoje é pouco utilizado.
-- Importante conhecer para a prova.
-
----
-
-## ext3 — Third Extended Filesystem (Terceiro Sistema de Arquivos Estendido)
-
-Evolução do `ext2`.
-
-- Possui **journaling**.
-- Maior segurança contra corrupção após desligamentos inesperados.
-- Foi muito utilizado em sistemas Linux.
-
----
-
-## ext4 — Fourth Extended Filesystem (Quarto Sistema de Arquivos Estendido)
-
-Evolução do `ext3` e um dos filesystems Linux mais conhecidos.
-
-- Possui **journaling**.
-- Suporta arquivos e sistemas de arquivos grandes.
-- É uma opção comum em distribuições Linux.
-
-    /dev/sda1 → ext4 → /home
-
----
-
-## XFS — X File System (Sistema de Arquivos X)
-
-Filesystem desenvolvido originalmente pela Silicon Graphics e muito utilizado em ambientes Linux.
-
-- Possui **journaling**.
-- Bom desempenho com arquivos e sistemas de arquivos grandes.
-- Muito usado em servidores.
-
----
-
-## Btrfs — B-tree File System (Sistema de Arquivos B-tree)
-
-Filesystem moderno com recursos avançados.
-
-- **Snapshots** — instantâneos.
-- **Subvolumes** — subvolumes.
-- **Checksums** — verificações de integridade.
-- Suporte a recursos avançados de gerenciamento.
-
----
-
-## swap — Swap Space (Espaço de Troca)
-
-Não é um filesystem tradicional para armazenar arquivos.
-
-É utilizado como **espaço de memória virtual**.
-
-    RAM
-     ↓
-    pouca memória disponível
-     ↓
-    swap
-
-Pode ser uma partição ou um arquivo.
+    Disco → Partição → Sistema de Arquivos → Arquivos
 
 Exemplo:
 
-    /dev/sda2 → swap
+    /dev/sda1 → ext4 → /home
+
+A partição `/dev/sda1` pode receber um sistema de arquivos `ext4`.
 
 ---
 
-## vfat — Virtual FAT (FAT Virtual)
+### 2. `ext4`
 
-Filesystem baseado na família FAT, muito utilizado em dispositivos compatíveis com vários sistemas.
+**ext4** — *Fourth Extended Filesystem* — **Quarto Sistema de Arquivos Estendido**
 
-É comum encontrar `vfat` em:
+É um dos sistemas de arquivos mais comuns no Linux.
 
-- Partições EFI.
-- Pendrives.
-- Cartões de memória.
+Características:
 
----
+- Suporta arquivos e sistemas de arquivos grandes.
+- Possui **journaling** — **registro de alterações**.
+- É muito utilizado em distribuições Linux.
+- É uma escolha comum para `/` e `/home`.
 
-## Filesystem × Journaling
+Exemplo:
 
-**Journaling — Registro de alterações**
+    sudo mkfs.ext4 /dev/sdb1
 
-O journaling mantém um registro de operações para ajudar na recuperação do filesystem após uma falha.
-
-    ext3 → journaling
-    ext4 → journaling
-    XFS  → journaling
+**mkfs** — *Make Filesystem* — **Criar Sistema de Arquivos**
 
 ---
 
-## Identificar o Filesystem
+### 3. `ext2` e `ext3`
 
-### lsblk -f — List Block Devices (Listar Dispositivos de Bloco)
+**ext2** — *Second Extended Filesystem* — **Segundo Sistema de Arquivos Estendido**
+
+- Não possui journaling.
+- É mais antigo.
+
+**ext3** — *Third Extended Filesystem* — **Terceiro Sistema de Arquivos Estendido**
+
+- Sucessor do ext2.
+- Adicionou journaling.
+
+**ext4** é a evolução do ext3.
+
+    ext2 → ext3 → ext4
+
+---
+
+### 4. `XFS`
+
+**XFS** — *X File System* — **Sistema de Arquivos X**
+
+É um sistema de arquivos de alto desempenho, conhecido por trabalhar bem com arquivos e sistemas de arquivos grandes.
+
+Exemplo:
+
+    sudo mkfs.xfs /dev/sdb1
+
+Comando relacionado:
+
+    xfs_info /dev/sdb1
+
+---
+
+### 5. `Btrfs`
+
+**Btrfs** — *B-tree File System* — **Sistema de Arquivos B-tree**
+
+É um sistema de arquivos moderno com recursos avançados.
+
+Características importantes:
+
+- **Snapshots** — **instantâneos**
+- **Subvolumes** — **subvolumes**
+- **Compression** — **compressão**
+- **Checksums** — **somas de verificação**
+- Recursos de gerenciamento avançado
+
+Exemplo:
+
+    sudo mkfs.btrfs /dev/sdb1
+
+---
+
+### 6. `VFAT` / `FAT32`
+
+**FAT32** — *File Allocation Table 32* — **Tabela de Alocação de Arquivos 32**
+
+É muito utilizado em dispositivos removíveis e também pode ser usado na:
+
+**ESP** — *EFI System Partition* — **Partição de Sistema EFI**
+
+Exemplo:
+
+    sudo mkfs.vfat /dev/sdb1
+
+---
+
+### 7. `NTFS`
+
+**NTFS** — *New Technology File System* — **Sistema de Arquivos de Nova Tecnologia**
+
+É o principal sistema de arquivos tradicional do Windows.
+
+O Linux pode trabalhar com NTFS, sendo útil principalmente para acessar partições compartilhadas com Windows.
+
+---
+
+### 8. `swap`
+
+**swap** — **espaço de troca**
+
+Não é utilizado como um sistema de arquivos comum para armazenar arquivos.
+
+É utilizado pelo Linux como espaço de memória virtual.
+
+Criar:
+
+    sudo mkswap /dev/sdb2
+
+Ativar:
+
+    sudo swapon /dev/sdb2
+
+Desativar:
+
+    sudo swapoff /dev/sdb2
+
+---
+
+### 9. Sistemas de arquivos virtuais
+
+Nem tudo em `/proc` e `/sys` está armazenado fisicamente no disco.
+
+**procfs** — *Process Filesystem* — **Sistema de Arquivos de Processos**
+
+Normalmente montado em:
+
+    /proc
+
+Fornece informações sobre:
+
+- Processos
+- Kernel
+- Memória
+- CPU
+- Sistema
+
+**sysfs** — *System Filesystem* — **Sistema de Arquivos do Sistema**
+
+Normalmente montado em:
+
+    /sys
+
+Fornece informações sobre:
+
+- Hardware
+- Dispositivos
+- Kernel
+- Drivers
+
+---
+
+### 10. Identificar o sistema de arquivos
+
+Use:
 
     lsblk -f
 
-`-f` — filesystem (sistema de arquivos)
+ou:
 
-Mostra o tipo do filesystem, LABEL, UUID e ponto de montagem.
+    sudo blkid
 
----
+Exemplo:
 
-### blkid — Block Device Identification (Identificação de Dispositivos de Bloco)
-
-    blkid /dev/sda1
-
-Mostra informações como:
-
-    TYPE="ext4"
-    UUID="a1b2-c3d4"
+    NAME   FSTYPE LABEL  UUID
+    sda1   ext4   ROOT   1234-abcd
+    sda2   ext4   HOME   5678-efgh
+    sda3   swap          9012-ijkl
 
 ---
 
-## Criar um Filesystem
+### 11. Criar um sistema de arquivos
 
-### mkfs — Make Filesystem (Criar Sistema de Arquivos)
+O comando `mkfs` cria um sistema de arquivos em uma partição.
 
-    mkfs.ext4 /dev/sda1
+Exemplo:
 
-`mkfs` — make filesystem (criar sistema de arquivos)
+    sudo mkfs.ext4 /dev/sdb1
 
-Nesse exemplo, cria um filesystem `ext4` na partição `/dev/sda1`.
+Outros exemplos:
 
-### Atenção
+    sudo mkfs.xfs /dev/sdb1
+    sudo mkfs.btrfs /dev/sdb1
+    sudo mkfs.vfat /dev/sdb1
 
-Criar um filesystem normalmente **apaga os dados existentes** na partição.
+**Atenção:** `mkfs` normalmente apaga os dados existentes na partição. Deve ser usado somente quando a partição puder ser formatada.
 
 ---
 
-## Principais Filesystems
+### 12. Verificar um sistema de arquivos
 
-| Filesystem | Característica principal |
+**fsck** — *Filesystem Check* — **Verificação do Sistema de Arquivos**
+
+É usado para verificar e, dependendo do sistema de arquivos e das opções, reparar problemas.
+
+Exemplo:
+
+    sudo fsck /dev/sdb1
+
+Para ext4:
+
+    sudo e2fsck /dev/sdb1
+
+> Normalmente, o sistema de arquivos deve estar desmontado antes de uma verificação/reparo com `fsck`.
+
+---
+
+### 13. Comparação rápida
+
+| Sistema | Característica principal |
 |---|---|
-| `ext2` | Sem journaling |
-| `ext3` | Journaling |
-| `ext4` | Evolução do ext3 |
-| `XFS` | Bom para grandes volumes |
-| `Btrfs` | Recursos avançados |
-| `swap` | Memória virtual |
-| `vfat` | Compatibilidade e partição EFI |
+| `ext2` | antigo, sem journaling |
+| `ext3` | ext2 + journaling |
+| `ext4` | muito comum no Linux |
+| `xfs` | desempenho e grandes volumes |
+| `btrfs` | snapshots e recursos avançados |
+| `vfat/FAT32` | compatibilidade e ESP |
+| `ntfs` | comum no Windows |
+| `swap` | memória virtual |
 
 ---
 
-## LPIC-1 — O que saber
+## Resumo LPIC-1
 
-- O que é **filesystem**.
-- Diferença básica entre `ext2`, `ext3` e `ext4`.
-- O que é **journaling**.
-- Reconhecer `ext4`, `XFS`, `Btrfs`, `vfat` e `swap`.
-- Saber identificar o filesystem com `lsblk -f` e `blkid`.
-- Conhecer `mkfs` — Make Filesystem (Criar Sistema de Arquivos).
-- Entender que criar um filesystem pode destruir os dados existentes.
-- Saber relacionar **partição → filesystem → ponto de montagem**.
-
----
-
-## Resumo
-
-    Disco
-      ↓
-    Partição
-      ↓
-    Filesystem
-      ↓
-    Montagem
-      ↓
-    Arquivos
-
-    ext2  → sem journaling
-    ext3  → journaling
-    ext4  → evolução do ext3
-    XFS   → grandes volumes
-    Btrfs → recursos avançados
-    vfat  → compatibilidade / EFI
-    swap  → memória virtual
+- **Filesystem** → sistema de arquivos.
+- `ext4` → sistema de arquivos Linux muito comum.
+- `ext3` → adicionou journaling ao ext2.
+- `xfs` → sistema de arquivos de alto desempenho.
+- `btrfs` → sistema moderno com snapshots e subvolumes.
+- `vfat/FAT32` → comum em mídias removíveis e ESP.
+- `ntfs` → sistema de arquivos tradicional do Windows.
+- `swap` → espaço usado para memória virtual.
+- `mkfs` → cria um sistema de arquivos.
+- `mkswap` → prepara uma área para swap.
+- `fsck` → verifica sistemas de arquivos.
+- `lsblk -f` e `blkid` → identificam sistemas de arquivos.
+- `/proc` → informações de processos e sistema.
+- `/sys` → informações de hardware, dispositivos e kernel.
+- **Partição ≠ sistema de arquivos**.
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

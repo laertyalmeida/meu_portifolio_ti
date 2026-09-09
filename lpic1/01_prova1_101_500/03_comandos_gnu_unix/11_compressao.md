@@ -1,248 +1,288 @@
-Compression — Compressão
+# Comandos GNU/UNIX
 
-O que é compressão?
+## 11 — Compressão
 
-Compression (Compressão) reduz o tamanho de um arquivo.
+**Compression — Compressão** é o processo de reduzir o tamanho de arquivos para economizar espaço e facilitar transferências.
 
-Exemplo:
+No Linux, os principais comandos de compressão cobrados no LPIC-1 são:
 
-arquivo grande
-     ↓
-compressão
-     ↓
-arquivo menor
+    gzip
+    bzip2
+    xz
 
-Isso ajuda a economizar espaço e facilita o envio de arquivos.
+Também é importante conhecer:
 
----
-
-"gzip" — GNU Zip
-
-O "gzip" é uma ferramenta muito comum no Linux.
-
-gzip arquivo.txt
-
-O arquivo passa a ser:
-
-arquivo.txt.gz
-
-Por padrão, o "gzip" remove o arquivo original depois de comprimi-lo.
+    gunzip
+    bunzip2
+    unxz
 
 ---
 
-"gunzip" — GNU Unzip
+## 1. `gzip` — GNU Zip — compressão
 
-Usado para descomprimir arquivos ".gz".
+Comprime arquivos usando o formato **Gzip**.
 
-gunzip arquivo.txt.gz
+    gzip arquivo.txt
+
+O arquivo original normalmente é substituído por:
+
+    arquivo.txt.gz
+
+Para descomprimir:
+
+    gunzip arquivo.txt.gz
+
+Ou:
+
+    gzip -d arquivo.txt.gz
+
+`-d` — decompress — descomprimir.
+
+---
+
+### `gzip -k` — Keep — manter
+
+Mantém o arquivo original:
+
+    gzip -k arquivo.txt
 
 Resultado:
 
-arquivo.txt
+    arquivo.txt
+    arquivo.txt.gz
 
 ---
 
-"gzip -d"
+### `gzip -l` — List — listar
 
-Também podemos descomprimir usando:
+Mostra informações sobre o arquivo comprimido:
 
-gzip -d arquivo.txt.gz
-
-"-d" — Decompress (Descomprimir)
-
--d → Decompress → Descomprimir
+    gzip -l arquivo.txt.gz
 
 ---
 
-"gzip -k"
+### `gzip -c` — Standard Output — saída padrão
+
+Envia o resultado comprimido para a saída padrão.
+
+    gzip -c arquivo.txt > arquivo.txt.gz
+
+Isso permite controlar o arquivo de saída usando `>`.
+
+---
+
+## 2. `bzip2` — Bzip2
+
+Outra ferramenta tradicional de compressão.
+
+    bzip2 arquivo.txt
+
+Produz:
+
+    arquivo.txt.bz2
+
+Descomprimir:
+
+    bunzip2 arquivo.txt.bz2
+
+Ou:
+
+    bzip2 -d arquivo.txt.bz2
+
+---
+
+### `bzip2 -k` — Keep — manter
+
+    bzip2 -k arquivo.txt
 
 Mantém o arquivo original.
 
-gzip -k arquivo.txt
-
-"-k" — Keep (Manter)
-
--k → Keep → Manter
-
-Resultado:
-
-arquivo.txt
-arquivo.txt.gz
-
 ---
 
-bzip2
+## 3. `xz` — XZ
 
-O "bzip2" também comprime arquivos.
+Ferramenta de compressão muito utilizada em distribuições Linux e pacotes de código-fonte.
 
-bzip2 arquivo.txt
+    xz arquivo.txt
 
-Resultado:
+Produz:
 
-arquivo.txt.bz2
+    arquivo.txt.xz
 
-Para descomprimir:
+Descomprimir:
 
-bunzip2 arquivo.txt.bz2
+    unxz arquivo.txt.xz
 
 Ou:
 
-bzip2 -d arquivo.txt.bz2
-
-"-d" — Decompress (Descomprimir)
+    xz -d arquivo.txt.xz
 
 ---
 
-xz
+### `xz -k` — Keep — manter
 
-O "xz" é outra ferramenta de compressão.
+    xz -k arquivo.txt
 
-xz arquivo.txt
-
-Resultado:
-
-arquivo.txt.xz
-
-Para descomprimir:
-
-unxz arquivo.txt.xz
-
-Ou:
-
-xz -d arquivo.txt.xz
-
-"-d" — Decompress (Descomprimir)
+Mantém o arquivo original.
 
 ---
 
-Comparando
+## 4. Comparação
 
-gzip  → .gz
-bzip2 → .bz2
-xz    → .xz
-
-Para descomprimir:
-
-gunzip → .gz
-bunzip2 → .bz2
-unxz   → .xz
+| Ferramenta | Extensão | Descompressão |
+|---|---|---|
+| `gzip` | `.gz` | `gunzip` / `gzip -d` |
+| `bzip2` | `.bz2` | `bunzip2` / `bzip2 -d` |
+| `xz` | `.xz` | `unxz` / `xz -d` |
 
 ---
 
-"tar" não é compressão
+## 5. Compressão não é arquivamento
 
-Essa diferença é muito importante.
+**Compression — Compressão** reduz o tamanho.
 
-O "tar" serve principalmente para agrupar vários arquivos em um único arquivo.
+**Archiving — Arquivamento** reúne vários arquivos em um único arquivo.
 
-tar -cf arquivos.tar arquivos/
+Por exemplo:
 
-vários arquivos
-      ↓
-     tar
-      ↓
-arquivos.tar
+    gzip arquivo.txt
 
-O ".tar" sozinho não significa que o arquivo está comprimido.
+Comprime um arquivo.
 
----
+Já:
 
-"tar" + "gzip"
+    tar -cf arquivos.tar arquivo1.txt arquivo2.txt
 
-Podemos agrupar e comprimir:
+Reúne vários arquivos em um único arquivo `.tar`, mas não necessariamente os comprime.
 
-tar -czf backup.tar.gz arquivos/
+Por isso é comum combinar:
 
-Flags
+    tar + gzip
+    tar + bzip2
+    tar + xz
 
--c → Create → Criar
--z → Gzip → Usar gzip
--f → File → Arquivo de saída
+Exemplos:
 
-Resultado:
-
-backup.tar.gz
+    arquivo.tar.gz
+    arquivo.tar.bz2
+    arquivo.tar.xz
 
 ---
 
-"tar" + "bzip2"
+## 6. `zcat` — Zipped Cat — exibir arquivo gzip
 
-tar -cjf backup.tar.bz2 arquivos/
+Permite visualizar um arquivo `.gz` sem descompactá-lo primeiro.
 
-Flag
+    zcat arquivo.txt.gz
 
--j → bzip2 → Usar bzip2
+Também existem:
 
----
+    bzcat arquivo.txt.bz2
 
-"tar" + "xz"
+    xzcat arquivo.txt.xz
 
-tar -cJf backup.tar.xz arquivos/
-
-Flag
-
--J → xz → Usar xz
+Eles permitem visualizar o conteúdo comprimido diretamente.
 
 ---
 
-🧠 Para a LPIC-1
+## 7. Compressão pela entrada e saída padrão
 
-Memorize:
+Podemos combinar compressão com redirecionamentos.
 
-gzip  → .gz
-bzip2 → .bz2
-xz    → .xz
-tar   → agrupar arquivos
+Exemplo:
 
-Flags do "tar"
+    gzip -c arquivo.txt > arquivo.txt.gz
 
--c → Create → Criar
--x → Extract → Extrair
--z → gzip
--j → bzip2
--J → xz
--f → File → Arquivo
+Para descomprimir e salvar:
 
-Exemplos
+    gzip -dc arquivo.txt.gz > arquivo.txt
 
-tar -czf backup.tar.gz pasta/
+Aqui:
 
-→ cria um ".tar.gz".
-
-tar -xzf backup.tar.gz
-
-→ extrai um ".tar.gz".
-
-tar -cJf backup.tar.xz pasta/
-
-→ cria um ".tar.xz".
-
-tar -xJf backup.tar.xz
-
-→ extrai um ".tar.xz".
+    -d → decompress → descomprimir
+    -c → stdout → enviar para a saída padrão
 
 ---
 
-Regra simples
+## 8. Verificar o tipo do arquivo
 
-tar
-↓
-agrupa
+Podemos usar `file`:
 
-gzip / bzip2 / xz
-↓
-comprimem
+    file arquivo.txt.gz
 
-Portanto:
+    file arquivo.txt.bz2
 
-.tar
-→ agrupado
+    file arquivo.txt.xz
 
-.tar.gz
-→ agrupado + gzip
+O `file` identifica o formato do conteúdo.
 
-.tar.bz2
-→ agrupado + bzip2
+---
 
-.tar.xz
-→ agrupado + xz
+## 9. Compressão e `tar`
+
+Um dos usos mais importantes no Linux é combinar `tar` com compressão.
+
+### Gzip
+
+    tar -czf backup.tar.gz documentos/
+
+`-z` — gzip — usar compressão gzip.
+
+### Bzip2
+
+    tar -cjf backup.tar.bz2 documentos/
+
+`-j` — bzip2 — usar compressão bzip2.
+
+### XZ
+
+    tar -cJf backup.tar.xz documentos/
+
+`-J` — xz — usar compressão xz.
+
+O estudo detalhado do `tar` será feito na próxima página.
+
+---
+
+## Resumo LPIC-1
+
+| Comando | Função |
+|---|---|
+| `gzip` | comprimir com gzip |
+| `gunzip` | descomprimir `.gz` |
+| `bzip2` | comprimir com bzip2 |
+| `bunzip2` | descomprimir `.bz2` |
+| `xz` | comprimir com xz |
+| `unxz` | descomprimir `.xz` |
+| `zcat` | visualizar `.gz` |
+| `bzcat` | visualizar `.bz2` |
+| `xzcat` | visualizar `.xz` |
+| `gzip -d` | descomprimir gzip |
+| `bzip2 -d` | descomprimir bzip2 |
+| `xz -d` | descomprimir xz |
+
+**Opções importantes:**
+
+    -d → decompress → descomprimir
+    -k → keep → manter original
+    -c → stdout → saída padrão
+
+**Extensões:**
+
+    .gz    → gzip
+    .bz2   → bzip2
+    .xz    → xz
+    .tar   → arquivamento
+    .tar.gz  → tar + gzip
+    .tar.bz2 → tar + bzip2
+    .tar.xz  → tar + xz
+
+**Memorize:**
+
+    gzip  → .gz
+    bzip2 → .bz2
+    xz    → .xz
+
+    Compressão ≠ arquivamento
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

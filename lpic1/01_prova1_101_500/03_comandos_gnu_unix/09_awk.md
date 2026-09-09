@@ -1,224 +1,358 @@
-awk — Processamento de Texto
+# Comandos GNU/UNIX
 
-"awk" — Processamento de Texto por Campos
+## 09 — awk
 
-O "awk" é usado principalmente para ler texto dividido em campos e trabalhar com esses campos.
+`awk` — **Aho, Weinberger and Kernighan** — ferramenta de processamento e análise de texto.
 
-Ele é muito útil para arquivos organizados em colunas.
+O `awk` é usado principalmente para **ler arquivos linha por linha, separar campos, filtrar informações e executar ações sobre os dados**.
 
----
-
-Exemplo
-
-Imagine um arquivo:
-
-joao 25 brasil
-maria 30 portugal
-carlos 22 brasil
-
-Cada espaço separa um campo.
-
-joao    25    brasil
-  $1     $2      $3
-
-No "awk":
-
-$1 → primeiro campo
-$2 → segundo campo
-$3 → terceiro campo
+É muito útil para trabalhar com arquivos organizados em colunas.
 
 ---
 
-Mostrar um campo
+## Estrutura básica
 
-awk '{print $1}' pessoas.txt
+Sintaxe:
 
-"print" — Print (Mostrar)
-
-Resultado:
-
-joao
-maria
-carlos
-
-Para mostrar o segundo campo:
-
-awk '{print $2}' pessoas.txt
-
-Resultado:
-
-25
-30
-22
-
----
-
-Mostrar vários campos
-
-awk '{print $1, $3}' pessoas.txt
-
-Resultado:
-
-joao brasil
-maria portugal
-carlos brasil
-
----
-
-"$0" — Whole Line (Linha Inteira)
-
-O "$0" representa a linha inteira.
-
-awk '{print $0}' pessoas.txt
-
-Resultado:
-
-joao 25 brasil
-maria 30 portugal
-carlos 22 brasil
-
----
-
-"-F" — Field Separator (Separador de Campos)
-
-Por padrão, o "awk" considera espaços como separadores.
-
-Podemos escolher outro separador.
-
-Imagine:
-
-joao:25:brasil
-maria:30:portugal
-
-Podemos usar:
-
-awk -F ':' '{print $1}' pessoas.txt
-
-"-F"
-
--F → Field Separator → Separador de Campos
-
-O ":" será usado para separar os campos.
-
----
-
-"NF" — Number of Fields (Número de Campos)
-
-"NF" informa quantos campos existem na linha.
-
-awk '{print NF}' pessoas.txt
-
-Se a linha tiver:
-
-joao 25 brasil
-
-o resultado será:
-
-3
-
----
-
-"NR" — Number of Records (Número do Registro/Linha)
-
-"NR" mostra o número da linha que o "awk" está processando.
-
-awk '{print NR, $1}' pessoas.txt
-
-Resultado:
-
-1 joao
-2 maria
-3 carlos
-
----
-
-Condições
-
-O "awk" também pode filtrar informações.
+    awk 'padrão { ação }' arquivo
 
 Exemplo:
 
-awk '$2 > 25 {print $1}' pessoas.txt
+    awk '{print $1}' arquivo.txt
 
 Significa:
 
-$2 > 25
-↓
-segundo campo maior que 25
-↓
-mostrar $1
+    $1    → primeiro campo
+    print → imprimir
+
+Se o arquivo tiver:
+
+    João 25 Linux
+    Maria 30 Windows
+    Pedro 22 Linux
+
+O comando:
+
+    awk '{print $1}' arquivo.txt
+
+Produz:
+
+    João
+    Maria
+    Pedro
+
+---
+
+## Campos
+
+Por padrão, o `awk` considera espaços e tabulações como separadores de campos.
+
+| Variável | Significado |
+|---|---|
+| `$0` | linha inteira |
+| `$1` | primeiro campo |
+| `$2` | segundo campo |
+| `$3` | terceiro campo |
+| `NF` | número de campos da linha |
+| `NR` | número da linha atual |
+
+Exemplo:
+
+    awk '{print $1, $3}' arquivo.txt
 
 Resultado:
 
-maria
+    João Linux
+    Maria Windows
+    Pedro Linux
 
 ---
 
-"BEGIN" e "END"
+## `$0` — linha inteira
 
-"BEGIN" — Antes (Antes de processar)
+    awk '{print $0}' arquivo.txt
 
-Executa antes de ler as linhas.
+Mostra a linha completa.
 
-awk 'BEGIN {print "Pessoas"}' pessoas.txt
+Na prática, é semelhante a:
 
-"END" — Depois (Depois de processar)
-
-Executa depois de terminar.
-
-awk 'END {print "Fim"}' pessoas.txt
-
-Para a LPIC-1, é importante reconhecer esses dois.
+    cat arquivo.txt
 
 ---
 
-Principais elementos
+## `NF` — Number of Fields — número de campos
 
-$0  → Whole Line → Linha inteira
-$1  → primeiro campo
-$2  → segundo campo
-$3  → terceiro campo
-NF  → Number of Fields → Número de campos
-NR  → Number of Records → Número da linha
+    awk '{print NF}' arquivo.txt
 
-Principais flags
+Mostra quantos campos existem em cada linha.
 
--F → Field Separator → Separador de Campos
+Exemplo:
 
----
+    João 25 Linux
 
-🧠 Para a LPIC-1
+Resultado:
 
-Memorize:
-
-awk '{print $1}' arquivo.txt
-
-→ mostra o primeiro campo.
-
-awk '{print $2}' arquivo.txt
-
-→ mostra o segundo campo.
-
-awk '{print $1, $3}' arquivo.txt
-
-→ mostra o primeiro e o terceiro.
-
-awk -F ':' '{print $1}' arquivo.txt
-
-→ usa ":" como separador.
+    3
 
 ---
 
-Regra simples
+## `NR` — Number of Records — número do registro/linha
 
-awk
- ↓
-lê a linha
- ↓
-separa em campos
- ↓
-escolhe o que queremos
- ↓
-mostra ou processa
+    awk '{print NR, $0}' arquivo.txt
 
-Pense no "awk" como uma ferramenta para trabalhar com "colunas" de texto.
+Resultado:
+
+    1 João 25 Linux
+    2 Maria 30 Windows
+    3 Pedro 22 Linux
+
+`NR` aumenta a cada linha processada.
+
+---
+
+## Filtrando informações
+
+Podemos usar condições.
+
+Exemplo:
+
+    awk '$3 == "Linux" {print $1}' arquivo.txt
+
+Significa:
+
+    $3 == "Linux" → terceiro campo é Linux
+    print $1       → mostrar o primeiro campo
+
+Resultado:
+
+    João
+    Pedro
+
+---
+
+## Operadores de comparação
+
+| Operador | Significado |
+|---|---|
+| `==` | igual |
+| `!=` | diferente |
+| `>` | maior |
+| `<` | menor |
+| `>=` | maior ou igual |
+| `<=` | menor ou igual |
+
+Exemplo:
+
+    awk '$2 > 25 {print $1}' arquivo.txt
+
+Mostra os nomes cuja idade seja maior que 25.
+
+---
+
+## `-F` — Field Separator — separador de campos
+
+Podemos definir qual caractere separa os campos.
+
+Exemplo com `:`:
+
+    awk -F: '{print $1}' /etc/passwd
+
+O arquivo `/etc/passwd` utiliza `:` como separador.
+
+Para mostrar usuário e shell:
+
+    awk -F: '{print $1, $7}' /etc/passwd
+
+Resultado semelhante a:
+
+    root /bin/bash
+    usuario /bin/bash
+
+---
+
+## Separador de saída
+
+Podemos controlar como os campos serão exibidos usando `OFS`.
+
+`OFS` — **Output Field Separator** — separador de campos de saída.
+
+Exemplo:
+
+    awk -F: 'BEGIN {OFS=" - "} {print $1, $7}' /etc/passwd
+
+Saída:
+
+    root - /bin/bash
+
+---
+
+## `BEGIN` — início
+
+`BEGIN` executa uma ação **antes de o arquivo começar a ser processado**.
+
+Exemplo:
+
+    awk 'BEGIN {print "Usuários"} {print $1}' arquivo.txt
+
+---
+
+## `END` — fim
+
+`END` executa uma ação **depois que todas as linhas foram processadas**.
+
+Exemplo:
+
+    awk '{total += $2} END {print total}' arquivo.txt
+
+Nesse exemplo, o `awk` soma os valores do segundo campo.
+
+---
+
+## Variáveis
+
+O `awk` permite criar variáveis.
+
+Exemplo:
+
+    awk '{total += $2} END {print "Total:", total}' arquivo.txt
+
+Se os valores forem:
+
+    João 10
+    Maria 20
+    Pedro 30
+
+Resultado:
+
+    Total: 60
+
+---
+
+## Expressões regulares
+
+O `awk` também trabalha com **Regular Expressions (Regex) — Expressões Regulares**.
+
+Exemplo:
+
+    awk '/Linux/ {print $1}' arquivo.txt
+
+Mostra o primeiro campo das linhas que contêm `Linux`.
+
+Com expressão regular:
+
+    awk '/^root/ {print $0}' /etc/passwd
+
+Procura linhas que começam com `root`.
+
+---
+
+## `awk` com `|` — Pipe — canal
+
+O `awk` pode receber a saída de outro comando.
+
+Exemplo:
+
+    ls -l | awk '{print $9}'
+
+Aqui:
+
+    ls -l → mostra os arquivos
+    |     → envia a saída
+    awk   → seleciona o campo desejado
+    $9    → normalmente contém o nome do arquivo nessa saída
+
+---
+
+## `awk` × `grep` × `sed`
+
+| Comando | Principal finalidade |
+|---|---|
+| `grep` | encontrar linhas |
+| `sed` | substituir/modificar texto |
+| `awk` | analisar campos e processar dados |
+
+Exemplo:
+
+    grep "Linux" arquivo.txt
+
+→ encontra linhas contendo `Linux`.
+
+    sed 's/Linux/Unix/g' arquivo.txt
+
+→ substitui `Linux` por `Unix`.
+
+    awk '{print $1}' arquivo.txt
+
+→ extrai o primeiro campo.
+
+---
+
+## Exemplos práticos
+
+Mostrar usuários do sistema:
+
+    awk -F: '{print $1}' /etc/passwd
+
+Mostrar usuário e shell:
+
+    awk -F: '{print $1, $7}' /etc/passwd
+
+Mostrar número das linhas:
+
+    awk '{print NR, $0}' arquivo.txt
+
+Mostrar apenas o segundo campo:
+
+    awk '{print $2}' arquivo.txt
+
+Mostrar linhas onde o terceiro campo é `Linux`:
+
+    awk '$3 == "Linux" {print $0}' arquivo.txt
+
+Somar valores do segundo campo:
+
+    awk '{total += $2} END {print total}' arquivo.txt
+
+---
+
+## Resumo LPIC-1
+
+| Elemento | Função |
+|---|---|
+| `awk` | processar e analisar texto |
+| `$0` | linha inteira |
+| `$1` | primeiro campo |
+| `$2` | segundo campo |
+| `$NF` | último campo |
+| `NF` | número de campos |
+| `NR` | número da linha |
+| `-F` | definir separador de campos |
+| `BEGIN` | executar antes do processamento |
+| `END` | executar depois do processamento |
+| `print` | imprimir |
+| `OFS` | separador de campos de saída |
+| `==` | igual |
+| `!=` | diferente |
+| `>` | maior |
+| `<` | menor |
+
+**Memorize principalmente:**
+
+    awk '{print $1}' arquivo
+    → mostrar o primeiro campo
+
+    awk -F: '{print $1}' /etc/passwd
+    → usar : como separador
+
+    $0  → linha inteira
+    $1  → primeiro campo
+    $2  → segundo campo
+    $NF → último campo
+    NF  → quantidade de campos
+    NR  → número da linha
+
+    grep → encontrar
+    sed  → modificar
+    awk  → analisar/processar
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

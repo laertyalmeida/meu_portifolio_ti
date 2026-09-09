@@ -1,178 +1,255 @@
-Links — Links
+# Comandos GNU/UNIX
 
-O que são Links?
+## 13 — Links
 
-No Linux, um Link (Link/Ligação) é uma forma de criar outro nome ou caminho para acessar um arquivo.
+**Link — Link / Ligação**
 
-Existem dois tipos importantes:
+Um **link** permite acessar um arquivo ou diretório por outro caminho.
 
-Hard Link      → Link Físico
-Symbolic Link  → Link Simbólico
+No Linux existem dois tipos principais:
 
----
-
-Hard Link — Link Físico
-
-Um Hard Link aponta para o mesmo inode do arquivo original.
-
-Criamos com:
-
-ln arquivo.txt copia.txt
-
-Agora:
-
-arquivo.txt ──┐
-              ├── mesmo inode
-copia.txt ────┘
-
-Os dois nomes acessam os mesmos dados.
+| Tipo | Nome em inglês | Funcionamento |
+|---|---|---|
+| **Hard Link** | Hard Link — Link Físico | Aponta para o mesmo inode do arquivo |
+| **Symbolic Link** | Symbolic Link — Link Simbólico | Aponta para o caminho de outro arquivo |
 
 ---
 
-Inode — Inode
+### 1. Hard Link — Link Físico
 
-O inode guarda informações sobre o arquivo.
+Um **Hard Link** é outro nome para o mesmo arquivo.
 
-Podemos visualizar com:
+Os dois nomes apontam para o **mesmo inode** e compartilham os mesmos dados.
 
-ls -i arquivo.txt
+Criar:
 
-"-i" — Inode (Inode)
+    ln arquivo.txt copia.txt
+
+Verificar:
+
+    ls -li
 
 Exemplo:
 
-123456 arquivo.txt
+    123456 -rw-r--r-- 2 usuario usuario 100 arquivo.txt
+    123456 -rw-r--r-- 2 usuario usuario 100 copia.txt
 
-Se fizermos:
+O mesmo número de inode indica que são Hard Links do mesmo arquivo.
 
-ln arquivo.txt copia.txt
+### Características
 
-e depois:
-
-ls -i arquivo.txt copia.txt
-
-os dois terão o mesmo número de inode.
-
----
-
-Symbolic Link — Link Simbólico
-
-O Symbolic Link funciona como um atalho.
-
-Criamos com:
-
-ln -s arquivo.txt atalho.txt
-
-"-s" — Symbolic (Simbólico)
-
-Funcionamento:
-
-atalho.txt
-     ↓
-arquivo.txt
-     ↓
-dados
+- Compartilha o mesmo inode.
+- Compartilha os mesmos dados.
+- Alterar um altera o conteúdo visto pelo outro.
+- Remover um nome não remove os dados enquanto existir outro Hard Link.
+- Normalmente não pode apontar para diretórios.
+- Não pode atravessar sistemas de arquivos diferentes.
 
 ---
 
-Ver um Symbolic Link
+### 2. Symbolic Link — Link Simbólico
+
+Um **Symbolic Link** é um arquivo especial que aponta para outro caminho.
+
+Criar:
+
+    ln -s arquivo.txt atalho.txt
+
+Verificar:
+
+    ls -l
+
+Resultado semelhante a:
+
+    atalho.txt -> arquivo.txt
+
+### Características
+
+- Possui inode próprio.
+- Guarda o caminho do destino.
+- Pode apontar para arquivos ou diretórios.
+- Pode atravessar sistemas de arquivos diferentes.
+- Pode ficar quebrado se o destino for removido ou movido.
+
+---
+
+## 3. `ln` — Link — criar links
+
+Sintaxe:
+
+    ln [opção] origem destino
+
+### Criar Hard Link
+
+    ln arquivo.txt copia.txt
+
+### Criar Symbolic Link
+
+    ln -s arquivo.txt atalho.txt
+
+### Opções importantes
+
+| Opção | English | Português |
+|---|---|---|
+| `-s` | symbolic | simbólico |
+| `-f` | force | forçar |
+| `-i` | interactive | perguntar antes |
+| `-v` | verbose | mostrar o que está sendo feito |
+
+Exemplo:
+
+    ln -sv arquivo.txt atalho.txt
+
+---
+
+## 4. Verificar links
+
+### `ls -l`
+
+    ls -l atalho.txt
+
+Exemplo:
+
+    lrwxrwxrwx 1 usuario usuario 11 set 8 20:00 atalho.txt -> arquivo.txt
+
+O primeiro caractere `l` indica **Symbolic Link — Link Simbólico**.
+
+---
+
+### `ls -i`
+
+    ls -i arquivo.txt copia.txt
+
+Mostra o **inode**.
+
+Se os números forem iguais:
+
+    123456 arquivo.txt
+    123456 copia.txt
+
+São Hard Links.
+
+---
+
+### `readlink`
+
+**readlink — ler o destino de um link**
+
+    readlink atalho.txt
+
+Resultado:
+
+    arquivo.txt
+
+Para obter o caminho completo:
+
+    readlink -f atalho.txt
+
+`-f` — canonicalize/follow — resolver o caminho completo seguindo os links.
+
+---
+
+## 5. Remover um link
 
 Use:
 
-ls -l
+    rm atalho.txt
 
-Podemos encontrar algo como:
+Ao remover um **Symbolic Link**, o arquivo original não é removido.
 
-atalho.txt -> arquivo.txt
+Para um Hard Link:
 
-A seta mostra para onde o link aponta.
+    rm copia.txt
 
----
-
-Link Simbólico Quebrado
-
-Se o arquivo original for removido:
-
-rm arquivo.txt
-
-o link continua existindo, mas não consegue mais acessar o arquivo.
-
-atalho.txt
-     ↓
-arquivo.txt
-     ✗
-
-Isso é chamado de Broken Link (Link Quebrado).
+O arquivo continuará existindo se ainda houver outro nome apontando para o mesmo inode.
 
 ---
 
-Hard Link × Symbolic Link
+## 6. Hard Link × Symbolic Link
 
-| Hard Link| Symbolic Link
-Comando| "ln"| "ln -s"
-Aponta para| Mesmo inode| Caminho
-Precisa do arquivo original?| Não necessariamente| Sim
-Pode apontar para diretório?| Normalmente não| Sim
-Pode atravessar sistemas de arquivos?| Não| Sim
+| Característica | Hard Link | Symbolic Link |
+|---|---|---|
+| Mesmo inode? | Sim | Não |
+| Aponta para | Inode | Caminho |
+| Pode apontar para diretório? | Normalmente não | Sim |
+| Pode cruzar sistemas de arquivos? | Não | Sim |
+| Quebra se destino for removido? | Não | Sim |
+| Criado com | `ln` | `ln -s` |
 
----
+### Visualização
 
-Exemplo prático
+    arquivo.txt
+        │
+        └── mesmo inode
+              ├── arquivo.txt
+              └── copia.txt
 
-Criar um Hard Link:
+Symbolic Link:
 
-ln original.txt copia.txt
-
-Criar um Symbolic Link:
-
-ln -s original.txt atalho.txt
-
-Ver os links:
-
-ls -li
-
-"-l" — Long Listing (Lista Detalhada)
-
-"-i" — Inode (Mostrar Inode)
+    atalho.txt ──────> arquivo.txt
 
 ---
 
-🧠 Para a LPIC-1
+## 7. Exemplo prático
 
-Memorize:
+Criar arquivo:
 
-Hard Link
-↓
-mesmo inode
+    echo "Linux" > arquivo.txt
 
-Symbolic Link
-↓
-aponta para um caminho
+Criar Hard Link:
 
-Comandos:
+    ln arquivo.txt hard.txt
 
-ln arquivo copia
+Criar Symbolic Link:
 
-→ Hard Link.
+    ln -s arquivo.txt simbolico.txt
 
-ln -s arquivo atalho
+Verificar:
 
-→ Symbolic Link.
+    ls -li
+
+Testar:
+
+    cat arquivo.txt
+    cat hard.txt
+    cat simbolico.txt
+
+Os três exibem:
+
+    Linux
 
 ---
 
-Flags
+## 8. Inode — Inode / Estrutura do Arquivo
 
--s → Symbolic → Simbólico
--i → Inode → Mostrar inode
--l → Long Listing → Lista detalhada
+O **inode** guarda informações sobre o arquivo, como:
 
-Regra simples
+- permissões;
+- proprietário;
+- grupo;
+- tamanho;
+- timestamps;
+- localização dos dados;
+- quantidade de Hard Links.
 
-ln
-↓
-Link Físico
+O nome do arquivo não fica armazenado no inode.
 
-ln -s
-↓
-Link Simbólico
+Por isso, vários nomes podem apontar para o mesmo inode através de **Hard Links**.
+
+---
+
+## Resumo LPIC-1
+
+- `ln arquivo link` → cria **Hard Link**.
+- `ln -s arquivo link` → cria **Symbolic Link**.
+- Hard Link → mesmo inode.
+- Symbolic Link → aponta para um caminho.
+- `ls -i` → mostra o inode.
+- `ls -l` → mostra detalhes e o destino de links simbólicos.
+- `readlink` → mostra para onde um link aponta.
+- Hard Link não atravessa sistemas de arquivos.
+- Symbolic Link pode apontar para diretórios e atravessar sistemas de arquivos.
+- Remover um Symbolic Link não remove o arquivo original.
+- Um arquivo só deixa de existir quando não há mais referências válidas a seus dados.
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

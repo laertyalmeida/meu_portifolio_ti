@@ -1,175 +1,224 @@
-# GRUB — Gerenciador de Inicialização
+# Instalação e Gerenciamento de Pacotes
 
-GRUB (**GRand Unified Bootloader**) é o programa responsável por iniciar o Linux.
+## 04 — GRUB
 
-Quando o computador liga:
+### GRUB — Grand Unified Bootloader — Grande Carregador de Inicialização Unificado
 
-Computador
- ↓
-BIOS/UEFI
- ↓
-GRUB
- ↓
-Kernel Linux
- ↓
-Sistema Linux
+**GRUB** é o carregador de inicialização normalmente usado para iniciar sistemas Linux.
 
-O GRUB aparece antes do Linux iniciar.
+Ele aparece depois do **BIOS/UEFI** e antes do **Kernel Linux**.
 
----
+### Processo de inicialização
 
-## Para que serve?
-
-O GRUB pode:
-
-- Iniciar o Linux.
-- Escolher entre diferentes sistemas operacionais.
-- Escolher diferentes kernels Linux.
-- Passar parâmetros para o kernel durante a inicialização.
-- Iniciar um modo de recuperação, dependendo da configuração.
+    BIOS/UEFI
+        ↓
+    GRUB
+        ↓
+    Kernel Linux
+        ↓
+    initramfs
+        ↓
+    systemd
+        ↓
+    Serviços
+        ↓
+    Login
 
 ---
 
-## Onde fica a configuração?
+## Bootloader — Carregador de Inicialização
 
-A configuração principal do GRUB geralmente fica em:
+O **Bootloader — Carregador de Inicialização** é responsável por localizar e carregar o kernel na memória.
 
-/boot/grub/grub.cfg
+O GRUB também pode:
 
-Esse arquivo contém as entradas que aparecem no menu do GRUB.
-
-**Importante:** normalmente não é recomendado editar esse arquivo diretamente.
-
-As configurações usadas para gerar o `grub.cfg` ficam principalmente em:
-
-/etc/default/grub
-
-E scripts relacionados ficam em:
-
-/etc/grub.d/
+- iniciar diferentes kernels;
+- iniciar diferentes sistemas operacionais;
+- receber parâmetros para o kernel;
+- oferecer um menu de inicialização;
+- iniciar um modo de recuperação.
 
 ---
 
-## Atualizar a configuração
+## GRUB 2
 
-Depois de alterar configurações do GRUB, é necessário gerar novamente o arquivo de configuração.
+A versão moderna utilizada atualmente é o **GRUB 2**.
 
-Em sistemas Debian/Ubuntu, por exemplo:
+Arquivos e diretórios importantes:
 
-sudo update-grub
+    /boot/grub/
 
-"update-grub" — Update GRUB (Atualizar GRUB)
+- `/boot` — boot — inicialização
+- `/boot/grub` — arquivos de configuração e componentes do GRUB
 
-Atualiza o arquivo de configuração do GRUB.
+Em sistemas UEFI, também pode existir:
+
+    /boot/efi/
+
+- `efi` — EFI — partição usada pelo firmware UEFI
 
 ---
 
-## Instalar o GRUB
+## grub.cfg — Configuração do GRUB
 
-O GRUB pode ser instalado no dispositivo de inicialização.
+O arquivo principal gerado de configuração é:
+
+    /boot/grub/grub.cfg
+
+Ele contém as entradas utilizadas pelo GRUB para inicializar os sistemas.
+
+**Não é recomendado editar esse arquivo diretamente.**
+
+Em muitas distribuições, a configuração é gerada a partir de:
+
+    /etc/default/grub
+
+- `/etc` — etcetera — configuração do sistema
+- `default` — padrão
+- `grub` — configuração principal do GRUB
+
+Depois de alterar essa configuração, normalmente é necessário regenerar o arquivo do GRUB.
+
+---
+
+## update-grub — Atualizar GRUB
+
+Em distribuições baseadas em Debian/Ubuntu:
+
+    sudo update-grub
+
+- `update` — atualizar
+- `grub` — GRUB
+
+O comando procura kernels e outros sistemas instalados e atualiza a configuração.
+
+---
+
+## grub-mkconfig — Gerar Configuração
+
+O comando utilizado para gerar a configuração é:
+
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+- `grub-mkconfig` — GRUB Make Configuration — gerar configuração do GRUB
+- `-o` — output — saída
+- `/boot/grub/grub.cfg` — arquivo de configuração gerado
+
+Em algumas distribuições, `update-grub` é apenas uma forma simplificada de executar esse processo.
+
+---
+
+## GRUB e Kernel
+
+O GRUB precisa saber qual kernel deve ser carregado.
+
+Os kernels geralmente ficam em:
+
+    /boot/
+
+Exemplos:
+
+    /boot/vmlinuz-6.x.x
+    /boot/initramfs-6.x.x.img
+
+- `vmlinuz` — imagem comprimida do kernel Linux
+- `initramfs` — Initial RAM Filesystem — sistema de arquivos inicial em RAM
+
+---
+
+## Kernel Parameters — Parâmetros do Kernel
+
+O GRUB pode passar parâmetros para o kernel durante a inicialização.
 
 Exemplo:
 
-sudo grub-install /dev/sda
+    quiet
 
-"grub-install" — GRUB Install (Instalar GRUB)
+- `quiet` — inicialização silenciosa, reduzindo mensagens exibidas
 
-Instala o GRUB no dispositivo indicado.
+Outro exemplo:
 
-Nesse exemplo:
+    ro
 
-/dev/sda → disco
+- `ro` — read-only — somente leitura
 
----
+Um parâmetro muito conhecido:
 
-## Kernel e GRUB
+    single
 
-O GRUB pode apresentar diferentes kernels instalados.
+- `single` — modo de usuário único
 
-Por exemplo:
-
-GRUB
-├── Linux Kernel 6.x
-├── Linux Kernel 5.x
-└── Recovery Mode
-
-Isso permite escolher qual kernel será iniciado.
+Os parâmetros aparecem na linha de inicialização do kernel no GRUB.
 
 ---
 
-## Parâmetros do Kernel
+## GRUB e recuperação
 
-O GRUB também pode passar parâmetros para o kernel.
+O menu do GRUB pode permitir selecionar:
 
-Exemplo:
+- diferentes versões do kernel;
+- **Recovery Mode — Modo de Recuperação**;
+- outros sistemas operacionais.
 
-quiet
+Isso é útil quando um kernel ou configuração apresenta problemas.
+
+---
+
+## BIOS × UEFI
+
+O GRUB pode trabalhar em sistemas iniciados por:
+
+    BIOS → GRUB → Kernel
 
 ou:
 
-nomodeset
+    UEFI → GRUB → Kernel
 
-Esses parâmetros podem alterar o comportamento do Linux durante a inicialização.
+Em sistemas UEFI, os arquivos de inicialização ficam na:
 
----
+**ESP — EFI System Partition — Partição de Sistema EFI**
 
-## GRUB e arquivos importantes
+Normalmente montada em:
 
-/etc/default/grub
-        ↓
-Configurações
-        ↓
-/etc/grub.d/
-        ↓
-Scripts
-        ↓
-update-grub
-        ↓
-/boot/grub/grub.cfg
+    /boot/efi/
 
 ---
 
-## LPIC-1 — O que saber
+## Comandos importantes
 
-- GRUB é um **bootloader** — Gerenciador de Inicialização.
-- Ele é executado antes do kernel Linux.
-- Pode iniciar diferentes kernels.
-- Pode iniciar diferentes sistemas operacionais.
-- Pode passar parâmetros para o kernel.
-- `/boot/grub/grub.cfg` contém a configuração gerada do GRUB.
-- `/etc/default/grub` contém configurações do GRUB em muitas distribuições.
-- `update-grub` gera/atualiza a configuração em sistemas Debian/Ubuntu.
-- `grub-install` instala o GRUB.
+| Comando | Tradução | Função |
+|---|---|---|
+| `update-grub` | Atualizar GRUB | Regenera a configuração |
+| `grub-mkconfig` | Gerar configuração | Cria `grub.cfg` |
+| `grub-install` | Instalar GRUB | Instala o carregador de inicialização |
+| `cat /etc/default/grub` | Exibir configuração | Mostra configurações do GRUB |
+
+Exemplo:
+
+    sudo grub-install /dev/sda
+
+- `grub-install` — instalar GRUB
+- `/dev/sda` — disco onde o GRUB será instalado
+
+**Cuidado:** o destino depende do modo de inicialização (BIOS/UEFI) e da configuração do sistema.
 
 ---
 
-## Resumo
+## Resumo LPIC-1
 
-Computador
- ↓
-BIOS/UEFI
- ↓
-GRUB
- ↓
-Kernel
- ↓
-Linux
+- **GRUB — Grand Unified Bootloader — Grande Carregador de Inicialização Unificado**.
+- GRUB é um **Bootloader — Carregador de Inicialização**.
+- Ele fica entre o **BIOS/UEFI** e o **Kernel Linux**.
+- `/boot` — diretório relacionado à inicialização.
+- `/boot/grub/` — arquivos do GRUB.
+- `/boot/grub/grub.cfg` — configuração gerada do GRUB.
+- `/etc/default/grub` — configurações usadas para gerar o GRUB.
+- `update-grub` — atualizar a configuração do GRUB.
+- `grub-mkconfig` — gerar `grub.cfg`.
+- `grub-install` — instalar o GRUB.
+- `vmlinuz` — imagem do kernel.
+- `initramfs` — sistema de arquivos inicial em RAM.
+- GRUB pode passar **Kernel Parameters — Parâmetros do Kernel**.
+- Em UEFI, a inicialização utiliza a **ESP — EFI System Partition — Partição de Sistema EFI**.
 
-GRUB
-├── Inicia Linux
-├── Escolhe kernel
-├── Escolhe sistema operacional
-└── Passa parâmetros ao kernel
-
-Arquivos:
-
-/etc/default/grub → configurações
-/etc/grub.d/      → scripts
-/boot/grub/grub.cfg → configuração gerada
-
-Comandos:
-
-update-grub  → atualizar configuração
-grub-install → instalar GRUB
-
-GRUB → Bootloader → Gerenciador de Inicialização
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

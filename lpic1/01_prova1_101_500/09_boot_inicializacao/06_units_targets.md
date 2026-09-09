@@ -1,124 +1,103 @@
-# 09 — Boot e Inicialização
+# Boot e Inicialização
+
 ## 06 — Units e Targets
 
-### 1. Unit — Unidade
+### 1. Units — Unidades
 
-**Unit** — Unidade é um recurso que o `systemd` consegue gerenciar.
+**Unit — Unidade**
 
-Cada tipo de recurso possui uma extensão diferente.
+No `systemd`, uma **unit** é um recurso que o sistema pode gerenciar.
 
-Exemplos:
-
-| Unit | Significado | Português |
-|---|---|---|
-| `.service` | Service | Serviço |
-| `.socket` | Socket | Soquete |
-| `.target` | Target | Alvo/estado |
-| `.mount` | Mount | Ponto de montagem |
-| `.timer` | Timer | Temporizador |
-| `.path` | Path | Caminho |
-| `.device` | Device | Dispositivo |
+Cada unidade possui um tipo, identificado normalmente pela extensão do arquivo.
 
 Exemplo:
 
     ssh.service
 
-É uma **unit do tipo service**.
+    graphical.target
+
+    backup.timer
 
 ---
 
-## 2. Service Unit
+### 2. Principais tipos de Units
 
-**Service** — Serviço
+| Unit | Inglês | Português | Função |
+|---|---|---|---|
+| `.service` | Service | Serviço | Gerencia serviços e processos |
+| `.target` | Target | Alvo/Estado | Agrupa unidades |
+| `.socket` | Socket | Socket | Comunicação entre processos |
+| `.mount` | Mount | Montagem | Gerencia pontos de montagem |
+| `.automount` | Automount | Montagem Automática | Monta sob demanda |
+| `.timer` | Timer | Temporizador | Executa unidades em horários definidos |
+| `.path` | Path | Caminho | Monitora alterações em caminhos |
+| `.device` | Device | Dispositivo | Representa dispositivos do sistema |
 
-Representa um programa ou serviço gerenciado pelo `systemd`.
+Para o LPIC-1, dê atenção principalmente a:
 
-Exemplos:
+    .service
+    .target
+    .mount
+    .timer
+    .socket
+
+---
+
+### 3. Service
+
+**Service — Serviço**
+
+Representa um serviço ou processo gerenciado pelo `systemd`.
+
+Exemplo:
 
     ssh.service
-    cron.service
-    NetworkManager.service
 
 Consultar:
 
     systemctl status ssh.service
 
-Também é possível omitir `.service`:
+O `.service` pode ser omitido:
 
     systemctl status ssh
 
 ---
 
-## 3. Target Unit
+### 4. Target
 
-**Target** — Alvo/estado
+**Target — Alvo/Estado do Sistema**
 
-Um target agrupa outras units para representar determinado estado do sistema.
+Um `target` agrupa outras unidades e representa um determinado estado do sistema.
 
-Exemplos:
+Exemplo:
 
-    multi-user.target
-    graphical.target
-    rescue.target
-    emergency.target
-
-Pense no target como um **ponto de organização do sistema**.
-
----
-
-## 4. Principais Targets
-
-### multi-user.target
-
-**Multi-user** — Multiusuário
-
-Representa um sistema em modo multiusuário, normalmente sem interface gráfica.
-
-Aproxima-se do antigo:
-
-    Runlevel 3
-
----
-
-### graphical.target
-
-**Graphical** — Gráfico
-
-Representa o modo gráfico.
-
-Normalmente inclui:
-
-    multi-user.target
-           ↓
     graphical.target
 
-Aproxima-se do antigo:
+Pode reunir:
 
-    Runlevel 5
-
----
-
-### rescue.target
-
-**Rescue** — Recuperação
-
-Modo de recuperação para manutenção do sistema.
-
-Pode ser usado para solucionar problemas sem iniciar todos os serviços normais.
+    serviços
+    sockets
+    mounts
+    outros targets
 
 ---
 
-### emergency.target
+### 5. Targets comuns
 
-**Emergency** — Emergência
-
-Modo mínimo de emergência.
-
-É ainda mais básico que `rescue.target`.
+| Target | Função |
+|---|---|
+| `multi-user.target` | Sistema multiusuário, normalmente sem login gráfico |
+| `graphical.target` | Sistema multiusuário com interface gráfica |
+| `rescue.target` | Modo de recuperação |
+| `emergency.target` | Ambiente mínimo de emergência |
+| `reboot.target` | Reinicialização |
+| `poweroff.target` | Desligamento |
 
 ---
 
-## 5. Ver o target padrão
+### 6. Target padrão
+
+Ver o target padrão:
 
     systemctl get-default
 
@@ -126,57 +105,51 @@ Exemplo:
 
     graphical.target
 
-Isso indica o target usado como padrão durante a inicialização.
-
----
-
-## 6. Alterar o target padrão
-
-Para iniciar normalmente em modo texto:
+Alterar para modo multiusuário:
 
     sudo systemctl set-default multi-user.target
 
-Para iniciar normalmente em modo gráfico:
+Alterar para interface gráfica:
 
     sudo systemctl set-default graphical.target
 
-### Atenção
+---
 
-`set-default` altera o **padrão para os próximos boots**.
+### 7. Targets possuem dependências
 
-Ele não significa simplesmente "mudar imediatamente para esse modo".
+Um target pode depender de várias unidades.
+
+Exemplo simplificado:
+
+    graphical.target
+          ↓
+    multi-user.target
+          ↓
+       serviços
+          ↓
+       sockets
+          ↓
+       mounts
+
+O `systemd` utiliza essas relações para determinar o que precisa ser iniciado.
 
 ---
 
-## 7. Ativar um target imediatamente
-
-**isolate** — isolar/ativar um target
-
-    sudo systemctl isolate multi-user.target
-
-Isso muda o estado atual do sistema para o target especificado.
-
-⚠️ Pode parar serviços que não fazem parte das dependências desse target.
-
----
-
-## 8. Ver as Units
-
-Listar units carregadas:
+### 8. Ver unidades ativas
 
     systemctl list-units
 
-Listar somente serviços:
+Somente serviços:
 
     systemctl list-units --type=service
 
-Listar somente targets:
+Somente targets:
 
     systemctl list-units --type=target
 
 ---
 
-## 9. Ver arquivos de Units
+### 9. Ver arquivos de Units
 
     systemctl list-unit-files
 
@@ -188,128 +161,151 @@ Somente targets:
 
     systemctl list-unit-files --type=target
 
-### Diferença importante
+Diferença:
 
-**list-units**
+    list-units
+    → unidades carregadas/ativas no momento
 
-→ mostra units atualmente carregadas/ativas no contexto do `systemd`.
-
-**list-unit-files**
-
-→ mostra os arquivos de configuração de units instalados e seus estados.
+    list-unit-files
+    → arquivos de unidades instalados e seus estados
 
 ---
 
-## 10. Ver dependências
+### 10. Ver dependências
 
-Para visualizar as dependências de um target:
+Para descobrir o que um target inicia ou depende:
 
     systemctl list-dependencies graphical.target
 
-Exemplo simplificado:
+**list-dependencies — Listar Dependências**
 
-    graphical.target
-    ├── multi-user.target
-    ├── network.target
-    └── display-manager.service
+Também podemos consultar um serviço:
 
-Isso ajuda a entender como o `systemd` organiza a inicialização.
+    systemctl list-dependencies ssh.service
 
 ---
 
-## 11. Unit Files
+### 11. Iniciar um Target
 
-Os arquivos de configuração das units normalmente possuem extensões como:
+Um target pode ser ativado:
 
-    .service
-    .socket
-    .target
-    .mount
-    .timer
+    sudo systemctl start multi-user.target
 
-Exemplo:
-
-    /usr/lib/systemd/system/ssh.service
-
-ou, dependendo da distribuição:
-
-    /lib/systemd/system/ssh.service
-
-Configurações administrativas locais geralmente ficam em:
-
-    /etc/systemd/system/
-
----
-
-# 🔑 Resumo LPIC-1
-
-### Unit
-
-É um recurso gerenciado pelo `systemd`.
-
-### Service
-
-Representa um serviço:
-
-    ssh.service
-
-### Target
-
-Agrupa units e representa um estado do sistema:
-
-    multi-user.target
-    graphical.target
-
-### Comandos essenciais
-
-    systemctl get-default
-
-→ Ver target padrão.
-
-    sudo systemctl set-default graphical.target
-
-→ Definir target gráfico como padrão.
+Ou:
 
     sudo systemctl isolate multi-user.target
 
-→ Mudar imediatamente para o target.
+**isolate — Isolar**
 
-    systemctl list-units --type=service
+O `isolate` ativa o target e encerra unidades que não são necessárias para o novo estado, conforme as dependências e configurações.
 
-→ Listar serviços carregados.
-
-    systemctl list-units --type=target
-
-→ Listar targets carregados.
-
-    systemctl list-dependencies graphical.target
-
-→ Ver dependências.
+> Use `isolate` com cuidado, principalmente em sistemas em produção.
 
 ---
 
-## 🧠 Para decorar
+### 12. Mount Unit
 
-**Unit** → recurso gerenciado
+**Mount Unit — Unidade de Montagem**
 
-**Service** → serviço
+O `systemd` também pode gerenciar pontos de montagem.
 
-**Target** → grupo/estado
+Exemplo:
 
-**multi-user.target** → modo texto/multiusuário
+    home.mount
 
-**graphical.target** → modo gráfico
+O nome da unit é relacionado ao caminho de montagem.
 
-**rescue.target** → recuperação
+Exemplo:
 
-**emergency.target** → emergência
+    /home
 
-**get-default** → descobrir padrão
+pode ser representado por:
 
-**set-default** → definir padrão
-
-**isolate** → mudar imediatamente
+    home.mount
 
 ---
+
+### 13. Timer Unit
+
+**Timer — Temporizador**
+
+Uma `.timer` pode iniciar outra unidade, geralmente uma `.service`, em determinado momento ou intervalo.
+
+Exemplo:
+
+    backup.timer
+          ↓
+    backup.service
+
+Ver timers:
+
+    systemctl list-timers
+
+---
+
+### 14. Socket Unit
+
+**Socket — Socket**
+
+Uma `.socket` representa um mecanismo de comunicação entre processos e pode trabalhar junto com um `.service`.
+
+Exemplo:
+
+    exemplo.socket
+          ↓
+    exemplo.service
+
+Isso permite que determinados serviços sejam iniciados sob demanda quando uma comunicação chega ao socket.
+
+---
+
+### 15. Relação entre Units e Targets
+
+    systemd
+       │
+       ├── service
+       ├── socket
+       ├── mount
+       ├── timer
+       └── target
+              │
+              ├── service
+              ├── mount
+              └── socket
+
+**Unit** é o conceito geral.
+
+**Target** é um tipo de unit usado principalmente para agrupar unidades e representar um estado desejado do sistema.
+
+---
+
+## Resumo LPIC-1
+
+- **Unit — Unidade** → recurso gerenciado pelo `systemd`.
+- `.service` → serviços.
+- `.target` → estados/grupos de unidades.
+- `.mount` → pontos de montagem.
+- `.timer` → temporizadores.
+- `.socket` → sockets.
+- `systemctl list-units` → unidades carregadas.
+- `systemctl list-unit-files` → arquivos de unidades instalados.
+- `systemctl list-dependencies` → mostra dependências.
+- `systemctl get-default` → mostra o target padrão.
+- `systemctl set-default` → define o target padrão.
+- `multi-user.target` → modo multiusuário.
+- `graphical.target` → modo gráfico.
+- `rescue.target` → modo de recuperação.
+- `emergency.target` → modo mínimo de emergência.
+
+### Conceito principal
+
+    Unit
+      ↓
+    recurso gerenciado pelo systemd
+
+    Target
+      ↓
+    Unit que representa um estado
+    e agrupa outras Units
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

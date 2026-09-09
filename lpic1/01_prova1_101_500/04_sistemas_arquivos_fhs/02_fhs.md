@@ -1,13 +1,24 @@
-# 02 — FHS
+# Sistemas de Arquivos e FHS
 
-## FHS — Filesystem Hierarchy Standard (Padrão de Hierarquia do Sistema de Arquivos)
+## 02 — FHS
 
-O **FHS** define uma estrutura organizada para os diretórios usados pelos sistemas Linux.
+**FHS — Filesystem Hierarchy Standard — Padrão de Hierarquia do Sistema de Arquivos**
 
-Seu objetivo é estabelecer **onde os arquivos e recursos do sistema devem ficar**.
+O **FHS** define uma organização padrão para os principais diretórios de sistemas Linux e Unix.
+
+A ideia é simples: cada diretório tem uma finalidade específica.
+
+---
+
+## 1. Estrutura básica
+
+A árvore começa em:
 
     /
-    ├── bin
+
+A partir dela existem diretórios com funções diferentes:
+
+    /
     ├── boot
     ├── dev
     ├── etc
@@ -28,153 +39,108 @@ Seu objetivo é estabelecer **onde os arquivos e recursos do sistema devem ficar
 
 ---
 
-## `/` — Root Directory (Diretório Raiz)
+## 2. `/` — Root — Raiz
 
-É o ponto inicial de toda a árvore de diretórios.
+É o ponto inicial da hierarquia.
 
-Tudo no Linux parte de:
-
-    /
+Todos os arquivos e diretórios ficam abaixo de `/`.
 
 Exemplo:
 
-    /home
-    /etc
-    /var
-    /usr
+    /etc/hostname
+
+O caminho começa em `/` e depois entra em `etc`.
 
 ---
 
-## `/bin` — Binaries (Binários)
+## 3. `/bin` — Binaries — Binários
 
-Contém comandos essenciais para todos os usuários.
+Contém comandos essenciais para os usuários e para o funcionamento básico do sistema.
 
 Exemplos:
 
-    ls
-    cp
-    mv
-    rm
-    cat
+    /bin/ls
+    /bin/cp
+    /bin/mv
+    /bin/cat
 
-> Em sistemas modernos com **merged-/usr (usr unificado)**, `/bin` pode ser um link simbólico para `/usr/bin`.
+Em sistemas modernos com **usr merge — unificação com `/usr`**, `/bin` pode ser um link simbólico para `/usr/bin`.
 
 ---
 
-## `/sbin` — System Binaries (Binários do Sistema)
+## 4. `/sbin` — System Binaries — Binários do Sistema
 
-Contém comandos utilizados principalmente para administração do sistema.
+Contém comandos utilizados principalmente para administração e manutenção do sistema.
 
 Exemplos:
 
-    ip
-    fsck
-    mount
+    /sbin/fsck
+    /sbin/mount
+    /sbin/reboot
 
-> Em sistemas modernos, `/sbin` pode ser um link simbólico para `/usr/sbin`.
+Em sistemas modernos, `/sbin` também pode ser um link simbólico para `/usr/sbin`.
 
 ---
 
-## `/boot` — Boot (Inicialização)
+## 5. `/lib` — Libraries — Bibliotecas
 
-Contém arquivos necessários para iniciar o sistema.
+Contém bibliotecas essenciais usadas pelos programas e pelo sistema.
 
 Exemplos:
 
-    kernel
-    initramfs
-    arquivos do bootloader
+    /lib
+    /lib64
+
+Em sistemas com **usr merge**, podem apontar para diretórios dentro de `/usr`.
 
 ---
 
-## `/dev` — Devices (Dispositivos)
-
-Contém arquivos que representam dispositivos do sistema.
-
-Exemplos:
-
-    /dev/sda
-    /dev/sda1
-    /dev/null
-
----
-
-## `/etc` — Configuration (Configuração)
+## 6. `/etc` — Configuration — Configuração
 
 Contém arquivos de configuração do sistema.
 
 Exemplos:
 
-    /etc/fstab
-    /etc/hosts
     /etc/passwd
+    /etc/shadow
+    /etc/fstab
+    /etc/hostname
+    /etc/hosts
+
+Regra prática:
+
+**`/etc` = configuração.**
 
 ---
 
-## `/home` — Home Directories (Diretórios dos Usuários)
+## 7. `/dev` — Devices — Dispositivos
 
-Contém os diretórios pessoais dos usuários comuns.
-
-    /home
-    ├── usuario1
-    └── usuario2
-
----
-
-## `/root` — Root Home (Diretório do Administrador)
-
-É o diretório pessoal do usuário `root`.
-
-    /root
-
-Não deve ser confundido com:
-
-    /
-
-`/` = raiz do sistema  
-`/root` = diretório pessoal do `root`
-
----
-
-## `/lib` — Libraries (Bibliotecas)
-
-Contém bibliotecas necessárias para programas e componentes essenciais do sistema.
-
-> Em sistemas modernos com **merged-/usr**, `/lib` também pode ser um link simbólico para `/usr/lib`.
-
----
-
-## `/media` — Media (Mídias)
-
-Ponto utilizado normalmente para montar mídias removíveis.
+Contém arquivos especiais que representam dispositivos.
 
 Exemplos:
 
-    pendrive
-    cartão de memória
-    CD/DVD
+    /dev/sda
+    /dev/sda1
+    /dev/nvme0n1
+    /dev/null
+
+Regra prática:
+
+**`/dev` = dispositivos.**
 
 ---
 
-## `/mnt` — Mount (Montagem)
+## 8. `/proc` — Processes — Processos
 
-Usado tradicionalmente para montagens temporárias ou administrativas.
+É um **Virtual Filesystem — Sistema de Arquivos Virtual**.
 
-    /mnt
+Fornece informações sobre:
 
----
-
-## `/opt` — Optional (Opcional)
-
-Usado para software adicional que não faz parte da instalação padrão do sistema.
-
-    /opt/programa
-
----
-
-## `/proc` — Processes (Processos)
-
-Filesystem virtual que fornece informações sobre processos e o kernel.
+- processos;
+- memória;
+- CPU;
+- kernel;
+- dispositivos e configurações do sistema.
 
 Exemplos:
 
@@ -182,49 +148,101 @@ Exemplos:
     /proc/meminfo
     /proc/uptime
 
+Consultar:
+
+    cat /proc/meminfo
+
 ---
 
-## `/run` — Runtime (Execução)
+## 9. `/sys` — System — Sistema
 
-Armazena dados temporários relacionados à execução atual do sistema.
+Também é um sistema de arquivos virtual.
+
+Fornece informações sobre:
+
+- hardware;
+- dispositivos;
+- drivers;
+- kernel.
 
 Exemplos:
 
-    PID
-    sockets
-    arquivos de estado
+    /sys/class/
+    /sys/devices/
+    /sys/block/
 
 ---
 
-## `/srv` — Service Data (Dados de Serviços)
+## 10. `/boot` — Boot — Inicialização
 
-Contém dados fornecidos por serviços do sistema.
+Contém arquivos utilizados durante a inicialização do sistema.
+
+Exemplos:
+
+    /boot/vmlinuz
+    /boot/initramfs
+    /boot/grub/
+
+---
+
+## 11. `/home` — Home — Diretórios Pessoais
+
+Contém os diretórios dos usuários comuns.
 
 Exemplo:
 
-    /srv/www
+    /home/laerte
+    /home/joao
+
+Arquivos pessoais normalmente ficam dentro do respectivo diretório `/home`.
 
 ---
 
-## `/sys` — System (Sistema)
+## 12. `/root` — Root Home — Diretório Pessoal do Root
 
-Filesystem virtual que fornece informações e interfaces relacionadas ao kernel, dispositivos e hardware.
+É o diretório pessoal do usuário administrativo `root`.
+
+    /root
+
+Não confunda:
+
+    /
+    /root
+
+`/` = raiz do sistema.
+
+`/root` = diretório pessoal do usuário `root`.
 
 ---
 
-## `/tmp` — Temporary (Temporário)
+## 13. `/run` — Runtime — Execução
 
-Usado para armazenar arquivos temporários.
+Contém dados temporários relacionados aos processos em execução desde a inicialização.
 
-    /tmp
+Exemplos:
 
-Arquivos nesse diretório não devem ser considerados permanentes.
+    /run/lock
+    /run/user/
+
+Seu conteúdo normalmente é recriado durante o boot.
 
 ---
 
-## `/usr` — Unix System Resources (Recursos do Sistema)
+## 14. `/tmp` — Temporary — Temporário
 
-Contém grande parte dos programas, bibliotecas, documentação e outros recursos do sistema.
+Usado para arquivos temporários.
+
+Exemplo:
+
+    /tmp/arquivo.tmp
+
+Não é apropriado para armazenar dados permanentes importantes.
+
+---
+
+## 15. `/usr` — User System Resources — Recursos do Sistema
+
+Contém grande parte dos programas, bibliotecas e dados utilizados pelo sistema.
 
 Principais subdiretórios:
 
@@ -232,83 +250,186 @@ Principais subdiretórios:
     /usr/sbin
     /usr/lib
     /usr/share
+    /usr/local
+
+### `/usr/bin`
+
+Programas e comandos.
+
+### `/usr/sbin`
+
+Programas administrativos.
+
+### `/usr/lib`
+
+Bibliotecas.
+
+### `/usr/share`
+
+Dados compartilhados, documentação e outros arquivos independentes da arquitetura.
+
+### `/usr/local`
+
+Software instalado localmente pelo administrador.
 
 ---
 
-## `/var` — Variable Data (Dados Variáveis)
+## 16. `/var` — Variable — Variável
 
-Armazena dados que mudam durante o funcionamento do sistema.
+Contém dados que mudam durante o funcionamento do sistema.
 
 Exemplos:
 
     /var/log
     /var/cache
-    /var/spool
+    /var/lib
+    /var/tmp
+
+### `/var/log`
+
+Contém registros (**Log — Registro**) do sistema e de serviços.
 
 ---
 
-## Tabela para memorizar
+## 17. `/media` — Media — Mídia
 
-| Diretório | Tradução | Função |
-|---|---|---|
-| `/` | Root — Raiz | Base do sistema |
-| `/bin` | Binaries — Binários | Comandos essenciais |
-| `/sbin` | System Binaries — Binários do Sistema | Administração |
-| `/boot` | Boot — Inicialização | Arquivos de inicialização |
-| `/dev` | Devices — Dispositivos | Dispositivos |
-| `/etc` | Configuration — Configuração | Configurações |
-| `/home` | Home — Usuários | Arquivos pessoais |
-| `/root` | Root Home — Home do administrador | Arquivos do `root` |
-| `/lib` | Libraries — Bibliotecas | Bibliotecas |
-| `/media` | Media — Mídias | Mídias removíveis |
-| `/mnt` | Mount — Montagem | Montagens temporárias |
-| `/opt` | Optional — Opcional | Software adicional |
-| `/proc` | Processes — Processos | Informações do kernel/processos |
-| `/run` | Runtime — Execução | Dados temporários de execução |
-| `/srv` | Service — Serviço | Dados de serviços |
-| `/sys` | System — Sistema | Kernel/hardware |
-| `/tmp` | Temporary — Temporário | Arquivos temporários |
-| `/usr` | Unix System Resources — Recursos do Sistema | Programas e recursos |
-| `/var` | Variable Data — Dados Variáveis | Dados que mudam |
+Ponto normalmente utilizado para montar mídias removíveis.
+
+Exemplo:
+
+    /media/laerte/USB
 
 ---
 
-## LPIC-1 — O que saber
+## 18. `/mnt` — Mount — Montagem
 
-- **FHS** = Filesystem Hierarchy Standard — Padrão de Hierarquia do Sistema de Arquivos.
-- `/` = raiz.
-- `/etc` = configuração.
-- `/home` = usuários.
-- `/root` = administrador.
-- `/var` = dados variáveis.
-- `/tmp` = arquivos temporários.
-- `/dev` = dispositivos.
-- `/proc` = processos e informações do kernel.
-- `/sys` = dispositivos, hardware e kernel.
-- `/boot` = inicialização.
-- `/usr` = programas e recursos.
-- `/opt` = software adicional.
-- `/mnt` = montagens temporárias.
-- `/media` = mídias removíveis.
-- Saber que `/proc` e `/sys` são **virtual filesystems (sistemas de arquivos virtuais)**.
+Ponto tradicional para montar temporariamente sistemas de arquivos.
+
+Exemplo:
+
+    mount /dev/sdb1 /mnt
 
 ---
 
-## Resumo
+## 19. `/opt` — Optional — Opcional
 
-    /      → raiz
-    /etc   → configuração
-    /home  → usuários
-    /root  → administrador
-    /var   → dados variáveis
-    /tmp   → temporários
-    /dev   → dispositivos
-    /proc  → processos / kernel
-    /sys   → hardware / kernel
-    /boot  → inicialização
-    /usr   → programas / recursos
-    /opt   → software adicional
-    /mnt   → montagem
-    /media  → mídias removíveis
+Pode ser usado para instalar software adicional que não faz parte da organização principal da distribuição.
+
+Exemplo:
+
+    /opt/programa/
+
+---
+
+## 20. `/srv` — Service — Serviço
+
+Pode armazenar dados disponibilizados por serviços do sistema.
+
+Exemplo:
+
+    /srv/www/
+
+---
+
+## 21. `/usr/local` — Local — Local
+
+Usado para software e arquivos instalados localmente pelo administrador, separados dos arquivos normalmente fornecidos pela distribuição.
+
+Exemplos:
+
+    /usr/local/bin
+    /usr/local/sbin
+    /usr/local/lib
+
+---
+
+## 22. `/var/tmp` — Variable Temporary — Temporário Variável
+
+Também armazena arquivos temporários, mas possui uma diferença importante em relação a `/tmp`.
+
+**`/tmp`** → temporários de curta duração.
+
+**`/var/tmp`** → temporários que podem precisar permanecer por mais tempo, inclusive após uma reinicialização, dependendo da política do sistema.
+
+---
+
+## 23. Diretórios essenciais para memorizar
+
+| Diretório | Função principal |
+|---|---|
+| `/` | Raiz |
+| `/bin` | Comandos essenciais |
+| `/sbin` | Comandos administrativos |
+| `/lib` | Bibliotecas essenciais |
+| `/boot` | Inicialização |
+| `/dev` | Dispositivos |
+| `/etc` | Configurações |
+| `/home` | Usuários |
+| `/root` | Home do root |
+| `/proc` | Processos e informações do kernel |
+| `/sys` | Hardware e kernel |
+| `/run` | Dados de execução |
+| `/tmp` | Temporários |
+| `/usr` | Programas e recursos do sistema |
+| `/var` | Dados variáveis |
+| `/media` | Mídias removíveis |
+| `/mnt` | Montagens temporárias |
+| `/opt` | Software adicional |
+| `/srv` | Dados de serviços |
+
+---
+
+## 24. FHS × Linux moderno
+
+O FHS ajuda a entender **onde os arquivos devem estar**, mas distribuições modernas podem implementar a estrutura de maneira diferente.
+
+Um exemplo é o **usr merge — unificação do `/usr`**.
+
+Nesse modelo, diretórios tradicionais como:
+
+    /bin
+    /sbin
+    /lib
+
+podem ser **Symbolic Links — Links Simbólicos** para:
+
+    /usr/bin
+    /usr/sbin
+    /usr/lib
+
+Por isso, encontrar:
+
+    /bin -> /usr/bin
+
+não significa necessariamente que o sistema esteja errado.
+
+---
+
+## Resumo LPIC-1
+
+- **FHS** → Filesystem Hierarchy Standard — Padrão de Hierarquia do Sistema de Arquivos.
+- `/` → raiz de toda a hierarquia.
+- `/bin` → comandos essenciais.
+- `/sbin` → comandos administrativos.
+- `/lib` → bibliotecas essenciais.
+- `/boot` → arquivos de inicialização.
+- `/dev` → dispositivos.
+- `/etc` → configurações.
+- `/home` → arquivos pessoais dos usuários.
+- `/root` → diretório pessoal do `root`.
+- `/proc` → informações virtuais sobre processos e kernel.
+- `/sys` → informações virtuais sobre hardware e kernel.
+- `/run` → dados temporários de execução.
+- `/tmp` → arquivos temporários.
+- `/usr` → programas, bibliotecas e recursos do sistema.
+- `/usr/local` → software instalado localmente.
+- `/var` → dados que mudam durante a operação.
+- `/var/log` → registros do sistema e serviços.
+- `/media` → mídias removíveis.
+- `/mnt` → montagens temporárias.
+- `/opt` → software adicional.
+- `/srv` → dados fornecidos por serviços.
+- `/var/tmp` → arquivos temporários que podem permanecer por mais tempo.
+- Sistemas Linux modernos podem usar **usr merge**, fazendo `/bin`, `/sbin` e `/lib` apontarem para `/usr`.
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

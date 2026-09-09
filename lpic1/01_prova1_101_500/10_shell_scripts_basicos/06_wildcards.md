@@ -1,49 +1,64 @@
 # 10 — Shell e Scripts Básicos
+
 ## 06 — Wildcards
 
-### Wildcards — Caracteres coringa
+**Wildcard — Coringa**
 
-**Wildcards** são caracteres usados pelo Bash para representar padrões de nomes de arquivos e diretórios.
+Wildcards são caracteres especiais usados pelo Bash para representar **padrões de nomes de arquivos e diretórios**.
+
+Eles são muito usados com comandos como:
+
+    ls
+    cp
+    mv
+    rm
 
 Os principais são:
 
-| Wildcard | Significado |
-|---|---|
-| `*` | Qualquer quantidade de caracteres |
-| `?` | Exatamente um caractere |
-| `[ ]` | Um caractere entre as opções |
+| Wildcard | English | Português | Significado |
+|---|---|---|---|
+| `*` | Asterisk | Asterisco | Zero ou mais caracteres |
+| `?` | Question Mark | Ponto de Interrogação | Exatamente um caractere |
+| `[...]` | Character Class | Classe de Caracteres | Um caractere dentro da lista |
+| `[!...]` | Negated Character Class | Classe Negada | Um caractere que não esteja na lista |
 
 ---
 
-## 1. Asterisco `*`
+### 1. `*` — Asterisk
 
-Representa qualquer quantidade de caracteres.
+Representa **zero ou mais caracteres**.
 
-Listar todos os arquivos `.txt`:
+Exemplo:
 
     ls *.txt
 
-Exemplos encontrados:
+Encontra arquivos como:
 
-    notas.txt
-    estudo.txt
-    comandos.txt
+    arquivo.txt
+    teste.txt
+    documento.txt
 
-Outro exemplo:
+Também pode aparecer no início:
 
-    ls arquivo*
+    ls *.conf
+
+Ou no meio:
+
+    ls arquivo*.txt
 
 Pode encontrar:
 
     arquivo.txt
-    arquivo.md
-    arquivo1
+    arquivo1.txt
+    arquivo-backup.txt
 
 ---
 
-## 2. Interrogação `?`
+### 2. `?` — Question Mark
 
-Representa **um único caractere**.
+Representa **exatamente um caractere**.
+
+Exemplo:
 
     ls arquivo?.txt
 
@@ -56,11 +71,17 @@ Mas não:
 
     arquivo10.txt
 
+Porque `??` seria necessário para representar dois caracteres:
+
+    ls arquivo??.txt
+
 ---
 
-## 3. Colchetes `[ ]`
+### 3. `[...]` — Character Class
 
-Representam uma opção entre os caracteres indicados.
+Representa **um único caractere escolhido entre os caracteres especificados**.
+
+Exemplo:
 
     ls arquivo[123].txt
 
@@ -70,11 +91,11 @@ Pode encontrar:
     arquivo2.txt
     arquivo3.txt
 
----
+Mas não:
 
-## 4. Faixa de caracteres
+    arquivo4.txt
 
-Podemos usar `-` para indicar uma faixa.
+Também podemos usar intervalos:
 
     ls arquivo[1-5].txt
 
@@ -88,39 +109,158 @@ Encontra:
 
 ---
 
-## 5. Combinação
+### 4. `[!...]` — Negated Character Class
 
-Os padrões podem ser combinados.
-
-    ls *.log
-
-→ todos os arquivos terminados em `.log`.
-
-    ls backup?.tar
-
-→ `backup` + um caractere + `.tar`.
-
-    ls [a-c]*
-
-→ nomes começando com `a`, `b` ou `c`.
-
----
-
-## 🎯 Para a LPIC-1
-
-    *       → qualquer quantidade
-    ?       → um caractere
-    [abc]   → a, b ou c
-    [0-9]   → números de 0 a 9
+Representa um caractere que **não esteja** na lista.
 
 Exemplo:
 
-    rm *.tmp
+    ls arquivo[!0-9].txt
 
-→ remove arquivos que correspondem ao padrão `*.tmp`.
+Procura nomes em que o caractere naquela posição não seja um número.
 
-**Wildcards são expandidos pelo Bash antes do comando ser executado.**
+Em Bash também é comum:
+
+    [^...]
+
+O significado de negação em padrões de nome pode variar conforme o contexto; no Bash, `[!...]` é a forma tradicional e clara para negação.
 
 ---
+
+### 5. Diferença entre `*` e `?`
+
+Imagine:
+
+    arquivo1.txt
+    arquivo12.txt
+    arquivo123.txt
+
+Com:
+
+    ls arquivo?.txt
+
+Somente:
+
+    arquivo1.txt
+
+Com:
+
+    ls arquivo*.txt
+
+Os três podem ser encontrados.
+
+**`?` = um caractere**
+
+**`*` = zero ou mais caracteres**
+
+---
+
+### 6. Wildcards não são Regex
+
+**Filename Expansion — Expansão de Nomes de Arquivos**
+
+Wildcards são usados pelo Shell para encontrar nomes de arquivos.
+
+Exemplo:
+
+    ls *.log
+
+Já **Regex — Regular Expression — Expressão Regular** é usada para encontrar padrões dentro de textos.
+
+Exemplo:
+
+    grep '^root' /etc/passwd
+
+Não confunda:
+
+    *.txt
+
+com:
+
+    .*\.txt$
+
+São mecanismos diferentes.
+
+---
+
+### 7. `*` não inclui arquivos ocultos normalmente
+
+Arquivos ocultos começam com `.`.
+
+Exemplo:
+
+    .bashrc
+    .profile
+    .config
+
+O comando:
+
+    ls *
+
+normalmente não inclui esses arquivos.
+
+Para listar arquivos ocultos:
+
+    ls -a
+
+- `-a` — All — Todos, incluindo ocultos.
+
+Para usar um padrão específico para ocultos:
+
+    ls .*
+
+**Cuidado:** `.*` também pode corresponder a `.` e `..` em determinados contextos/comandos. Por isso, não use padrões amplos com `rm` sem entender exatamente o que será expandido.
+
+---
+
+### 8. Expansão acontece antes do comando
+
+Quando você executa:
+
+    ls *.txt
+
+O Bash primeiro expande `*.txt` para os arquivos correspondentes.
+
+Por exemplo:
+
+    ls arquivo1.txt arquivo2.txt arquivo3.txt
+
+Depois o `ls` recebe esses nomes.
+
+Isso significa que o `*` é interpretado pelo **Shell**, não pelo `ls`.
+
+---
+
+### 9. Verificar a expansão
+
+Podemos usar `echo`:
+
+    echo *.txt
+
+Se existirem:
+
+    teste.txt
+    arquivo.txt
+
+O resultado será:
+
+    teste.txt arquivo.txt
+
+O Bash fez a expansão antes de executar o `echo`.
+
+---
+
+## Resumo LPIC-1
+
+- **Wildcard** = caractere coringa usado para padrões de nomes.
+- `*` = zero ou mais caracteres.
+- `?` = exatamente um caractere.
+- `[abc]` = um caractere entre `a`, `b` ou `c`.
+- `[1-5]` = um caractere entre `1` e `5`.
+- `[!0-9]` = um caractere que não seja de `0` a `9`.
+- Arquivos ocultos não são incluídos normalmente por `*`.
+- Wildcards são diferentes de **Regex**.
+- O Bash faz a expansão do padrão antes de executar o comando.
+- `echo *.txt` é uma forma simples de visualizar a expansão.
 
 **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

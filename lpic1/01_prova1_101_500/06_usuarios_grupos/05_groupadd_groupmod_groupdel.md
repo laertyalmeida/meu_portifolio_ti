@@ -2,234 +2,148 @@
 
 ## 05 — groupadd, groupmod e groupdel
 
-## Group Management — Gerenciamento de Grupos
+### groupadd — Group Add — Adicionar Grupo
 
-Os principais comandos para administrar grupos no Linux são:
+Cria um novo grupo no sistema.
 
-| Comando | Inglês | Português |
+    sudo groupadd developers
+
+O grupo recebe um **GID — Group ID — ID do Grupo** automaticamente.
+
+Definir um GID específico:
+
+    sudo groupadd -g 1500 developers
+
+| Opção | English | Português |
 |---|---|---|
-| `groupadd` | Group Add | Adicionar Grupo |
-| `groupmod` | Group Modify | Modificar Grupo |
-| `groupdel` | Group Delete | Excluir Grupo |
+| `-g` | GID | Definir o ID do grupo |
+| `-r` | System Group | Criar grupo do sistema |
+| `-f` | Force | Não apresentar erro se o grupo já existir |
+
+Verificar:
+
+    getent group developers
 
 ---
 
-# 1. groupadd — Group Add (Adicionar Grupo)
+### groupmod — Group Modify — Modificar Grupo
 
-Cria um novo grupo.
+Altera as informações de um grupo existente.
 
-    sudo groupadd desenvolvedores
+### Alterar o nome
 
-Depois, podemos verificar:
+    sudo groupmod -n dev developers
 
-    getent group desenvolvedores
+Aqui:
 
-Exemplo:
+    developers → dev
 
-    desenvolvedores:x:1001:
+### Alterar o GID
 
----
+    sudo groupmod -g 1600 dev
 
-## Definir um GID
+| Opção | English | Português |
+|---|---|---|
+| `-n` | New Name | Novo nome |
+| `-g` | GID | Novo ID do grupo |
+| `-o` | Non-Unique | Permitir GID não exclusivo |
 
-`-g` — GID (ID do Grupo)
-
-    sudo groupadd -g 1500 desenvolvedores
-
-O grupo será criado com GID `1500`.
-
-⚠️ O GID precisa estar disponível.
+> Alterar o GID não significa automaticamente alterar o GID armazenado nos arquivos que pertenciam ao grupo antigo.
 
 ---
 
-# 2. groupmod — Group Modify (Modificar Grupo)
+### groupdel — Group Delete — Excluir Grupo
 
-Altera informações de um grupo existente.
+Remove um grupo do sistema.
 
-## Alterar o nome
+    sudo groupdel developers
 
-`-n` — new name (novo nome)
+Verificar:
 
-    sudo groupmod -n programadores desenvolvedores
+    getent group developers
 
-O grupo:
+Se o grupo não existir, o comando apresentará um erro.
 
-    desenvolvedores
-
-passará a se chamar:
-
-    programadores
-
-O **GID permanece o mesmo**.
+> **Importante:** o `groupdel` remove o grupo, mas não remove os arquivos pertencentes a esse grupo.
 
 ---
 
-## Alterar o GID
+## /etc/group
 
-`-g` — GID (ID do Grupo)
-
-    sudo groupmod -g 1600 programadores
-
-O GID do grupo passa a ser `1600`.
-
-⚠️ Alterar GIDs exige cuidado, pois arquivos podem continuar pertencendo ao GID antigo.
-
----
-
-# 3. groupdel — Group Delete (Excluir Grupo)
-
-Remove um grupo.
-
-    sudo groupdel programadores
-
-Depois disso, o grupo deixa de existir.
-
-### Atenção
-
-O `groupdel` não deve ser usado para remover o **grupo primário de um usuário** enquanto esse usuário ainda estiver utilizando esse grupo como grupo primário.
-
-Primeiro altere o grupo primário ou remova a conta do usuário, conforme a situação.
-
----
-
-# 4. Adicionar usuários ao grupo
-
-O `groupadd` apenas **cria o grupo**.
-
-Para adicionar um usuário:
-
-    sudo usermod -aG desenvolvedores laerte
-
-`-a` — append (adicionar)
-
-`-G` — supplementary groups (grupos suplementares)
-
-Verifique:
-
-    groups laerte
-
-Ou:
-
-    id laerte
-
----
-
-# 5. Consultar grupos
-
-### Todos os grupos
-
-    getent group
-
-### Grupo específico
-
-    getent group desenvolvedores
-
-### Arquivo local de grupos
-
-    cat /etc/group
-
----
-
-# 6. `/etc/group`
-
-As informações dos grupos locais ficam normalmente em:
+Os grupos locais são registrados em:
 
     /etc/group
 
 Exemplo:
 
-    desenvolvedores:x:1001:laerte,maria
+    developers:x:1500:laerte,joao
 
-Estrutura:
+| Campo | Significado |
+|---|---|
+| `developers` | Group Name — Nome do grupo |
+| `x` | Senha do grupo |
+| `1500` | GID — ID do grupo |
+| `laerte,joao` | Membros do grupo |
 
-    grupo : senha : GID : usuários
+Consultar:
 
-Nesse exemplo:
+    cat /etc/group
 
-    Grupo    → desenvolvedores
-    GID      → 1001
-    Membros  → laerte, maria
+Ou:
 
----
-
-# 7. Exemplos práticos
-
-### Criar grupo
-
-    sudo groupadd desenvolvedores
-
-### Criar com GID específico
-
-    sudo groupadd -g 1500 desenvolvedores
-
-### Alterar nome
-
-    sudo groupmod -n programadores desenvolvedores
-
-### Alterar GID
-
-    sudo groupmod -g 1600 programadores
-
-### Adicionar usuário
-
-    sudo usermod -aG programadores laerte
-
-### Verificar
-
-    getent group programadores
-
-### Excluir grupo
-
-    sudo groupdel programadores
+    getent group
 
 ---
 
-# 8. groupadd × groupmod × groupdel
+## Verificando grupos e usuários
+
+Ver grupos de um usuário:
+
+    groups laerte
+
+Ver UID, GID e grupos:
+
+    id laerte
+
+Ver informações do grupo:
+
+    getent group developers
+
+---
+
+## Relação com usuários
+
+Criar grupo:
+
+    sudo groupadd developers
+
+Adicionar usuário ao grupo:
+
+    sudo usermod -aG developers laerte
+
+Verificar:
+
+    id laerte
+
+Excluir grupo:
+
+    sudo groupdel developers
+
+---
+
+## Resumo LPIC-1
 
 | Comando | Função |
 |---|---|
-| `groupadd` | Cria um grupo |
-| `groupmod` | Modifica um grupo |
-| `groupdel` | Exclui um grupo |
+| `groupadd` | Criar grupo |
+| `groupmod` | Modificar grupo |
+| `groupdel` | Excluir grupo |
+| `-g` | Definir/alterar GID |
+| `-n` | Alterar nome do grupo |
+| `-r` | Criar grupo do sistema |
+| `/etc/group` | Arquivo de grupos |
+| `getent group` | Consultar grupos |
+| `id` | Consultar GID e grupos do usuário |
+| `groups` | Mostrar grupos do usuário |
 
-### Principais opções
-
-    groupadd -g GID grupo
-
-    groupmod -n novo_nome grupo
-
-    groupmod -g novo_GID grupo
-
-    groupdel grupo
-
----
-
-# 9. LPIC-1 — O que lembrar
-
-- `groupadd` → cria grupos.
-- `groupmod` → modifica grupos.
-- `groupdel` → remove grupos.
-- `-g` → define/altera o GID.
-- `-n` → define um novo nome.
-- `/etc/group` → informações dos grupos locais.
-- `getent group` → consulta grupos da base configurada.
-- `usermod -aG` → adiciona usuário a grupos suplementares.
-- Não remova o grupo primário de um usuário que ainda depende dele.
-
-### Resumo
-
-    sudo groupadd grupo
-
-    sudo groupadd -g 1500 grupo
-
-    sudo groupmod -n novo_nome grupo
-
-    sudo groupmod -g 1600 grupo
-
-    sudo groupdel grupo
-
-    sudo usermod -aG grupo usuario
-
-    getent group grupo
-
-> **"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**
+**Conhecimento só tem valor quando é compartilhado** - Laerte Costa

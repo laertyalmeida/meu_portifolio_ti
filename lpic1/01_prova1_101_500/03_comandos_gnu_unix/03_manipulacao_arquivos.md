@@ -1,137 +1,246 @@
-Manipulação de Arquivos
+# Comandos GNU/UNIX
 
-No Linux, usamos alguns comandos básicos para criar, copiar, mover, renomear e apagar arquivos e diretórios.
+## 03 — Manipulação de Arquivos
+
+### File Manipulation — Manipulação de Arquivos
+
+No Linux, os principais comandos para criar, copiar, mover, renomear e remover arquivos e diretórios são:
+
+    touch
+    cp
+    mv
+    rm
+    mkdir
+    rmdir
 
 ---
 
-"touch" — Touch (Criar/Atualizar)
+## touch — Tocar/Criar Arquivo
 
-Cria um arquivo vazio se ele ainda não existir.
+**touch — Tocar** cria um arquivo vazio quando ele não existe.
 
-touch arquivo.txt
+    touch arquivo.txt
 
-Se o arquivo já existir, atualiza sua data de modificação.
+Também pode atualizar a data e hora de modificação de um arquivo existente.
 
 ---
 
-"mkdir" — Make Directory (Criar Diretório)
+## mkdir — Make Directory — Criar Diretório
 
 Cria um diretório.
 
-mkdir documentos
+    mkdir documentos
 
-"-p" — Parents (Pais)
+Criar vários diretórios:
 
-Cria também os diretórios necessários no caminho.
+    mkdir fotos vídeos projetos
 
-mkdir -p projetos/linux/lpic
+### `-p` — parents — diretórios pais
 
-Sem "-p", os diretórios anteriores precisam existir.
+Cria toda a estrutura necessária:
+
+    mkdir -p projetos/linux/comandos
+
+Resultado:
+
+    projetos/
+    └── linux/
+        └── comandos/
 
 ---
 
-"cp" — Copy (Copiar)
+## cp — Copy — Copiar
 
 Copia arquivos ou diretórios.
 
-cp arquivo.txt backup.txt
+### Copiar arquivo
 
-"-r" — Recursive (Recursivo)
+    cp arquivo.txt backup.txt
 
-Usado para copiar diretórios e todo o seu conteúdo.
+### Copiar para outro diretório
 
-cp -r documentos backup
+    cp arquivo.txt documentos/
+
+### `-r` — recursive — recursivo
+
+Copia diretórios e seu conteúdo:
+
+    cp -r documentos backup/
+
+### `-i` — interactive — interativo
+
+Pergunta antes de sobrescrever:
+
+    cp -i arquivo.txt documentos/
+
+### `-v` — verbose — detalhado
+
+Mostra o que está sendo copiado:
+
+    cp -v arquivo.txt documentos/
 
 ---
 
-"mv" — Move (Mover)
+## mv — Move — Mover
 
 Move ou renomeia arquivos e diretórios.
 
-Mover:
+### Mover
 
-mv arquivo.txt documentos/
+    mv arquivo.txt documentos/
 
-Renomear:
+### Renomear
 
-mv antigo.txt novo.txt
+    mv antigo.txt novo.txt
+
+O mesmo comando realiza as duas operações porque, no Linux, renomear significa alterar o nome dentro do mesmo sistema de arquivos.
+
+### `-i` — interactive — interativo
+
+    mv -i arquivo.txt documentos/
+
+Pergunta antes de sobrescrever.
+
+### `-v` — verbose — detalhado
+
+    mv -v arquivo.txt documentos/
 
 ---
 
-"rm" — Remove (Remover)
+## rm — Remove — Remover
 
 Remove arquivos.
 
-rm arquivo.txt
+    rm arquivo.txt
 
-"-r" — Recursive (Recursivo)
+### `-i` — interactive — interativo
 
-Remove diretórios e seu conteúdo.
+    rm -i arquivo.txt
 
-rm -r documentos
+Pede confirmação antes de remover.
 
-"-f" — Force (Forçar)
+### `-r` — recursive — recursivo
 
-Não pede confirmação e ignora arquivos inexistentes.
+Remove diretórios e seu conteúdo:
 
-rm -f arquivo.txt
+    rm -r documentos/
 
-Cuidado: "rm" pode apagar arquivos definitivamente.
+### `-f` — force — forçar
 
----
+Não pede confirmação e ignora arquivos inexistentes:
 
-"rmdir" — Remove Directory (Remover Diretório)
+    rm -f arquivo.txt
 
-Remove um diretório vazio.
-
-rmdir documentos
-
-Se houver arquivos dentro, o comando não remove o diretório.
+**Cuidado:** `rm` normalmente não envia arquivos para uma lixeira. A remoção pode ser permanente.
 
 ---
 
-Exemplo prático
+## rmdir — Remove Directory — Remover Diretório
 
-mkdir projeto
-cd projeto
-touch arquivo.txt
-cp arquivo.txt copia.txt
-mv copia.txt backup.txt
-ls
-rm backup.txt
+Remove um diretório **vazio**.
 
-Resultado final:
+    rmdir documentos
 
-projeto/
-└── arquivo.txt
+Se o diretório possuir arquivos, o `rmdir` não o removerá.
+
+Para diretórios com conteúdo:
+
+    rm -r documentos/
 
 ---
 
-LPIC-1 — O que saber
+## Arquivos Ocultos
 
-- "touch" cria arquivos vazios.
-- "mkdir" cria diretórios.
-- "cp" copia.
-- "mv" move ou renomeia.
-- "rm" remove.
-- "rmdir" remove diretórios vazios.
-- "-r" significa Recursive (Recursivo).
-- "-f" significa Force (Forçar).
-- "-p" significa Parents (Diretórios pais).
+No Linux, arquivos cujo nome começa com `.` são normalmente considerados ocultos.
+
+Exemplo:
+
+    .bashrc
+    .profile
+    .config/
+
+Listar incluindo arquivos ocultos:
+
+    ls -a
+
+- `-a` — all — todos
 
 ---
 
-Resumo
+## Wildcards — Caracteres Coringa
 
-touch   → criar arquivo
-mkdir   → criar diretório
-cp      → copiar
-mv      → mover / renomear
-rm      → remover
-rmdir   → remover diretório vazio
+Os curingas podem ser usados para manipular vários arquivos.
 
-Principais opções
+### `*` — qualquer quantidade de caracteres
 
--p → Parents (Pais)
--r → Recursive (Recursivo)
--f → Force (Forçar)
+    cp *.txt backup/
+
+### `?` — exatamente um caractere
+
+    mv arquivo?.txt documentos/
+
+### `[ ]` — conjunto de caracteres
+
+    rm arquivo[1-3].txt
+
+O shell expande esses padrões antes de executar o comando.
+
+---
+
+## Opções importantes
+
+| Opção | Inglês | Português |
+|---|---|---|
+| `-a` | all | todos |
+| `-f` | force | forçar |
+| `-i` | interactive | interativo |
+| `-p` | parents | diretórios pais |
+| `-r` | recursive | recursivo |
+| `-v` | verbose | detalhado |
+
+---
+
+## Exemplo prático
+
+Criar estrutura:
+
+    mkdir -p projeto/documentos
+
+Criar arquivo:
+
+    touch projeto/documentos/arquivo.txt
+
+Copiar:
+
+    cp projeto/documentos/arquivo.txt backup.txt
+
+Renomear:
+
+    mv backup.txt copia.txt
+
+Remover:
+
+    rm copia.txt
+
+---
+
+## Resumo LPIC-1
+
+- `touch` = criar arquivo vazio ou atualizar timestamps.
+- `mkdir` = criar diretório.
+- `mkdir -p` = criar diretórios pais necessários.
+- `cp` = copiar.
+- `cp -r` = copiar diretórios recursivamente.
+- `mv` = mover ou renomear.
+- `rm` = remover arquivos.
+- `rm -r` = remover diretório e conteúdo recursivamente.
+- `rm -f` = forçar remoção.
+- `rmdir` = remover diretório vazio.
+- `ls -a` = mostrar arquivos ocultos.
+- `*` = qualquer quantidade de caracteres.
+- `?` = exatamente um caractere.
+- `[ ]` = conjunto de caracteres.
+- **Recursive — Recursivo** = executar a operação também dentro dos subdiretórios.
+- `rm` não utiliza uma lixeira por padrão.
+
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

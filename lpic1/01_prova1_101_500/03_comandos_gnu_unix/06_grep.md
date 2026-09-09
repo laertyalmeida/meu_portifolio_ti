@@ -1,200 +1,258 @@
-grep — Global Regular Expression Print
+# Comandos GNU/UNIX
 
-grep — Procurar Texto
+## 06 — grep
 
-O "grep" é usado para procurar texto dentro de arquivos.
+`grep` — **Global Regular Expression Print** — localizar e exibir linhas que correspondem a um padrão.
+
+É um dos comandos mais importantes do Linux para **pesquisar texto dentro de arquivos e saídas de comandos**.
+
+---
+
+### Uso básico
+
+Pesquisar uma palavra:
+
+    grep "Linux" arquivo.txt
+
+O `grep` mostra as linhas que contêm `Linux`.
+
+Pesquisar em vários arquivos:
+
+    grep "Linux" arquivo1.txt arquivo2.txt
+
+---
+
+### Opções principais
+
+| Opção | Inglês | Português |
+|---|---|---|
+| `-i` | ignore case | ignorar maiúsculas/minúsculas |
+| `-v` | invert match | mostrar linhas que **não** correspondem |
+| `-n` | line number | mostrar número da linha |
+| `-r` | recursive | pesquisar recursivamente |
+| `-l` | files with matches | mostrar apenas nomes dos arquivos encontrados |
+| `-c` | count | contar ocorrências/linhas correspondentes |
+| `-w` | word | procurar palavra inteira |
+| `-E` | extended regexp | usar expressões regulares estendidas |
+| `-A` | after context | mostrar linhas depois da correspondência |
+| `-B` | before context | mostrar linhas antes da correspondência |
+| `-C` | context | mostrar linhas antes e depois |
+
+---
+
+### `-i` — Ignore Case — ignorar maiúsculas/minúsculas
+
+    grep -i "linux" arquivo.txt
+
+Encontra:
+
+    Linux
+    linux
+    LINUX
+    LiNuX
+
+---
+
+### `-n` — Line Number — número da linha
+
+    grep -n "Linux" arquivo.txt
+
+Mostra a linha onde o texto foi encontrado.
+
+---
+
+### `-v` — Invert Match — inverter correspondência
+
+Mostra as linhas que **não contêm** o padrão.
+
+    grep -v "Linux" arquivo.txt
+
+---
+
+### `-w` — Word — palavra inteira
+
+    grep -w "root" arquivo.txt
+
+Procura `root` como palavra inteira, evitando correspondências como:
+
+    root
+    root123
+    myroot
+
+---
+
+### `-r` — Recursive — recursivo
+
+Pesquisa dentro de diretórios e seus subdiretórios.
+
+    grep -r "Linux" /etc
+
+Muito útil para procurar uma configuração em vários arquivos.
+
+---
+
+### `-l` — Files with Matches — arquivos com correspondência
+
+Mostra somente os nomes dos arquivos que contêm o padrão.
+
+    grep -l "Linux" *.txt
+
+---
+
+### `-c` — Count — contar
+
+Conta quantas linhas correspondem ao padrão.
+
+    grep -c "Linux" arquivo.txt
+
+---
+
+### `-E` — Extended Regular Expression — expressão regular estendida
+
+Permite utilizar recursos de **expressões regulares estendidas**.
+
+    grep -E "Linux|Unix" arquivo.txt
+
+Procura `Linux` **ou** `Unix`.
+
+Também pode ser usado como:
+
+    egrep "Linux|Unix" arquivo.txt
+
+Para LPIC-1, prefira conhecer `grep -E`.
+
+---
+
+### `grep` com `|` — Pipe — canal
+
+O `grep` é frequentemente usado com **pipes** para pesquisar a saída de outro comando.
+
+    ps aux | grep "bash"
+
+Aqui:
+
+    ps aux → mostra processos
+    |      → envia a saída para o próximo comando
+    grep   → procura "bash"
+
+Outro exemplo:
+
+    ls -l /etc | grep "conf"
+
+---
+
+### `grep` com expressões regulares
+
+O `grep` pode procurar padrões, não apenas palavras.
 
 Exemplo:
 
-grep "Linux" arquivo.txt
+    grep "^root" /etc/passwd
 
-Significa:
+`^` — início da linha.
 
-grep
-↓
-procure "Linux"
-↓
-dentro de arquivo.txt
+Procura linhas que começam com `root`.
 
-Se encontrar "Linux", o "grep" mostra a linha na tela.
+Outro exemplo:
 
----
+    grep "bash$" /etc/passwd
 
-Procurando uma palavra
+`$` — fim da linha.
 
-Imagine o arquivo:
-
-Linux é livre
-Windows é um sistema
-Linux usa comandos
-macOS também é um sistema
-
-Com:
-
-grep "Linux" sistemas.txt
-
-Resultado:
-
-Linux é livre
-Linux usa comandos
+Procura linhas que terminam com `bash`.
 
 ---
 
-"-i" — Ignore Case (Ignorar Maiúsculas/Minúsculas)
+### `grep` e arquivos de configuração
 
-Sem "-i", o "grep" diferencia:
+Exemplo:
 
-Linux
-linux
-LINUX
+    grep "PermitRootLogin" /etc/ssh/sshd_config
 
-Com:
+Podemos ignorar linhas comentadas:
 
-grep -i "linux" arquivo.txt
+    grep -v "^#" /etc/ssh/sshd_config
 
-ele encontra todas essas formas.
+E também ignorar linhas vazias:
 
-Flag
-
--i → Ignore Case (Ignorar Maiúsculas/Minúsculas)
+    grep -v "^#" /etc/ssh/sshd_config | grep -v "^$"
 
 ---
 
-"-v" — Invert Match (Inverter Correspondência)
+### `grep` com contexto
 
-Mostra as linhas que não possuem o texto procurado.
+Mostrar 2 linhas depois:
 
-grep -v "Linux" arquivo.txt
+    grep -A 2 "Linux" arquivo.txt
 
-Flag
+Mostrar 2 linhas antes:
 
--v → Invert Match (Inverter Correspondência)
+    grep -B 2 "Linux" arquivo.txt
 
----
+Mostrar 2 linhas antes e depois:
 
-"-n" — Line Number (Número da Linha)
-
-Mostra o número da linha junto com o resultado.
-
-grep -n "Linux" arquivo.txt
-
-Resultado:
-
-1:Linux é livre
-3:Linux usa comandos
-
-Flag
-
--n → Line Number (Número da Linha)
+    grep -C 2 "Linux" arquivo.txt
 
 ---
 
-"-c" — Count (Contar)
+## Exemplos práticos
 
-Conta quantas linhas possuem o texto.
+Pesquisar usuários:
 
-grep -c "Linux" arquivo.txt
+    grep "root" /etc/passwd
 
-Resultado:
+Pesquisar sem diferenciar maiúsculas/minúsculas:
 
-2
+    grep -i "error" log.txt
 
-Flag
+Mostrar números das linhas:
 
--c → Count (Contar)
+    grep -n "error" log.txt
 
----
+Pesquisar recursivamente:
 
-"-r" — Recursive (Recursivo)
+    grep -r "localhost" /etc
 
-Procura dentro de vários arquivos e subdiretórios.
+Pesquisar palavra inteira:
 
-grep -r "Linux" projeto/
+    grep -w "root" arquivo.txt
 
-Flag
+Pesquisar duas possibilidades:
 
--r → Recursive (Recursivo)
+    grep -E "Linux|Unix" arquivo.txt
 
----
+Pesquisar na saída de um comando:
 
-"-l" — Files with Match (Arquivos com Correspondência)
-
-Mostra somente os nomes dos arquivos que possuem o texto.
-
-grep -l "Linux" *.txt
-
-Flag
-
--l → Files with Match (Arquivos com Correspondência)
+    ps aux | grep "bash"
 
 ---
 
-"grep" com Pipe
+## Resumo LPIC-1
 
-O "grep" também pode receber a saída de outro comando.
+| Comando | Função |
+|---|---|
+| `grep "texto" arquivo` | procurar texto |
+| `grep -i` | ignorar maiúsculas/minúsculas |
+| `grep -v` | inverter a busca |
+| `grep -n` | mostrar número da linha |
+| `grep -r` | pesquisar recursivamente |
+| `grep -l` | mostrar nomes dos arquivos |
+| `grep -c` | contar correspondências |
+| `grep -w` | procurar palavra inteira |
+| `grep -E` | usar expressões regulares estendidas |
+| `grep -A` | mostrar linhas depois |
+| `grep -B` | mostrar linhas antes |
+| `grep -C` | mostrar contexto |
+| `\|` | enviar saída para outro comando |
 
-ls | grep ".txt"
+**Memorize principalmente:**
 
-Funcionamento:
+    grep      → pesquisar texto
+    grep -i   → ignorar maiúsculas/minúsculas
+    grep -n   → mostrar número da linha
+    grep -v   → mostrar o que NÃO corresponde
+    grep -r   → pesquisar recursivamente
+    grep -w   → palavra inteira
+    grep -E   → expressão regular estendida
 
-ls
-↓
-lista arquivos
-↓
-grep
-↓
-mostra os que possuem ".txt"
-
----
-
-Principais flags para LPIC-1
-
--i → Ignore Case → ignorar maiúsculas/minúsculas
--v → Invert Match → inverter correspondência
--n → Line Number → número da linha
--c → Count → contar
--r → Recursive → recursivo
--l → Files with Match → arquivos com correspondência
-
----
-
-Resumo
-
-grep "Linux" arquivo.txt
-
-→ procura "Linux".
-
-grep -i "linux" arquivo.txt
-
-→ ignora maiúsculas/minúsculas.
-
-grep -v "Linux" arquivo.txt
-
-→ mostra linhas que não possuem "Linux".
-
-grep -n "Linux" arquivo.txt
-
-→ mostra o número da linha.
-
-grep -c "Linux" arquivo.txt
-
-→ conta as linhas encontradas.
-
-grep -r "Linux" projeto/
-
-→ procura recursivamente.
-
-grep -l "Linux" *.txt
-
-→ mostra os arquivos que possuem "Linux".
-
-Regra para memorizar
-
-grep → procurar texto
-
--i → ignorar maiúsculas
--v → inverter
--n → número da linha
--c → contar
--r → recursivo
--l → nome dos arquivos
+**"Conhecimento só tem valor quando é compartilhado" - Laerte Costa**

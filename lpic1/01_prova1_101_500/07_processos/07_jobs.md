@@ -1,218 +1,202 @@
-# 07 — Processos
-## 07 — Jobs
+# Processos
 
-### Job — Tarefa (Processo controlado pelo Shell)
+## 07 — jobs
 
-Um **job** é um processo que o **shell** está controlando, principalmente quando executamos comandos em primeiro ou segundo plano.
+### jobs — Jobs — Tarefas do Shell
 
-Exemplo:
+O comando `jobs` mostra os **jobs — tarefas** iniciados pelo shell atual.
 
-    comando &
+Esses jobs podem estar:
 
-O `&` inicia o comando em **Background — Segundo Plano**.
-
----
-
-### Foreground — Primeiro Plano
-
-Quando executamos normalmente:
-
-    comando
-
-O processo ocupa o terminal e permanece em primeiro plano.
-
-Enquanto ele estiver executando, normalmente não podemos usar aquele terminal para executar outro comando.
-
----
-
-### Background — Segundo Plano
-
-Para executar um comando em segundo plano:
-
-    comando &
+- em **Foreground — Primeiro Plano**
+- em **Background — Segundo Plano**
+- **Stopped — Parados**
 
 Exemplo:
 
-    sleep 60 &
+    jobs
 
-O shell pode mostrar:
+Saída:
 
-    [1] 1250
-
-- `[1]` → **Job ID (ID do Job)**
-- `1250` → **PID (ID do Processo)**
-
-⚠️ **Job ID e PID são diferentes.**
+    [1]+  Running    sleep 100 &
+    [2]-  Stopped    vim
 
 ---
 
-### jobs — List Jobs (Listar Jobs)
+## Job ID × PID
 
-O comando `jobs` mostra os jobs controlados pelo shell atual.
+Um **Job ID** é diferente de um **PID**.
+
+### Job ID — Identificador da Tarefa
+
+É um número atribuído pelo shell.
+
+Exemplo:
+
+    [1]
+
+### PID — Process ID — ID do Processo
+
+É o identificador atribuído pelo sistema ao processo.
+
+Exemplo:
+
+    1520
+
+Podemos ter:
+
+    Job ID → [1]
+    PID    → 1520
+
+O Job ID é usado principalmente pelos comandos de controle de jobs do shell.
+
+---
+
+## Executar em Background
+
+Adicionar `&` ao final do comando:
+
+    sleep 100 &
+
+O shell inicia o processo em segundo plano e devolve o prompt.
+
+Consultar:
 
     jobs
 
 Exemplo:
 
-    [1]+  Running    sleep 60 &
-    [2]-  Stopped    vim
-
-Informações:
-
-- `[1]` → Job ID
-- `Running` → Executando
-- `Stopped` → Parado
-- `+` → job atual/padrão para operações de job
-- `-` → job anterior
+    [1]+  Running    sleep 100 &
 
 ---
 
-### Ctrl + Z — Suspender um Job
+## Ctrl+Z — Suspender
 
-Pressionar:
+Durante a execução de um processo em primeiro plano:
 
-    Ctrl + Z
+    Ctrl+Z
 
-Normalmente envia `SIGTSTP` para o processo em primeiro plano e o suspende.
-
-Exemplo:
-
-    comando
-
-Pressione:
-
-    Ctrl + Z
-
-O shell pode mostrar:
-
-    [1]+  Stopped    comando
-
-O processo não foi encerrado. Ele está **parado**.
-
----
-
-### bg — Background (Segundo Plano)
-
-O comando `bg` continua um job parado em segundo plano.
-
-    bg
-
-Por padrão, atua sobre o job atual (`%+`).
-
-Também podemos indicar o Job ID:
-
-    bg %1
-
-- `%1` → Job ID 1
-
-Exemplo:
-
-    [1]+  Stopped    comando
+O processo é suspenso.
 
 Depois:
 
-    bg %1
-
-Resultado:
-
-    [1]+  Running    comando &
-
----
-
-### fg — Foreground (Primeiro Plano)
-
-O comando `fg` traz um job para o primeiro plano.
-
-    fg
-
-Ou:
-
-    fg %1
+    jobs
 
 Exemplo:
 
-    [1]+  Running    comando
+    [1]+  Stopped    vim
+
+---
+
+## bg — Background — Segundo Plano
+
+O `bg` continua um job suspenso em segundo plano.
+
+    bg %1
+
+**`%1` → Job 1 — Tarefa 1**
 
 Depois:
 
-    fg %1
+    jobs
 
-O job volta para o **Foreground — Primeiro Plano**.
+O resultado poderá mostrar:
 
----
-
-### Encadeamento básico
-
-O fluxo mais importante é:
-
-    comando
-        ↓
-    Ctrl + Z
-        ↓
-    Stopped
-        ↓
-    bg
-        ↓
-    Running em Background
-        ↓
-    fg
-        ↓
-    Running em Foreground
+    [1]+  Running    vim &
 
 ---
 
-### Job ID × PID
+## fg — Foreground — Primeiro Plano
 
-Exemplo:
-
-    sleep 300 &
-
-Saída:
-
-    [1] 1250
-
-Temos:
-
-    Job ID → 1
-    PID    → 1250
-
-Para trabalhar com jobs:
+O `fg` traz um job para o primeiro plano.
 
     fg %1
-    bg %1
+
+Agora o processo volta a ocupar o terminal.
+
+---
+
+## Identificando o job atual
+
+O shell utiliza símbolos como:
+
+    [1]+
+    [2]-
+
+O:
+
+    +
+
+indica o **Current Job — Job Atual**.
+
+O:
+
+    -
+
+indica o **Previous Job — Job Anterior**.
+
+---
+
+## Encerrar um job
+
+Podemos usar `kill` com o Job ID:
+
     kill %1
 
-Para trabalhar diretamente com o processo:
+Ou usar o PID:
 
-    kill 1250
+    kill 1520
 
-⚠️ O `%` indica que estamos usando um **Job ID**.
+Também podemos usar:
 
----
+    fg %1
 
-### Atalhos importantes
+e depois:
 
-| Comando/Tecla | Função |
-|---|---|
-| `&` | Executar em Background |
-| `Ctrl + Z` | Suspender o processo atual |
-| `jobs` | Listar jobs |
-| `bg` | Continuar em Background |
-| `fg` | Trazer para Foreground |
+    Ctrl+C
 
 ---
 
-### Exemplo completo
+## wait — Wait — Aguardar
+
+O `wait` faz o shell esperar um job ou processo terminar.
+
+    wait %1
+
+Também pode ser usado com um PID:
+
+    wait 1520
+
+É especialmente útil em scripts.
+
+---
+
+## Comandos principais
+
+| Comando | English | Português |
+|---|---|---|
+| `jobs` | Jobs | Listar tarefas do shell |
+| `bg` | Background | Continuar em segundo plano |
+| `fg` | Foreground | Trazer para primeiro plano |
+| `kill` | Send Signal | Enviar sinal |
+| `wait` | Wait | Aguardar término |
+| `&` | Background Operator | Executar em segundo plano |
+| `Ctrl+Z` | Suspend | Suspender processo |
+| `Ctrl+C` | Interrupt | Interromper processo |
+
+---
+
+## Fluxo completo
 
 Iniciar:
 
-    sleep 300
+    sleep 100
 
 Suspender:
 
-    Ctrl + Z
+    Ctrl+Z
 
-Ver os jobs:
+Verificar:
 
     jobs
 
@@ -220,35 +204,50 @@ Continuar em segundo plano:
 
     bg %1
 
-Ver novamente:
+Verificar:
 
     jobs
 
-Trazer para primeiro plano:
+Trazer para o primeiro plano:
 
     fg %1
 
+Interromper:
+
+    Ctrl+C
+
 ---
 
-### ⚠️ Atenção para a prova LPIC-1
+## jobs × ps
 
-Memorize:
+`jobs` mostra principalmente os **jobs controlados pelo shell atual**.
 
-    &       → iniciar em Background
-    jobs    → listar Jobs
-    Ctrl+Z  → suspender
-    bg      → continuar em Background
-    fg      → trazer para Foreground
+    jobs
 
-E principalmente:
+`ps` mostra informações sobre **processos do sistema**.
 
-**Job ID ≠ PID**
+    ps
 
-Exemplo:
+Portanto:
 
-    [1] 1250
+    jobs → tarefas do shell
+    ps   → processos
 
-**`1`** → Job ID  
-**`1250`** → PID
+---
 
-> **Conhecimento só tem valor quando é compartilhado** - Laerte Costa
+## Resumo LPIC-1
+
+- `jobs` → **Jobs — Tarefas do Shell**.
+- `jobs` → mostra jobs do shell atual.
+- `&` → executa um comando em background.
+- `Ctrl+Z` → suspende um processo.
+- `bg` → continua um job em background.
+- `fg` → traz um job para foreground.
+- `%1` → referencia o Job ID 1.
+- `kill %1` → envia sinal ao Job 1.
+- `wait` → aguarda o término de um job/processo.
+- **Job ID** → identificador usado pelo shell.
+- **PID** → identificador do processo pelo sistema.
+- `jobs` e `ps` não são a mesma coisa.
+
+**Conhecimento só tem valor quando é compartilhado** - Laerte Costa
